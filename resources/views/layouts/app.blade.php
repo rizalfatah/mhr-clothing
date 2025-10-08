@@ -22,12 +22,12 @@
     @stack('styles')
 </head>
 
-<body class="antialiased bg-gray-50 text-gray-900">
+<body class="antialiased bg-gray-50 text-gray-900 flex flex-col min-h-screen">
     <!-- Header -->
     <x-header />
 
     <!-- Main Content -->
-    <main id="main-content" class="">
+    <main id="main-content" class="flex-grow">
         @yield('content')
     </main>
 
