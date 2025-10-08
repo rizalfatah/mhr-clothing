@@ -21,3 +21,7 @@ Route::get('/products/{id}', function ($id) {
 Route::get('/about', function () {
     return view('about');
 });
+
+Route::get('/account', function () {
+    return view('account');
+});
