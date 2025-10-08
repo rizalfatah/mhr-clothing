@@ -58,7 +58,7 @@
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center gap-8">
                 <a href="/catalog"
-                    class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('/') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Catalog</a>
+                    class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('catalog') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Catalog</a>
                 <a href="/community"
                     class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('community') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Community</a>
                 <a href="/about"

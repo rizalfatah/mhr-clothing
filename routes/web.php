@@ -13,3 +13,7 @@ Route::get('/community', function () {
 Route::get('/catalog', function () {
     return view('catalog');
 });
+
+Route::get('/products/{id}', function ($id) {
+    return view('product-detail', ['id' => $id]);
+});
