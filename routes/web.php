@@ -17,3 +17,7 @@ Route::get('/catalog', function () {
 Route::get('/products/{id}', function ($id) {
     return view('product-detail', ['id' => $id]);
 });
+
+Route::get('/about', function () {
+    return view('about');
+});
