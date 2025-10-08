@@ -34,6 +34,9 @@
     <!-- Footer -->
     <x-footer />
 
+    <!-- Cart Sidebar -->
+    <x-cart-sidebar />
+
     <!-- Scripts -->
     @stack('scripts')
 </body>
