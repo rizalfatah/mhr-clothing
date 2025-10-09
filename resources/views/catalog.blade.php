@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Catalog -MHR')
+@section('title', 'Catalog Products')
 
 @push('styles')
     <style>

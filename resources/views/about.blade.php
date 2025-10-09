@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'About - MHR')
+@section('title', 'About')
 
 @section('content')
     <div class="flex items-center justify-center p-12">
