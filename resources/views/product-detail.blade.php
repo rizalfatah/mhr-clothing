@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Detail - MHR')
+@section('title', 'Product Detail')
 
 @push('styles')
     <style>
@@ -12,7 +12,7 @@
         .diagonal-line::after {
             content: '';
             position: absolute;
-            top: 50%;
+            chore(ui): edit page titles for consistency top: 50%;
             left: -10%;
             width: 125%;
             height: 3px;
