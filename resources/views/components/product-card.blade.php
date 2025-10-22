@@ -23,7 +23,7 @@
             class="absolute bottom-4 left-4 right-4 bg-white rounded-2xl p-4 text-center shadow-xl hover:shadow-2xl transition-shadow block">
             <div class="flex flex-col items-center gap-1">
                 <span class="text-md text-gray-400 font-light diagonal-line">IDR {{ $oldPrice }}</span>
-                <span class="text-3xl font-normal text-gray-900">IDR {{ $price }}</span>
+                <span class="text-xl xl:text-3xl font-normal text-gray-900">IDR {{ $price }}</span>
             </div>
         </a>
     </div>
