@@ -9,6 +9,32 @@
     --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+
+    /* Primary Color Palette - Black Theme */
+    --color-primary-50: #f7f7f7;
+    --color-primary-100: #e3e3e3;
+    --color-primary-200: #c7c7c7;
+    --color-primary-300: #a3a3a3;
+    --color-primary-400: #6b6b6b;
+    --color-primary-500: #1a1a1a; /* core */
+    --color-primary-600: #171717;
+    --color-primary-700: #141414;
+    --color-primary-800: #0f0f0f;
+    --color-primary-900: #0a0a0a;
+    --color-primary-950: #050505;
+
+    /* Secondary Color Palette - Dark Blue Gray */
+    --color-secondary-50: #f8f9fa;
+    --color-secondary-100: #eaecef;
+    --color-secondary-200: #d5d9df;
+    --color-secondary-300: #b0b8c4;
+    --color-secondary-400: #7c8699;
+    --color-secondary-500: #101828; /* core */
+    --color-secondary-600: #0e1520;
+    --color-secondary-700: #0c121c;
+    --color-secondary-800: #0a0f17;
+    --color-secondary-900: #070b10;
+    --color-secondary-950: #040609;
 }
 
 /* Custom Animations */
@@ -133,10 +159,10 @@ html {
 }
 
 /* Focus Styles */
-*:focus-visible {
-    outline: 2px solid #3b82f6;
+/* *:focus-visible {
+    outline: 2px solid #1a1a1a;
     outline-offset: 2px;
-}
+} */
 
 /* Section Spacing */
 .section-padding {

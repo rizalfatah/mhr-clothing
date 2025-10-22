@@ -17,12 +17,25 @@
                 </p>
             </div>
             <div class="flex gap-3 ml-6">
-                <button class="px-6 py-2 bg-white text-gray-900 font-medium rounded hover:bg-gray-100 transition">
-                    Login
-                </button>
-                <button class="px-6 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition">
-                    Signup
-                </button>
+                @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="px-6 py-2 bg-white text-gray-900 font-medium rounded hover:bg-gray-100 transition">
+                            Logout
+                        </button>
+                    </form>
+                @endauth
+
+                @guest
+                    <a href="{{ route('login') }}"
+                        class="px-6 py-2 bg-white text-gray-900 font-medium rounded hover:bg-gray-100 transition">
+                        Login
+                    </a>
+                    <button class="px-6 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition">
+                        Signup
+                    </button>
+                @endguest
             </div>
         </div>
 
