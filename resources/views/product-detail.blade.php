@@ -12,7 +12,7 @@
         .diagonal-line::after {
             content: '';
             position: absolute;
-            chore(ui): edit page titles for consistency top: 50%;
+            top: 50%;
             left: -10%;
             width: 125%;
             height: 3px;
