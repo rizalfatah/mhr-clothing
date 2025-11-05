@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -18,6 +22,16 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Admin Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('products', ProductController::class);
+    Route::delete('/products/{image}/delete-image', [ProductController::class, 'deleteImage'])->name('products.delete-image');
+});
+
+
 Route::get('/', function () {
     return view('home');
 });
@@ -26,13 +40,9 @@ Route::get('/community', function () {
     return view('community');
 });
 
-Route::get('/catalog', function () {
-    return view('catalog');
-});
+Route::get('/catalog', [ProductPageController::class, 'catalog'])->name('catalog');
 
-Route::get('/products/{id}', function ($id) {
-    return view('product-detail', ['id' => $id]);
-});
+Route::get('/products/{slug}', [ProductPageController::class, 'show'])->name('products.show');
 
 Route::get('/about', function () {
     return view('about');

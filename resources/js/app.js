@@ -1,4 +1,5 @@
 import './bootstrap';
+import 'preline';
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {

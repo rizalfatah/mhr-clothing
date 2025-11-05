@@ -32,9 +32,10 @@
                         class="px-6 py-2 bg-white text-gray-900 font-medium rounded hover:bg-gray-100 transition">
                         Login
                     </a>
-                    <button class="px-6 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition">
+                    <a href="{{ route('register') }}"
+                        class="px-6 py-2 bg-black text-white font-medium rounded hover:bg-gray-800 transition">
                         Signup
-                    </button>
+                    </a>
                 @endguest
             </div>
         </div>

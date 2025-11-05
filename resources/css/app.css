@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Preline UI */
+@source "preline/dist/*.js";
+@import "preline/variants.css";
+
+/* Plugins */
+@plugin "@tailwindcss/forms";
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
