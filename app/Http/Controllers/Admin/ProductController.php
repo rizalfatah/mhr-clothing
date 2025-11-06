@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
         $products = Product::with(['category', 'primaryImage'])
@@ -46,33 +51,17 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
-        DB::beginTransaction();
         try {
-            $validated['slug'] = Str::slug($validated['name']);
             $validated['is_active'] = $request->has('is_active');
             $validated['is_featured'] = $request->has('is_featured');
 
-            $product = Product::create($validated);
+            $images = $request->hasFile('images') ? $request->file('images') : null;
 
-            // Handle image uploads
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $index => $image) {
-                    $path = $image->store('products', 'public');
-                    
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $path,
-                        'is_primary' => $index === 0,
-                        'sort_order' => $index,
-                    ]);
-                }
-            }
+            $this->productService->createProduct($validated, $images);
 
-            DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Produk berhasil dibuat.');
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withInput()
                 ->with('error', 'Gagal membuat produk: ' . $e->getMessage());
         }
@@ -103,35 +92,17 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
-        DB::beginTransaction();
         try {
-            $validated['slug'] = Str::slug($validated['name']);
             $validated['is_active'] = $request->has('is_active');
             $validated['is_featured'] = $request->has('is_featured');
 
-            $product->update($validated);
+            $images = $request->hasFile('images') ? $request->file('images') : null;
 
-            // Handle new image uploads
-            if ($request->hasFile('images')) {
-                $currentImageCount = $product->images()->count();
-                
-                foreach ($request->file('images') as $index => $image) {
-                    $path = $image->store('products', 'public');
-                    
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $path,
-                        'is_primary' => $currentImageCount === 0 && $index === 0,
-                        'sort_order' => $currentImageCount + $index,
-                    ]);
-                }
-            }
+            $this->productService->updateProduct($product, $validated, $images);
 
-            DB::commit();
             return redirect()->route('admin.products.index')
                 ->with('success', 'Produk berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withInput()
                 ->with('error', 'Gagal memperbarui produk: ' . $e->getMessage());
         }
@@ -140,12 +111,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            // Delete images from storage
-            foreach ($product->images as $image) {
-                Storage::disk('public')->delete($image->image_path);
-            }
-
-            $product->delete();
+            $this->productService->deleteProduct($product);
 
             return redirect()->route('admin.products.index')
                 ->with('success', 'Produk berhasil dihapus.');
@@ -157,8 +123,7 @@ class ProductController extends Controller
     public function deleteImage(ProductImage $image)
     {
         try {
-            Storage::disk('public')->delete($image->image_path);
-            $image->delete();
+            $this->productService->deleteImage($image);
 
             return back()->with('success', 'Gambar berhasil dihapus.');
         } catch (\Exception $e) {
