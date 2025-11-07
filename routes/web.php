@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductPageController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('products', ProductController::class);
     Route::delete('/products/{image}/delete-image', [ProductController::class, 'deleteImage'])->name('products.delete-image');
+    
+    // Transaction Routes
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/{order}', [TransactionController::class, 'show'])->name('show');
+        Route::put('/{order}/status', [TransactionController::class, 'updateStatus'])->name('update-status');
+        Route::put('/{order}/shipping', [TransactionController::class, 'updateShipping'])->name('update-shipping');
+        Route::put('/{order}/customer', [TransactionController::class, 'updateCustomer'])->name('update-customer');
+        Route::put('/{order}/notes', [TransactionController::class, 'updateNotes'])->name('update-notes');
+        Route::put('/{order}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
+        Route::delete('/{order}', [TransactionController::class, 'destroy'])->name('destroy');
+        Route::get('/{order}/invoice', [TransactionController::class, 'printInvoice'])->name('invoice');
+    });
 });
 
 
