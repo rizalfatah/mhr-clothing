@@ -22,5 +22,12 @@ class DatabaseSeeder extends Seeder
             'whatsapp_number' => '628123456789',
             'password' => Hash::make('password')
         ]);
+
+        // Seed categories and products
+        $this->call([
+            CategorySeeder::class,
+            ProductSeeder::class,
+            AdminSeeder::class,
+        ]);
     }
 }
