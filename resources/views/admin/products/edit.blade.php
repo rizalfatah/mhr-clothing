@@ -78,6 +78,45 @@
                 </div>
             </div>
 
+            <!-- Marketplace Links -->
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="p-4 sm:p-7">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">Link Marketplace</h2>
+                        <p class="text-sm text-gray-600 dark:text-neutral-400">Tambahkan link produk di marketplace</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Tokopedia URL -->
+                        <div>
+                            <label for="tokopedia_url" class="block text-sm font-medium mb-2 dark:text-white">Link Tokopedia</label>
+                            <input type="url" id="tokopedia_url" name="tokopedia_url" value="{{ old('tokopedia_url', $product->tokopedia_url) }}" placeholder="https://tokopedia.com/..." class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('tokopedia_url') border-red-500 @enderror">
+                            @error('tokopedia_url')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Shopee URL -->
+                        <div>
+                            <label for="shopee_url" class="block text-sm font-medium mb-2 dark:text-white">Link Shopee</label>
+                            <input type="url" id="shopee_url" name="shopee_url" value="{{ old('shopee_url', $product->shopee_url) }}" placeholder="https://shopee.co.id/..." class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('shopee_url') border-red-500 @enderror">
+                            @error('shopee_url')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- TikTok URL -->
+                        <div>
+                            <label for="tiktok_url" class="block text-sm font-medium mb-2 dark:text-white">Link TikTok Shop</label>
+                            <input type="url" id="tiktok_url" name="tiktok_url" value="{{ old('tiktok_url', $product->tiktok_url) }}" placeholder="https://tiktok.com/..." class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('tiktok_url') border-red-500 @enderror">
+                            @error('tiktok_url')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Pricing & Inventory -->
             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
                 <div class="p-4 sm:p-7">
