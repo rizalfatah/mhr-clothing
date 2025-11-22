@@ -16,5 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle 419 CSRF token mismatch errors
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
+            if ($e->getStatusCode() === 419) {
+                return back()->with([
+                    'error' => 'Your session has expired. Please try again.',
+                    'csrf_expired' => true
+                ])->withInput($request->except('password', '_token'));
+            }
+        });
     })->create();
