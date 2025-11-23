@@ -114,14 +114,37 @@
                         @endif
                     </div>
 
-                    <!-- Notify Me Button -->
-                    <button
-                        class="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold text-base flex items-center justify-center gap-2 hover:bg-gray-800 transition mb-4">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                    <!-- Quantity Selector -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-900 mb-2">Jumlah</label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" id="decrease-qty"
+                                class="w-10 h-10 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                </svg>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" max="99"
+                                class="w-20 text-center border-2 border-gray-300 rounded-lg py-2 font-semibold focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+                            <button type="button" id="increase-qty"
+                                class="w-10 h-10 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <button id="add-to-cart-btn" data-product-id="{{ $product->id }}"
+                        class="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold text-base flex items-center justify-center gap-2 hover:bg-gray-800 transition mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
-                        Notify me
+                        <span>Tambah ke Keranjang</span>
                     </button>
 
                     <!-- Marketplace Links -->
@@ -222,10 +245,10 @@
                         </div>
                     </div>
 
-                    <!-- Bottom Notify Me Button -->
-                    <button
-                        class="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold text-base hover:bg-gray-800 transition">
-                        Notify me
+                    <!-- Buy Now Button -->
+                    <button id="buy-now-btn" data-product-id="{{ $product->id }}"
+                        class="w-full bg-white border-2 border-gray-900 text-gray-900 py-3 rounded-lg font-semibold text-base hover:bg-gray-50 transition">
+                        Beli Sekarang
                     </button>
                 </div>
             </div>
@@ -247,3 +270,141 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Quantity controls
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decrease-qty');
+        const increaseBtn = document.getElementById('increase-qty');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        const buyNowBtn = document.getElementById('buy-now-btn');
+
+        decreaseBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue < 99) {
+                quantityInput.value = currentValue + 1;
+            }
+        });
+
+        // Prevent manual input outside range
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (value > 99) {
+                this.value = 99;
+            }
+        });
+
+        // Add to cart functionality
+        addToCartBtn.addEventListener('click', async function() {
+            const productId = this.dataset.productId;
+            const quantity = parseInt(quantityInput.value);
+
+            // Disable button and show loading state
+            const originalContent = this.innerHTML;
+            this.disabled = true;
+            this.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Menambahkan...</span>
+            `;
+
+            try {
+                const response = await fetch('{{ route('cart.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success state
+                    this.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Berhasil Ditambahkan!</span>
+                    `;
+
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        this.innerHTML = originalContent;
+                        this.disabled = false;
+                    }, 2000);
+
+                    // Show cart notification or badge update if you have one
+                    console.log('Product added to cart:', data);
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Terjadi kesalahan saat menambahkan produk ke keranjang. Silakan coba lagi.');
+                this.innerHTML = originalContent;
+                this.disabled = false;
+            }
+        });
+
+        // Buy now functionality
+        buyNowBtn.addEventListener('click', async function() {
+            const productId = this.dataset.productId;
+            const quantity = parseInt(quantityInput.value);
+
+            // Disable button and show loading state
+            const originalContent = this.innerHTML;
+            this.disabled = true;
+            this.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-gray-900 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
+
+            try {
+                const response = await fetch('{{ route('cart.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect to checkout
+                    window.location.href = '{{ route('checkout.index') }}';
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+                this.innerHTML = originalContent;
+                this.disabled = false;
+            }
+        });
+    </script>
+@endpush

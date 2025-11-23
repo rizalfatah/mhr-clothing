@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductPageController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,9 +29,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // Product image delete route must be BEFORE resource route to avoid conflict
+    Route::delete('/products/images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.delete-image');
     Route::resource('products', ProductController::class);
-    Route::delete('/products/{image}/delete-image', [ProductController::class, 'deleteImage'])->name('products.delete-image');
-    
+
     // Transaction Routes
     Route::prefix('transactions')->name('transactions.')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('index');
@@ -48,7 +51,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 Route::get('/community', function () {
     return view('community');

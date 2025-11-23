@@ -63,7 +63,12 @@ class ProductController extends Controller
             'weight' => 'required|integer|min:0',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
+        ], [
+            'images.*.image' => 'Setiap file harus berupa gambar.',
+            'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',
+            'images.*.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         try {
@@ -107,7 +112,12 @@ class ProductController extends Controller
             'weight' => 'required|integer|min:0',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
+        ], [
+            'images.*.image' => 'Setiap file harus berupa gambar.',
+            'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',
+            'images.*.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         try {
@@ -126,7 +136,7 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product, Request $request)
     {
         try {
             $this->productService->deleteProduct($product);
@@ -138,14 +148,30 @@ class ProductController extends Controller
         }
     }
 
-    public function deleteImage(ProductImage $image)
+    public function deleteImage(ProductImage $productImage, Request $request)
     {
         try {
-            $this->productService->deleteImage($image);
+            $this->productService->deleteImage($productImage);
+
+            // Return JSON for AJAX requests
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Gambar berhasil dihapus.'
+                ]);
+            }
 
             return back()->with('success', 'Gambar berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghapus gambar: ' . $e->getMessage());
+            // Return JSON error for AJAX requests
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus gambar'
+                ], 500);
+            }
+
+            return back()->with('error', 'Gagal menghapus gambar');
         }
     }
 }
