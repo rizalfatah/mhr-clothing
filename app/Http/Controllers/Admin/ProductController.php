@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -50,6 +52,17 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // Check for duplicate product name/slug first
+        if ($request->has('name')) {
+            $slug = Str::slug($request->name);
+            $existingProduct = Product::where('slug', $slug)->first();
+
+            if ($existingProduct) {
+                return back()->withInput()
+                    ->with('error', 'Nama produk "' . $request->name . '" sudah ada. Silakan gunakan nama yang berbeda.');
+            }
+        }
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
@@ -99,6 +112,19 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        // Check for duplicate product name/slug (excluding current product)
+        if ($request->has('name')) {
+            $slug = Str::slug($request->name);
+            $existingProduct = Product::where('slug', $slug)
+                ->where('id', '!=', $product->id)
+                ->first();
+
+            if ($existingProduct) {
+                return back()->withInput()
+                    ->with('error', 'Nama produk "' . $request->name . '" sudah ada. Silakan gunakan nama yang berbeda.');
+            }
+        }
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
