@@ -61,6 +61,20 @@ Route::get('/catalog', [ProductPageController::class, 'catalog'])->name('catalog
 
 Route::get('/products/{slug}', [ProductPageController::class, 'show'])->name('products.show');
 
+// Cart & Checkout Routes
+Route::prefix('cart')->name('cart.')->controller(CheckoutController::class)->group(function () {
+    Route::get('/', 'getCart')->name('get');
+    Route::post('/add', 'addToCart')->name('add');
+    Route::put('/update', 'updateCart')->name('update');
+    Route::delete('/remove', 'removeFromCart')->name('remove');
+});
+
+Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/process', 'process')->name('process');
+    Route::get('/success/{order}', 'success')->name('success');
+});
+
 Route::get('/about', function () {
     return view('about');
 });
