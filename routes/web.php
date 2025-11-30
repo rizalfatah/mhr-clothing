@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
@@ -45,6 +46,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('/{order}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
         Route::delete('/{order}', [TransactionController::class, 'destroy'])->name('destroy');
         Route::get('/{order}/invoice', [TransactionController::class, 'printInvoice'])->name('invoice');
+    });
+
+    // Settings Routes
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingController::class, 'index'])->name('index');
+        Route::put('/update', [SettingController::class, 'update'])->name('update');
     });
 });
 
