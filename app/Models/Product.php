@@ -52,4 +52,12 @@ class Product extends Model
     {
         return $this->hasOne(ProductImage::class)->where('is_primary', true);
     }
+
+    /**
+     * Get the price attribute (returns selling_price)
+     */
+    public function getPriceAttribute()
+    {
+        return $this->selling_price;
+    }
 }

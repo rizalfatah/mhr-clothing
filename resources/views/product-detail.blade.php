@@ -83,7 +83,7 @@
                             <div class="text-2xl font-bold text-gray-900 mt-1">IDR
                                 {{ number_format($product->selling_price, 0, ',', '.') }}</div>
                             <div class="mt-1 text-sm font-medium text-red-600">
-                                Hemat
+                                Save
                                 {{ number_format((($product->original_price - $product->selling_price) / $product->original_price) * 100, 0) }}%
                             </div>
                         @else
@@ -109,14 +109,14 @@
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
                                     </path>
                                 </svg>
-                                Produk Unggulan
+                                Featured Product
                             </div>
                         @endif
                     </div>
 
                     <!-- Quantity Selector -->
                     <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 mb-2">Jumlah</label>
+                        <label class="block text-sm font-semibold text-gray-900 mb-2">Quantity</label>
                         <div class="flex items-center gap-3">
                             <button type="button" id="decrease-qty"
                                 class="w-10 h-10 flex items-center justify-center border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition">
@@ -144,25 +144,25 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
-                        <span>Tambah ke Keranjang</span>
+                        <span>Add to Cart</span>
                     </button>
 
                     <!-- Marketplace Links -->
                     @if ($product->tokopedia_url || $product->shopee_url || $product->tiktok_url)
                         <div class="mb-4 pb-4 border-b border-gray-200">
-                            <h3 class="text-base font-semibold text-gray-900 mb-3">Beli di Marketplace</h3>
+                            <h3 class="text-base font-semibold text-gray-900 mb-3">Buy on Marketplace</h3>
                             <div class="space-y-2">
                                 @if ($product->tokopedia_url)
                                     <a href="{{ $product->tokopedia_url }}" target="_blank" rel="noopener noreferrer"
                                         class="flex items-center gap-3 px-4 py-3 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition group">
-                                        <div
-                                            class="flex-shrink-0 w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                        <div class="flex-shrink-0 w-8 h-8  rounded-lg flex items-center justify-center">
                                             {{-- <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                                             </svg> --}}
 
-                                            <img src="https://brandfetch.com/tokopedia.com?view=library&library=default&collection=logos&asset=id9X_tkaHj&utm_source=https%253A%252F%252Fbrandfetch.com%252Ftokopedia.com&utm_medium=copyAction&utm_campaign=brandPageReferral"
-                                                alt="Tokopedia Logo">
+                                            <img src="{{ @asset('images/Tokopedia_Mascot.png') }}" alt=""
+                                                srcset="">
+
                                         </div>
                                         <div class="flex-1">
                                             <span class="text-sm font-semibold text-gray-900">Tokopedia</span>
@@ -178,12 +178,30 @@
                                 @if ($product->shopee_url)
                                     <a href="{{ $product->shopee_url }}" target="_blank" rel="noopener noreferrer"
                                         class="flex items-center gap-3 px-4 py-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition group">
-                                        <div
-                                            class="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center">
+                                            {{-- <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                                                 <path
                                                     d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 4h4v3h-4V4zm10 16H4V9h16v11z" />
+                                            </svg> --}}
+
+                                            <?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                viewBox="0 0 109.59 122.88"
+                                                style="enable-background:new 0 0 109.59 122.88" xml:space="preserve">
+                                                <style type="text/css">
+                                                    <![CDATA[
+                                                    .st0 {
+                                                        fill: #EE4D2D;
+                                                    }
+                                                    ]]>
+                                                </style>
+                                                <g>
+                                                    <path class="st0"
+                                                        d="M74.98,91.98C76.15,82.36,69.96,76.22,53.6,71c-7.92-2.7-11.66-6.24-11.57-11.12 c0.33-5.4,5.36-9.34,12.04-9.47c4.63,0.09,9.77,1.22,14.76,4.56c0.59,0.37,1.01,0.32,1.35-0.2c0.46-0.74,1.61-2.53,2-3.17 c0.26-0.42,0.31-0.96-0.35-1.44c-0.95-0.7-3.6-2.13-5.03-2.72c-3.88-1.62-8.23-2.64-12.86-2.63c-9.77,0.04-17.47,6.22-18.12,14.47 c-0.42,5.95,2.53,10.79,8.86,14.47c1.34,0.78,8.6,3.67,11.49,4.57c9.08,2.83,13.8,7.9,12.69,13.81c-1.01,5.36-6.65,8.83-14.43,8.93 c-6.17-0.24-11.71-2.75-16.02-6.1c-0.11-0.08-0.65-0.5-0.72-0.56c-0.53-0.42-1.11-0.39-1.47,0.15c-0.26,0.4-1.92,2.8-2.34,3.43 c-0.39,0.55-0.18,0.86,0.23,1.2c1.8,1.5,4.18,3.14,5.81,3.97c4.47,2.28,9.32,3.53,14.48,3.72c3.32,0.22,7.5-0.49,10.63-1.81 C70.63,102.67,74.25,97.92,74.98,91.98L74.98,91.98z M54.79,7.18c-10.59,0-19.22,9.98-19.62,22.47h39.25 C74.01,17.16,65.38,7.18,54.79,7.18L54.79,7.18z M94.99,122.88l-0.41,0l-80.82-0.01h0c-5.5-0.21-9.54-4.66-10.09-10.19l-0.05-1 l-3.61-79.5v0C0,32.12,0,32.06,0,32c0-1.28,1.03-2.33,2.3-2.35l0,0h25.48C28.41,13.15,40.26,0,54.79,0s26.39,13.15,27.01,29.65 h25.4h0.04c1.3,0,2.35,1.05,2.35,2.35c0,0.04,0,0.08,0,0.12v0l-3.96,79.81l-0.04,0.68C105.12,118.21,100.59,122.73,94.99,122.88 L94.99,122.88z" />
+                                                </g>
                                             </svg>
+
                                         </div>
                                         <div class="flex-1">
                                             <span class="text-sm font-semibold text-gray-900">Shopee</span>
@@ -223,7 +241,7 @@
                     <!-- Product Details -->
                     @if ($product->details)
                         <div class="mb-4">
-                            <h3 class="text-base font-semibold text-gray-900 mb-2">Detail Produk:</h3>
+                            <h3 class="text-base font-semibold text-gray-900 mb-2">Product Details:</h3>
                             <div class="text-sm text-gray-700 whitespace-pre-line">
                                 {{ $product->details }}
                             </div>
@@ -232,15 +250,15 @@
 
                     <!-- Delivery Info -->
                     <div class="bg-gray-100 rounded-xl p-4 mb-4">
-                        <h3 class="text-base font-semibold text-gray-900 mb-2">Pengiriman</h3>
+                        <h3 class="text-base font-semibold text-gray-900 mb-2">Shipping</h3>
                         <div class="space-y-1.5 text-sm text-gray-700">
                             <div class="flex justify-between">
-                                <span>Berat:</span>
+                                <span>Weight:</span>
                                 <span class="font-medium">{{ $product->weight }}g</span>
                             </div>
                             <div class="text-xs text-gray-600 mt-2">
-                                Dikirim dalam 48 jam
-                                <div>(Setelah konfirmasi pembayaran)</div>
+                                Shipped within 48 hours
+                                <div>(After payment confirmation)</div>
                             </div>
                         </div>
                     </div>
@@ -248,7 +266,7 @@
                     <!-- Buy Now Button -->
                     <button id="buy-now-btn" data-product-id="{{ $product->id }}"
                         class="w-full bg-white border-2 border-gray-900 text-gray-900 py-3 rounded-lg font-semibold text-base hover:bg-gray-50 transition">
-                        Beli Sekarang
+                        Buy Now
                     </button>
                 </div>
             </div>
@@ -256,7 +274,7 @@
             <!-- Related Products -->
             @if ($relatedProducts->count() > 0)
                 <div class="mt-16">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Produk Terkait</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         @foreach ($relatedProducts as $relatedProduct)
                             <x-product-card :name="$relatedProduct->name" :price="number_format($relatedProduct->selling_price, 0, ',', '.')" :oldPrice="number_format($relatedProduct->original_price, 0, ',', '.')" :image="$relatedProduct->primaryImage
@@ -317,7 +335,7 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Menambahkan...</span>
+                <span>Adding...</span>
             `;
 
             try {
@@ -341,7 +359,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>Berhasil Ditambahkan!</span>
+                        <span>Successfully Added!</span>
                     `;
 
                     // Reset after 2 seconds
@@ -353,11 +371,11 @@
                     // Show cart notification or badge update if you have one
                     console.log('Product added to cart:', data);
                 } else {
-                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                    throw new Error(data.message || 'Failed to add to cart');
                 }
             } catch (error) {
                 console.error('Error adding to cart:', error);
-                alert('Terjadi kesalahan saat menambahkan produk ke keranjang. Silakan coba lagi.');
+                alert('An error occurred while adding product to cart. Please try again.');
                 this.innerHTML = originalContent;
                 this.disabled = false;
             }
@@ -397,11 +415,11 @@
                     // Redirect to checkout
                     window.location.href = '{{ route('checkout.index') }}';
                 } else {
-                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                    throw new Error(data.message || 'Failed to add to cart');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+                alert('An error occurred. Please try again.');
                 this.innerHTML = originalContent;
                 this.disabled = false;
             }

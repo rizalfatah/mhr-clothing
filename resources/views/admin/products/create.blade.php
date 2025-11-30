@@ -228,15 +228,11 @@
                                 {{ dump($errors->get('images.*')) }}
                             @enderror
 
-
-                            @if ($errors->has('images') || $errors->has('images.*'))
-                                {{ dd($errors->get('images.*')) }}
-                            @endif
-                            {{-- @foreach ($errors->get('images.*') as $messages)
+                            @foreach ($errors->get('images.*') as $messages)
                                 @foreach ((array) $messages as $message)
                                     <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
                                 @endforeach
-                            @endforeach --}}
+                            @endforeach
                         </div>
                     </div>
                 </div>

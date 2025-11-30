@@ -226,7 +226,7 @@ class ProductSeeder extends Seeder
 
             // Cari kategori
             $category = Category::where('slug', Str::slug($productData['category']))->first();
-            
+
             if (!$category) {
                 $this->command->warn("Category not found: {$productData['category']}");
                 continue;
@@ -256,18 +256,18 @@ class ProductSeeder extends Seeder
             foreach ($productData['images'] as $index => $imageUrl) {
                 try {
                     $this->command->info("  Downloading image from: {$imageUrl}");
-                    
+
                     // Download gambar dari Unsplash
                     $response = Http::timeout(30)->get($imageUrl);
-                    
+
                     if ($response->successful()) {
                         // Generate nama file unik
                         $filename = 'product_' . $product->id . '_' . ($index + 1) . '_' . time() . '.jpg';
                         $path = 'products/' . $filename;
-                        
+
                         // Simpan gambar ke storage
                         Storage::disk('public')->put($path, $response->body());
-                        
+
                         // Buat record ProductImage
                         ProductImage::create([
                             'product_id' => $product->id,
@@ -275,7 +275,7 @@ class ProductSeeder extends Seeder
                             'is_primary' => $index === 0, // Gambar pertama jadi primary
                             'sort_order' => $index,
                         ]);
-                        
+
                         $this->command->info("  ✓ Image saved: {$path}");
                     } else {
                         $this->command->error("  ✗ Failed to download image: {$imageUrl}");

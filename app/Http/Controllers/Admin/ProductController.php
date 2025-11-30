@@ -64,7 +64,7 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
+            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:4096',
         ], [
             'images.*.image' => 'Setiap file harus berupa gambar.',
             'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',
@@ -113,7 +113,7 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
+            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:4096',
         ], [
             'images.*.image' => 'Setiap file harus berupa gambar.',
             'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',
