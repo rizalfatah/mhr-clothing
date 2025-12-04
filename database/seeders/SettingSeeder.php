@@ -54,6 +54,15 @@ class SettingSeeder extends Seeder
                 'group' => 'shipping',
                 'description' => 'Minimal belanja untuk gratis ongkir (Rp)',
             ],
+
+            // Promotional Settings
+            [
+                'key' => 'promotional_banner',
+                'value' => 'Free Shipping on Orders Over $50',
+                'type' => 'text',
+                'group' => 'promotional',
+                'description' => 'Pesan promosi yang ditampilkan di top bar header',
+            ],
         ];
 
         foreach ($settings as $setting) {

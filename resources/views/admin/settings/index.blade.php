@@ -40,6 +40,10 @@
                                     🚚 Pengaturan Pengiriman
                                 @break
 
+                                @case('promotional')
+                                    🎯 Pengaturan Promosi
+                                @break
+
                                 @default
                                     {{ ucfirst($group) }}
                             @endswitch

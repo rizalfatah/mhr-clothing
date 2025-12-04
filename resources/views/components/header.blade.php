@@ -20,7 +20,7 @@
                     </span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="hidden md:inline">Free Shipping on Orders Over $50</span>
+                    <span class="hidden md:inline">{{ \App\Models\Setting::get('promotional_banner', '') }}</span>
                     <div class="flex gap-3">
                         <a href="#" class="hover:text-gray-300 transition">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
