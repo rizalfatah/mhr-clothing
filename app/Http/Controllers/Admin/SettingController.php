@@ -44,6 +44,9 @@ class SettingController extends Controller
                 ]);
             }
 
+            // Clear cache so changes reflect immediately
+            Setting::clearCache();
+
             return redirect()
                 ->route('admin.settings.index')
                 ->with('success', 'Pengaturan berhasil disimpan.');
