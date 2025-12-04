@@ -14,10 +14,19 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
+            // Contact Settings
+            [
+                'key' => 'contact_email',
+                'value' => 'admin@mahrmofficial.com',
+                'type' => 'text',
+                'group' => 'contact',
+                'description' => 'Email kontak untuk ditampilkan di header',
+            ],
+
             // WhatsApp Settings
             [
                 'key' => 'whatsapp_admin_number',
-                'value' => '6281234567890',
+                'value' => '6285867480640', // falih's whatsapp number
                 'type' => 'text',
                 'group' => 'whatsapp',
                 'description' => 'Nomor WhatsApp admin (format: 628xxx tanpa +)',
