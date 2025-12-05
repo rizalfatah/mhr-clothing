@@ -105,6 +105,21 @@ class CheckoutController extends Controller
                 'status' => Order::STATUS_PENDING,
             ];
 
+            // Set user_id for authenticated users or guest_customer_id for guests
+            if (auth()->check()) {
+                $orderData['user_id'] = auth()->id();
+            } else {
+                // Generate or retrieve guest customer ID from cookie
+                $guestCustomerId = $request->cookie('guest_customer_id');
+                if (!$guestCustomerId) {
+                    $guestCustomerId = \Str::uuid()->toString();
+                    // Queue cookie for 1 year (525600 minutes)
+                    cookie()->queue('guest_customer_id', $guestCustomerId, 525600);
+                }
+                $orderData['guest_customer_id'] = $guestCustomerId;
+            }
+
+
             // Prepare order items
             $items = [];
             $subtotal = 0;

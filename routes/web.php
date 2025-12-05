@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductPageController;
@@ -86,6 +87,4 @@ Route::get('/about', function () {
     return view('about');
 });
 
-Route::get('/account', function () {
-    return view('account');
-});
+Route::get('/account', [AccountController::class, 'index'])->name('account');

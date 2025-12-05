@@ -17,7 +17,7 @@ return new class extends Migration
 
             // Customer Info - bisa dari user atau guest
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('guest_customer_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('guest_customer_id', 36)->nullable();
 
             // Contact Info
             $table->string('customer_name');
