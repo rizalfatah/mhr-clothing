@@ -206,6 +206,10 @@
                 const data = await response.json();
                 if (data.success) {
                     loadCart();
+                    // Update cart counter
+                    if (typeof window.updateCartCounter === 'function') {
+                        window.updateCartCounter();
+                    }
                 }
             } catch (error) {
                 console.error('Error updating cart:', error);
@@ -231,6 +235,10 @@
                 const data = await response.json();
                 if (data.success) {
                     loadCart();
+                    // Update cart counter
+                    if (typeof window.updateCartCounter === 'function') {
+                        window.updateCartCounter();
+                    }
                 }
             } catch (error) {
                 console.error('Error removing from cart:', error);

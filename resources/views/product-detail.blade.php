@@ -374,6 +374,11 @@
                         <span>Successfully Added!</span>
                     `;
 
+                    // Update cart counter
+                    if (typeof window.updateCartCounter === 'function') {
+                        window.updateCartCounter();
+                    }
+
                     // Reset after 2 seconds
                     setTimeout(() => {
                         this.innerHTML = originalContent;
