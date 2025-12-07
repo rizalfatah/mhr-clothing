@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
     public function login()
     {
         return view('auth.login');
@@ -33,6 +40,10 @@ class AuthController extends Controller
 
         if (auth()->attempt([$fieldType => $loginField, 'password' => $password], $request->filled('remember'))) {
             $request->session()->regenerate();
+
+            // Merge session cart to database for authenticated user
+            $this->cartService->mergeSessionToDatabase();
+
             return redirect()->intended('/account');
         }
 

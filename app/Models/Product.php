@@ -60,4 +60,12 @@ class Product extends Model
     {
         return $this->selling_price;
     }
+
+    /**
+     * Get the cart items for this product
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }

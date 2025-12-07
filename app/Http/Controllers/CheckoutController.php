@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Services\CartService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,10 +15,12 @@ use Illuminate\Support\Facades\Session;
 class CheckoutController extends Controller
 {
     protected $transactionService;
+    protected $cartService;
 
-    public function __construct(TransactionService $transactionService)
+    public function __construct(TransactionService $transactionService, CartService $cartService)
     {
         $this->transactionService = $transactionService;
+        $this->cartService = $cartService;
     }
 
     /**
@@ -25,10 +28,10 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        // Get cart from session
-        $cart = Session::get('cart', []);
+        // Get cart items from service
+        $items = $this->cartService->getItems();
 
-        if (empty($cart)) {
+        if (empty($items)) {
             return redirect()->route('catalog')->with('error', 'Keranjang belanja Anda kosong');
         }
 
@@ -36,17 +39,15 @@ class CheckoutController extends Controller
         $subtotal = 0;
         $cartItems = [];
 
-        foreach ($cart as $productId => $item) {
-            $product = Product::find($productId);
+        foreach ($items as $item) {
+            $product = Product::find($item['id']);
             if ($product) {
-                $itemSubtotal = $product->price * $item['quantity'];
-                $subtotal += $itemSubtotal;
-
                 $cartItems[] = [
                     'product' => $product,
                     'quantity' => $item['quantity'],
-                    'subtotal' => $itemSubtotal,
+                    'subtotal' => $item['subtotal'],
                 ];
+                $subtotal += $item['subtotal'];
             }
         }
 
@@ -82,10 +83,10 @@ class CheckoutController extends Controller
             'shipping_notes' => 'nullable|string',
         ]);
 
-        // Get cart from session
-        $cart = Session::get('cart', []);
+        // Get cart items from service
+        $items = $this->cartService->getItems();
 
-        if (empty($cart)) {
+        if (empty($items)) {
             return redirect()->route('catalog')->with('error', 'Keranjang belanja Anda kosong');
         }
 
@@ -121,24 +122,24 @@ class CheckoutController extends Controller
 
 
             // Prepare order items
-            $items = [];
+            $cartItems = $this->cartService->getItems();
+            $orderItems = [];
             $subtotal = 0;
 
-            foreach ($cart as $productId => $item) {
-                $product = Product::find($productId);
+            foreach ($cartItems as $item) {
+                $product = Product::find($item['id']);
                 if (!$product) {
                     continue;
                 }
 
-                $itemSubtotal = $product->price * $item['quantity'];
-                $subtotal += $itemSubtotal;
+                $subtotal += $item['subtotal'];
 
-                $items[] = [
+                $orderItems[] = [
                     'product_id' => $product->id,
                     'product_name' => $product->name,
                     'price' => $product->price,
                     'quantity' => $item['quantity'],
-                    'subtotal' => $itemSubtotal,
+                    'subtotal' => $item['subtotal'],
                 ];
             }
 
@@ -155,15 +156,15 @@ class CheckoutController extends Controller
             $orderData['total'] = $subtotal + $shippingCost;
 
             // Create order
-            $order = $this->transactionService->createOrder($orderData, $items);
+            $order = $this->transactionService->createOrder($orderData, $orderItems);
 
             // Update order status to contacted (sent to WhatsApp)
             $order->update(['status' => Order::STATUS_CONTACTED]);
 
             DB::commit();
 
-            // Clear cart
-            Session::forget('cart');
+            // Clear cart using service
+            $this->cartService->clear();
 
             // Generate WhatsApp message
             $whatsappUrl = $this->generateWhatsAppUrl($order);
@@ -254,26 +255,12 @@ class CheckoutController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cart = Session::get('cart', []);
-
-        $productId = $validated['product_id'];
-        $quantity = $validated['quantity'];
-
-        // If product already in cart, update quantity
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
-        } else {
-            $cart[$productId] = [
-                'quantity' => $quantity,
-            ];
-        }
-
-        Session::put('cart', $cart);
+        $this->cartService->addItem($validated['product_id'], $validated['quantity']);
 
         return response()->json([
             'success' => true,
             'message' => 'Produk berhasil ditambahkan ke keranjang',
-            'cart_count' => count($cart),
+            'cart_count' => $this->cartService->getCount(),
         ]);
     }
 
@@ -287,23 +274,12 @@ class CheckoutController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $cart = Session::get('cart', []);
-        $productId = $validated['product_id'];
-        $quantity = $validated['quantity'];
-
-        if ($quantity == 0) {
-            // Remove item from cart
-            unset($cart[$productId]);
-        } else {
-            $cart[$productId]['quantity'] = $quantity;
-        }
-
-        Session::put('cart', $cart);
+        $this->cartService->updateItem($validated['product_id'], $validated['quantity']);
 
         return response()->json([
             'success' => true,
             'message' => 'Keranjang berhasil diperbarui',
-            'cart_count' => count($cart),
+            'cart_count' => $this->cartService->getCount(),
         ]);
     }
 
@@ -316,17 +292,12 @@ class CheckoutController extends Controller
             'product_id' => 'required|exists:products,id',
         ]);
 
-        $cart = Session::get('cart', []);
-        $productId = $validated['product_id'];
-
-        unset($cart[$productId]);
-
-        Session::put('cart', $cart);
+        $this->cartService->removeItem($validated['product_id']);
 
         return response()->json([
             'success' => true,
             'message' => 'Produk berhasil dihapus dari keranjang',
-            'cart_count' => count($cart),
+            'cart_count' => $this->cartService->getCount(),
         ]);
     }
 
@@ -335,26 +306,11 @@ class CheckoutController extends Controller
      */
     public function getCart()
     {
-        $cart = Session::get('cart', []);
-        $cartItems = [];
+        $cartItems = $this->cartService->getItems();
         $subtotal = 0;
 
-        foreach ($cart as $productId => $item) {
-            $product = Product::with('images')->find($productId);
-            if ($product) {
-                $itemSubtotal = $product->price * $item['quantity'];
-                $subtotal += $itemSubtotal;
-
-                $cartItems[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'price' => $product->price,
-                    'quantity' => $item['quantity'],
-                    'subtotal' => $itemSubtotal,
-                    'image' => $product->images->first()?->image_path,
-                ];
-            }
+        foreach ($cartItems as $item) {
+            $subtotal += $item['subtotal'];
         }
 
         // Get shipping cost
