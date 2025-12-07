@@ -13,6 +13,7 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         $orders = collect();
+        $addresses = collect();
 
         // Get orders based on authentication status
         if (auth()->check()) {
@@ -21,6 +22,9 @@ class AccountController extends Controller
                 ->where('user_id', auth()->id())
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Load user addresses
+            $addresses = auth()->user()->addresses()->orderBy('is_default', 'desc')->orderBy('created_at', 'desc')->get();
         } else {
             // For guest users: get orders by guest_customer_id from cookie
             $guestCustomerId = $request->cookie('guest_customer_id');
@@ -33,6 +37,6 @@ class AccountController extends Controller
             }
         }
 
-        return view('account', compact('orders'));
+        return view('account', compact('orders', 'addresses'));
     }
 }

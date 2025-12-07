@@ -24,6 +24,20 @@ Route::middleware('auth')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('/logout', 'logout')->name('logout');
     });
+
+    // Profile Routes
+    Route::controller(\App\Http\Controllers\ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        Route::post('/update', 'updatePersonalInfo')->name('update');
+        Route::post('/password', 'updatePassword')->name('password');
+    });
+
+    // Address Routes
+    Route::controller(\App\Http\Controllers\AddressController::class)->prefix('addresses')->name('addresses.')->group(function () {
+        Route::post('/', 'store')->name('store');
+        Route::put('/{address}', 'update')->name('update');
+        Route::delete('/{address}', 'destroy')->name('destroy');
+        Route::post('/{address}/default', 'setDefault')->name('setDefault');
+    });
 });
 
 // Admin Routes
