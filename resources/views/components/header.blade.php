@@ -85,8 +85,7 @@
                 </button>
 
                 <!-- Account -->
-                <a href="/account"
-                    class="hidden md:flex items-center gap-2 text-gray-700 hover:text-gray-900 transition">
+                <a href="/account" class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
