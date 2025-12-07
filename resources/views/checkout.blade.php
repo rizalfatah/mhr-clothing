@@ -57,7 +57,8 @@
                                         Full Name <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="customer_name" name="customer_name"
-                                        value="{{ old('customer_name') }}" required
+                                        value="{{ old('customer_name', auth()->check() ? auth()->user()->name : '') }}"
+                                        required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('customer_name') border-red-500 @enderror">
                                     @error('customer_name')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -69,7 +70,8 @@
                                         WhatsApp Number <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="customer_whatsapp" name="customer_whatsapp"
-                                        value="{{ old('customer_whatsapp') }}" placeholder="example: 081234567890" required
+                                        value="{{ old('customer_whatsapp', auth()->check() ? auth()->user()->whatsapp_number : '') }}"
+                                        placeholder="example: 081234567890" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('customer_whatsapp') border-red-500 @enderror">
                                     @error('customer_whatsapp')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -83,7 +85,7 @@
                                         Email (Optional)
                                     </label>
                                     <input type="email" id="customer_email" name="customer_email"
-                                        value="{{ old('customer_email') }}"
+                                        value="{{ old('customer_email', auth()->check() ? auth()->user()->email : '') }}"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('customer_email') border-red-500 @enderror">
                                     @error('customer_email')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -102,7 +104,7 @@
                                         Full Address <span class="text-red-500">*</span>
                                     </label>
                                     <textarea id="shipping_address" name="shipping_address" rows="3" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_address') border-red-500 @enderror">{{ old('shipping_address') }}</textarea>
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_address') border-red-500 @enderror">{{ old('shipping_address', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? trim((auth()->user()->addresses()->where('is_default', true)->first()->address_line_1 ?? '') . "\n" . (auth()->user()->addresses()->where('is_default', true)->first()->address_line_2 ?? '')) : '') }}</textarea>
                                     @error('shipping_address')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                     @enderror
@@ -114,7 +116,8 @@
                                             City/Regency <span class="text-red-500">*</span>
                                         </label>
                                         <input type="text" id="shipping_city" name="shipping_city"
-                                            value="{{ old('shipping_city') }}" required
+                                            value="{{ old('shipping_city', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? auth()->user()->addresses()->where('is_default', true)->first()->city : '') }}"
+                                            required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_city') border-red-500 @enderror">
                                         @error('shipping_city')
                                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -126,7 +129,8 @@
                                             Province <span class="text-red-500">*</span>
                                         </label>
                                         <input type="text" id="shipping_province" name="shipping_province"
-                                            value="{{ old('shipping_province') }}" required
+                                            value="{{ old('shipping_province', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? auth()->user()->addresses()->where('is_default', true)->first()->province : '') }}"
+                                            required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_province') border-red-500 @enderror">
                                         @error('shipping_province')
                                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -139,7 +143,7 @@
                                         Postal Code (Optional)
                                     </label>
                                     <input type="text" id="shipping_postal_code" name="shipping_postal_code"
-                                        value="{{ old('shipping_postal_code') }}"
+                                        value="{{ old('shipping_postal_code', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? auth()->user()->addresses()->where('is_default', true)->first()->postal_code : '') }}"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_postal_code') border-red-500 @enderror">
                                     @error('shipping_postal_code')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -151,7 +155,7 @@
                                         Shipping Notes (Optional)
                                     </label>
                                     <textarea id="shipping_notes" name="shipping_notes" rows="2" placeholder="Example: Please contact before delivery"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_notes') border-red-500 @enderror">{{ old('shipping_notes') }}</textarea>
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_notes') border-red-500 @enderror">{{ old('shipping_notes', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? auth()->user()->addresses()->where('is_default', true)->first()->notes : '') }}</textarea>
                                     @error('shipping_notes')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                     @enderror
