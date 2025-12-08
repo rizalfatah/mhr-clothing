@@ -12,10 +12,10 @@
             </div>
 
             <!-- Masonry Gallery Grid -->
-            <div class="grid grid-cols-4 grid-rows-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
                 <!-- Image 1 -->
                 <div
-                    class="row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                    class="sm:row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
                     <img src="{{ asset('images/community/1.png') }}" alt="Community Member"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div
@@ -28,7 +28,7 @@
 
                 <!-- Image 2 -->
                 <div
-                    class="col-span-2 row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                    class="sm:col-span-2 sm:row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
                     <img src="{{ asset('images/community/2.png') }}" alt="Community Member"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div
@@ -41,7 +41,7 @@
 
                 <!-- Image 3 -->
                 <div
-                    class="row-span-3 col-start-4 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                    class="sm:row-span-3 lg:col-start-4 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[400px] lg:min-h-0">
                     <img src="{{ asset('images/community/3.png') }}" alt="Community Member"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div
@@ -54,7 +54,7 @@
 
                 <!-- Image 4 -->
                 <div
-                    class="col-span-2 row-span-2 col-start-2 row-start-3 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                    class="sm:col-span-2 sm:row-span-2 lg:col-span-3 lg:row-start-3 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
                     <img src="{{ asset('images/community/4.png') }}" alt="Community Member"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div
