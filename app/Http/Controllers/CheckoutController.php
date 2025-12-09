@@ -197,7 +197,7 @@ class CheckoutController extends Controller
         $adminName = Setting::get('whatsapp_admin_name', 'Admin');
 
         // Build order details
-        $orderDetails = "📋 *Nomor Pesanan: {$order->order_number}*\n\n";
+        $orderDetails = "*Nomor Pesanan: {$order->order_number}*\n\n";
         $orderDetails .= "*Daftar Produk:*\n";
 
         foreach ($order->items as $index => $item) {
@@ -208,14 +208,14 @@ class CheckoutController extends Controller
             $orderDetails .= "   Subtotal: Rp " . number_format($item->subtotal, 0, ',', '.') . "\n\n";
         }
 
-        $orderDetails .= "💰 *Ringkasan Pembayaran:*\n";
+        $orderDetails .= "*Ringkasan Pembayaran:*\n";
         $orderDetails .= "Subtotal: Rp " . number_format($order->subtotal, 0, ',', '.') . "\n";
         $orderDetails .= "Ongkir: Rp " . number_format($order->shipping_cost, 0, ',', '.') . "\n";
         $orderDetails .= "━━━━━━━━━━━━━━━\n";
         $orderDetails .= "*TOTAL: Rp " . number_format($order->total, 0, ',', '.') . "*\n\n";
 
         // Build shipping info
-        $shippingInfo = "📦 *Informasi Pengiriman:*\n";
+        $shippingInfo = "*Informasi Pengiriman:*\n";
         $shippingInfo .= "Nama: {$order->customer_name}\n";
         $shippingInfo .= "WhatsApp: {$order->customer_whatsapp}\n";
         if ($order->customer_email) {
