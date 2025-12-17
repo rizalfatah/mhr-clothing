@@ -71,11 +71,20 @@
                 <!-- Cart -->
                 <button id="cart-toggle"
                     class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                    </svg> --}}
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart">
+                        <circle cx="8" cy="21" r="1" />
+                        <circle cx="19" cy="21" r="1" />
+                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
                     </svg>
+
                     @php
                         $cartService = app(\App\Services\CartService::class);
                         $cartCount = $cartService->getCount();
@@ -84,14 +93,134 @@
                         class="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
                 </button>
 
-                <!-- Account -->
-                <a href="/account" class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg>
-                </a>
+                <!-- User Account Dropdown -->
+                <div class="relative">
+                    @auth
+                        <!-- Authenticated User -->
+                        <button id="user-dropdown-toggle"
+                            class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-user">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span class="hidden md:inline font-medium">{{ Auth::user()->name }}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="user-dropdown-menu"
+                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <!-- User Info -->
+                            <div class="px-4 py-3 border-b border-gray-200">
+                                <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+
+                            <!-- Menu Items -->
+                            <a href="{{ route('account') }}"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-circle">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <circle cx="12" cy="10" r="3" />
+                                    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                                </svg>
+                                My Account
+                            </a>
+
+                            <!-- Logout -->
+                            <form method="POST" action="{{ route('logout') }}"
+                                class="border-t border-gray-200 mt-2 pt-2">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                        <polyline points="16 17 21 12 16 7" />
+                                        <line x1="21" x2="9" y1="12" y2="12" />
+                                    </svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <!-- Guest User -->
+                        <button id="guest-dropdown-toggle"
+                            class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-user">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span class="hidden md:inline font-medium">Guest</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <!-- Guest Dropdown Menu -->
+                        <div id="guest-dropdown-menu"
+                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <!-- Track Orders -->
+                            <a href="{{ route('account') }}"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-search">
+                                    <path
+                                        d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14" />
+                                    <path d="M16.5 9.4 7.55 4.24" />
+                                    <polyline points="3.29 7 12 12 20.71 7" />
+                                    <line x1="12" x2="12" y1="22" y2="12" />
+                                    <circle cx="18.5" cy="15.5" r="2.5" />
+                                    <path d="M20.27 17.27 22 19" />
+                                </svg>
+                                Track My Orders
+                            </a>
+
+                            <div class="border-t border-gray-200 my-2"></div>
+
+                            <!-- Login -->
+                            <a href="{{ route('login') }}"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                    <polyline points="10 17 15 12 10 7" />
+                                    <line x1="15" x2="3" y1="12" y2="12" />
+                                </svg>
+                                Login
+                            </a>
+
+                            <!-- Register -->
+                            <a href="{{ route('register') }}"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <line x1="19" x2="19" y1="8" y2="14" />
+                                    <line x1="22" x2="16" y1="11" y2="11" />
+                                </svg>
+                                Register
+                            </a>
+                        </div>
+                    @endauth
+                </div>
 
                 <!-- Mobile Menu Toggle -->
                 <button id="mobile-menu-toggle" class="lg:hidden text-gray-700 hover:text-gray-900">
@@ -124,6 +253,54 @@
             const menu = document.getElementById('mobile-menu');
             menu?.classList.toggle('hidden');
         });
+
+        // User dropdown toggle (for authenticated users)
+        const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+        const userDropdownMenu = document.getElementById('user-dropdown-menu');
+
+        if (userDropdownToggle && userDropdownMenu) {
+            // Toggle dropdown on button click
+            userDropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdownMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userDropdownMenu.contains(e.target) && !userDropdownToggle.contains(e.target)) {
+                    userDropdownMenu.classList.add('hidden');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            userDropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Guest dropdown toggle (for guest users)
+        const guestDropdownToggle = document.getElementById('guest-dropdown-toggle');
+        const guestDropdownMenu = document.getElementById('guest-dropdown-menu');
+
+        if (guestDropdownToggle && guestDropdownMenu) {
+            // Toggle dropdown on button click
+            guestDropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                guestDropdownMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!guestDropdownMenu.contains(e.target) && !guestDropdownToggle.contains(e.target)) {
+                    guestDropdownMenu.classList.add('hidden');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            guestDropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
 
         // Global function to update cart counter
         window.updateCartCounter = async function() {

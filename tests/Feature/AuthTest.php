@@ -14,7 +14,7 @@ describe('User Registration', function () {
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('verification.notice'));
         $this->assertDatabaseHas('users', [
             'name' => 'John Doe',
             'email' => 'john1@example.com',
@@ -157,6 +157,7 @@ describe('User Login', function () {
             'email' => 'test@example.com',
             'whatsapp_number' => '6281234567890',
             'password' => 'password123',
+            'email_verified_at' => now(), // User must be verified to login
         ]);
     });
 
@@ -292,7 +293,7 @@ describe('User Logout', function () {
     test('guest cannot access logout', function () {
         $response = $this->post('/logout');
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     });
 });
 

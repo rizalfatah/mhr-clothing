@@ -9,6 +9,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductPageController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -24,6 +25,20 @@ Route::middleware('auth')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('/logout', 'logout')->name('logout');
     });
+
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
+        ->middleware('throttle:6,1')
+        ->name('verification.resend');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect()->route('account')->with('success', 'Your email has been verified successfully!');
+    })->middleware('signed')->name('verification.verify');
 
     // Profile Routes
     Route::controller(\App\Http\Controllers\ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
@@ -92,8 +107,13 @@ Route::prefix('cart')->name('cart.')->controller(CheckoutController::class)->gro
 });
 
 Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::class)->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::post('/process', 'process')->name('process');
+    // Checkout pages - only accessible by guests and verified users
+    Route::middleware(['check.checkout.access'])->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/process', 'process')->name('process');
+    });
+
+    // Success page - accessible by anyone with the order ID
     Route::get('/success/{order}', 'success')->name('success');
 });
 
