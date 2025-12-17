@@ -1,6 +1,6 @@
 <header class="sticky top-0 z-50 bg-linear-to-r from-white to-gray-300 shadow-sm">
     <!-- Top Bar -->
-    <div class="bg-gray-900 text-white py-2">
+    <div class="bg-primary-500 text-white py-2">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center text-sm">
                 <div class="flex items-center gap-6">
@@ -47,22 +47,22 @@
     </div>
 
     <!-- Main Navigation -->
-    <nav class="container mx-auto px-4 py-4">
+    <nav class="container mx-auto px-2 py-2">
         <div class="flex items-center justify-between">
             <!-- Logo -->
-            <a href="/" class="flex flex-col items-center gap-1 text-gray-900">
-                <img src="{{ asset('logo-mhr.svg') }}" alt="MHR Clothing Logo" class="w-12 h-12">
-                <span class="text-l font-bold">MHR</span>
+            <a href="/" class="flex flex-col items-center gap-1 text-primary-500">
+                <img src="{{ asset('logo-mhr.svg') }}" alt="MHR Clothing Logo" class="w-10 h-10">
+                <span class="text-sm font-bold">MHR</span>
             </a>
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center gap-8">
                 <a href="/catalog"
-                    class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('catalog') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Catalog</a>
+                    class="nav-link font-normal transition px-4 py-2 rounded-lg {{ request()->is('catalog') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">Catalog</a>
                 <a href="/community"
-                    class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('community') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Community</a>
+                    class="nav-link font-normal transition px-4 py-2 rounded-lg {{ request()->is('community') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">Community</a>
                 <a href="/about"
-                    class="nav-link font-medium transition px-4 py-2 rounded-lg {{ request()->is('about') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">About</a>
+                    class="nav-link font-normal transition px-4 py-2 rounded-lg {{ request()->is('about') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">About</a>
             </div>
 
             <!-- Right Actions -->
@@ -70,14 +70,14 @@
 
                 <!-- Cart -->
                 <button id="cart-toggle"
-                    class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition relative">
+                    class="flex items-center gap-2 text-primary-500 hover:text-primary-600 transition relative">
                     {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                     </svg> --}}
 
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart">
                         <circle cx="8" cy="21" r="1" />
@@ -90,7 +90,7 @@
                         $cartCount = $cartService->getCount();
                     @endphp
                     <span id="cart-counter-badge"
-                        class="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
+                        class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
                 </button>
 
                 <!-- User Account Dropdown -->
@@ -98,14 +98,14 @@
                     @auth
                         <!-- Authenticated User -->
                         <button id="user-dropdown-toggle"
-                            class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            class="flex items-center gap-2 text-primary-500 hover:text-primary-600 transition focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-user">
                                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
-                            <span class="hidden md:inline font-medium">{{ Auth::user()->name }}</span>
+                            <span class="hidden md:inline font-normal">{{ Auth::user()->name }}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-chevron-down">
@@ -115,16 +115,16 @@
 
                         <!-- Dropdown Menu -->
                         <div id="user-dropdown-menu"
-                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-primary-200 py-2 z-50">
                             <!-- User Info -->
-                            <div class="px-4 py-3 border-b border-gray-200">
-                                <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
-                                <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                            <div class="px-4 py-3 border-b border-primary-200">
+                                <p class="text-sm font-semibold text-primary-500">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-primary-500 truncate">{{ Auth::user()->email }}</p>
                             </div>
 
                             <!-- Menu Items -->
                             <a href="{{ route('account') }}"
-                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-primary-500 hover:bg-primary-50 hover:text-primary-600 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-circle">
@@ -137,7 +137,7 @@
 
                             <!-- Logout -->
                             <form method="POST" action="{{ route('logout') }}"
-                                class="border-t border-gray-200 mt-2 pt-2">
+                                class="border-t border-primary-200 mt-2 pt-2">
                                 @csrf
                                 <button type="submit"
                                     class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
@@ -155,14 +155,14 @@
                     @else
                         <!-- Guest User -->
                         <button id="guest-dropdown-toggle"
-                            class="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            class="flex items-center gap-2 text-primary-500 hover:text-primary-600 transition focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-user">
                                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
-                            <span class="hidden md:inline font-medium">Guest</span>
+                            <span class="hidden md:inline font-normal">Guest</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="lucide lucide-chevron-down">
@@ -172,10 +172,10 @@
 
                         <!-- Guest Dropdown Menu -->
                         <div id="guest-dropdown-menu"
-                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-primary-200 py-2 z-50">
                             <!-- Track Orders -->
                             <a href="{{ route('account') }}"
-                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-primary-500 hover:bg-primary-50 hover:text-primary-600 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-search">
@@ -190,11 +190,11 @@
                                 Track My Orders
                             </a>
 
-                            <div class="border-t border-gray-200 my-2"></div>
+                            <div class="border-t border-primary-200 my-2"></div>
 
                             <!-- Login -->
                             <a href="{{ route('login') }}"
-                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-primary-500 hover:bg-primary-50 hover:text-primary-600 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in">
@@ -207,7 +207,7 @@
 
                             <!-- Register -->
                             <a href="{{ route('register') }}"
-                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-primary-500 hover:bg-primary-50 hover:text-primary-600 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus">
@@ -223,7 +223,7 @@
                 </div>
 
                 <!-- Mobile Menu Toggle -->
-                <button id="mobile-menu-toggle" class="lg:hidden text-gray-700 hover:text-gray-900">
+                <button id="mobile-menu-toggle" class="lg:hidden text-primary-500 hover:text-primary-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16" />
@@ -234,14 +234,14 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="lg:hidden hidden border-t border-gray-200 bg-white">
+    <div id="mobile-menu" class="lg:hidden hidden border-t border-primary-200 bg-white">
         <div class="container mx-auto px-4 py-4 space-y-3">
             <a href="/catalog"
-                class="block font-medium transition px-4 py-2 rounded-lg {{ request()->is('catalog') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Catalog</a>
+                class="block font-normal transition px-4 py-2 rounded-lg {{ request()->is('catalog') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">Catalog</a>
             <a href="/community"
-                class="block font-medium transition px-4 py-2 rounded-lg {{ request()->is('community') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">Community</a>
+                class="block font-normal transition px-4 py-2 rounded-lg {{ request()->is('community') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">Community</a>
             <a href="/about"
-                class="block font-medium transition px-4 py-2 rounded-lg {{ request()->is('about') ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }}">About</a>
+                class="block font-normal transition px-4 py-2 rounded-lg {{ request()->is('about') ? 'bg-primary-50 text-primary-500 shadow-sm' : 'text-primary-500 hover:bg-primary-50 hover:text-primary-600' }}">About</a>
         </div>
     </div>
 </header>
