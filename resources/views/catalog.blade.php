@@ -37,7 +37,7 @@
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ route('catalog') }}"
                         class="px-4 py-2 rounded-full text-sm font-medium transition {{ !request('category') ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200' }}">
-                        Semua
+                        All
                     </a>
                     @foreach ($categories as $category)
                         <a href="{{ route('catalog', ['category' => $category->id]) }}"
@@ -49,13 +49,16 @@
 
                 <!-- Sort -->
                 <div class="flex items-center gap-2">
-                    <label for="sort" class="text-sm font-medium text-gray-900">Urutkan:</label>
-                    <select id="sort" name="sort" onchange="window.location.href='{{ route('catalog') }}?category={{ request('category') }}&sort=' + this.value"
+                    <label for="sort" class="text-sm font-medium text-gray-900">Sort:</label>
+                    <select id="sort" name="sort"
+                        onchange="window.location.href='{{ route('catalog') }}?category={{ request('category') }}&sort=' + this.value"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-900">
-                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga Terendah</option>
-                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
-                        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Nama A-Z</option>
+                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Newest</option>
+                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Lowest Price
+                        </option>
+                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Highest Price
+                        </option>
+                        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name A-Z</option>
                     </select>
                 </div>
             </div>
@@ -64,14 +67,10 @@
             @if ($products->count() > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
                     @foreach ($products as $product)
-                        <x-product-card 
-                            :name="$product->name" 
-                            :price="number_format($product->selling_price, 0, ',', '.')"
-                            :oldPrice="number_format($product->original_price, 0, ',', '.')" 
-                            :image="$product->primaryImage ? 'storage/' . $product->primaryImage->image_path : 'images/products/product-1.png'"
-                            :link="route('products.show', $product->slug)" 
-                            :id="$product->id" 
-                        />
+                        <x-product-card :name="$product->name" :price="number_format($product->selling_price, 0, ',', '.')" :oldPrice="number_format($product->original_price, 0, ',', '.')" :image="$product->primaryImage
+                            ? 'storage/' . $product->primaryImage->image_path
+                            : 'images/products/product-1.png'"
+                            :link="route('products.show', $product->slug)" :id="$product->id" />
                     @endforeach
                 </div>
 

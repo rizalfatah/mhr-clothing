@@ -28,10 +28,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
             </svg>
-            <p class="text-gray-500 font-medium">Keranjang Anda kosong</p>
+            <p class="text-gray-500 font-medium">Your cart is empty</p>
             <button onclick="closeCart()"
                 class="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition">
-                Mulai Belanja
+                Start Shopping
             </button>
         </div>
         <div id="cart-items" class="space-y-4">
@@ -218,7 +218,7 @@
 
         // Remove item from cart
         async function removeFromCart(productId) {
-            if (!confirm('Hapus produk dari keranjang?')) return;
+            if (!confirm('Remove product from cart?')) return;
 
             try {
                 const response = await fetch('{{ route('cart.remove') }}', {

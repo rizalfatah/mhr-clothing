@@ -32,7 +32,7 @@ class CheckoutController extends Controller
         $items = $this->cartService->getItems();
 
         if (empty($items)) {
-            return redirect()->route('catalog')->with('error', 'Keranjang belanja Anda kosong');
+            return redirect()->route('catalog')->with('error', 'Your cart is empty');
         }
 
         // Calculate totals
@@ -87,7 +87,7 @@ class CheckoutController extends Controller
         $items = $this->cartService->getItems();
 
         if (empty($items)) {
-            return redirect()->route('catalog')->with('error', 'Keranjang belanja Anda kosong');
+            return redirect()->route('catalog')->with('error', 'Your cart is empty');
         }
 
         try {
@@ -259,7 +259,7 @@ class CheckoutController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
+            'message' => 'Product added to cart successfully',
             'cart_count' => $this->cartService->getCount(),
         ]);
     }
@@ -278,7 +278,7 @@ class CheckoutController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Keranjang berhasil diperbarui',
+            'message' => 'Cart updated successfully',
             'cart_count' => $this->cartService->getCount(),
         ]);
     }
@@ -296,7 +296,7 @@ class CheckoutController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Produk berhasil dihapus dari keranjang',
+            'message' => 'Product removed from cart successfully',
             'cart_count' => $this->cartService->getCount(),
         ]);
     }
