@@ -216,6 +216,58 @@
                             </a>
                         </li>
 
+                        <!-- User Management -->
+                        <li class="hs-accordion {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                            id="users-accordion">
+                            <button type="button"
+                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                aria-expanded="{{ request()->routeIs('admin.users.*') ? 'true' : 'false' }}"
+                                aria-controls="users-accordion-child">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                                Manajemen User
+
+                                <svg class="hs-accordion-active:block ms-auto hidden size-4"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
+                                </svg>
+
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </button>
+
+                            <div id="users-accordion-child"
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') ? '' : 'hidden' }}"
+                                role="region" aria-labelledby="users-accordion">
+                                <ul class="ps-8 pt-1 space-y-1">
+                                    <li>
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.users.admins') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                            href="{{ route('admin.users.admins') }}">
+                                            Admin
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.users.customers') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                            href="{{ route('admin.users.customers') }}">
+                                            Customer
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
                         <!-- Settings -->
                         <li>
                             <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"

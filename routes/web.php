@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
@@ -82,6 +83,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('index');
         Route::put('/update', [SettingController::class, 'update'])->name('update');
+    });
+
+    // User Management Routes
+    Route::prefix('users')->name('users.')->controller(UserController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/admins', 'admins')->name('admins');
+        Route::get('/customers', 'customers')->name('customers');
+        Route::get('/{user}', 'show')->name('show');
     });
 });
 
