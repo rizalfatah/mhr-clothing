@@ -14,6 +14,69 @@
 namespace App\Models{
 /**
  * @property int $id
+ * @property int|null $user_id
+ * @property string|null $label
+ * @property string $recipient_name
+ * @property string $phone_number
+ * @property string $address_line_1
+ * @property string|null $address_line_2
+ * @property string $city
+ * @property string $province
+ * @property string $postal_code
+ * @property string|null $notes
+ * @property bool $is_default
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address default()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereAddressLine1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereAddressLine2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereIsDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address wherePhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address wherePostalCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereProvince($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereRecipientName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereUserId($value)
+ */
+	class Address extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $product_id
+ * @property int $quantity
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read float $subtotal
+ * @property-read \App\Models\Product $product
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereUserId($value)
+ */
+	class CartItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $slug
  * @property string|null $description
@@ -24,6 +87,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
  * @property-read int|null $products_count
+ * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
@@ -45,7 +109,7 @@ namespace App\Models{
  * @property int $id
  * @property string $order_number
  * @property int|null $user_id
- * @property int|null $guest_customer_id
+ * @property string|null $guest_customer_id
  * @property string $customer_name
  * @property string $customer_whatsapp
  * @property string|null $customer_email
@@ -153,6 +217,9 @@ namespace App\Models{
  * @property string $slug
  * @property string|null $description
  * @property string|null $details
+ * @property string|null $tokopedia_url
+ * @property string|null $shopee_url
+ * @property string|null $tiktok_url
  * @property numeric $original_price
  * @property numeric $selling_price
  * @property int $weight
@@ -164,10 +231,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CartItem> $cartItems
+ * @property-read int|null $cart_items_count
  * @property-read \App\Models\Category $category
+ * @property-read mixed $price
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductImage> $images
  * @property-read int|null $images_count
  * @property-read \App\Models\ProductImage|null $primaryImage
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product onlyTrashed()
@@ -184,8 +255,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereOriginalPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereRating($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSellingPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereShopeeUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSortOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereTiktokUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereTokopediaUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereTotalReviews($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereWeight($value)
@@ -222,6 +296,32 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $key
+ * @property string|null $value
+ * @property string $type
+ * @property string $group
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\SettingFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereGroup($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereValue($value)
+ */
+	class Setting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $role
@@ -231,6 +331,11 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Address> $addresses
+ * @property-read int|null $addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CartItem> $cartItems
+ * @property-read int|null $cart_items_count
+ * @property-read \App\Models\Address|null $defaultAddress
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -248,6 +353,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereWhatsappNumber($value)
  */
-	class User extends \Eloquent {}
+	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }
 

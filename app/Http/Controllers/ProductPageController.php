@@ -39,7 +39,7 @@ class ProductPageController extends Controller
                 $query->orderBy('created_at', 'desc');
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
