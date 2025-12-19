@@ -43,6 +43,21 @@ class AuthController extends Controller
         if (auth()->attempt([$fieldType => $loginField, 'password' => $password], $request->filled('remember'))) {
             $user = auth()->user();
 
+            // Check account status
+            if ($user->account_status !== 'active') {
+                auth()->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                $message = match ($user->account_status) {
+                    'suspended' => 'Your account has been suspended. Please contact support for assistance.',
+                    'banned' => 'Your account has been banned. Please contact support for more information.',
+                    default => 'Your account is not active. Please contact support.',
+                };
+
+                return redirect()->back()->withErrors(['login' => $message]);
+            }
+
             // Check if email is verified
             if (!$user->hasVerifiedEmail()) {
                 auth()->logout();
@@ -52,6 +67,9 @@ class AuthController extends Controller
                 return redirect()->route('verification.notice')
                     ->withErrors(['email' => 'Please verify your email address before logging in.']);
             }
+
+            // Update last login timestamp
+            $user->update(['last_login_at' => now()]);
 
             $request->session()->regenerate();
 

@@ -56,7 +56,7 @@ class UserService
     public function getUserDetails(User $user): array
     {
         // Load relationships
-        $user->load(['orders.items', 'addresses']);
+        $user->load(['orders.items.product', 'addresses', 'cartItems.product']);
 
         // Calculate user statistics
         $userStats = [
@@ -67,6 +67,7 @@ class UserService
                 : 0,
             'first_order_date' => $user->orders->min('created_at'),
             'last_order_date' => $user->orders->max('created_at'),
+            'order_frequency' => $this->getOrderFrequencyMetrics($user),
         ];
 
         // Get recent orders
@@ -76,10 +77,23 @@ class UserService
             ->take(10)
             ->get();
 
+        // Get order status breakdown
+        $orderStatusBreakdown = $this->getOrderStatusBreakdown($user);
+
+        // Get shopping behavior analytics
+        $shoppingBehavior = [
+            'abandoned_cart' => $this->getAbandonedCartItems($user),
+            'most_purchased_categories' => $this->getMostPurchasedCategories($user),
+            'most_purchased_products' => $this->getMostPurchasedProducts($user),
+            'favorite_variants' => $this->getFavoriteVariants($user),
+        ];
+
         return [
             'user' => $user,
             'userStats' => $userStats,
             'recentOrders' => $recentOrders,
+            'orderStatusBreakdown' => $orderStatusBreakdown,
+            'shoppingBehavior' => $shoppingBehavior,
         ];
     }
 
@@ -216,5 +230,179 @@ class UserService
         } else {
             $query->orderBy($sortBy, $sortOrder);
         }
+    }
+
+    /**
+     * Calculate order frequency metrics
+     */
+    private function getOrderFrequencyMetrics(User $user): array
+    {
+        if ($user->orders->count() === 0) {
+            return [
+                'orders_per_month' => 0,
+                'days_between_orders' => 0,
+            ];
+        }
+
+        $firstOrderDate = $user->orders->min('created_at');
+        $lastOrderDate = $user->orders->max('created_at');
+
+        if (!$firstOrderDate || !$lastOrderDate) {
+            return [
+                'orders_per_month' => 0,
+                'days_between_orders' => 0,
+            ];
+        }
+
+        $monthsDiff = \Carbon\Carbon::parse($firstOrderDate)
+            ->diffInMonths(\Carbon\Carbon::parse($lastOrderDate));
+
+        // If all orders in same month, use 1 month
+        $monthsDiff = max($monthsDiff, 1);
+
+        $ordersPerMonth = round($user->orders->count() / $monthsDiff, 2);
+
+        // Calculate average days between orders
+        $daysDiff = \Carbon\Carbon::parse($firstOrderDate)
+            ->diffInDays(\Carbon\Carbon::parse($lastOrderDate));
+
+        $daysBetweenOrders = $user->orders->count() > 1
+            ? round($daysDiff / ($user->orders->count() - 1), 1)
+            : 0;
+
+        return [
+            'orders_per_month' => $ordersPerMonth,
+            'days_between_orders' => $daysBetweenOrders,
+        ];
+    }
+
+    /**
+     * Get order status breakdown
+     */
+    private function getOrderStatusBreakdown(User $user): array
+    {
+        $breakdown = $user->orders
+            ->groupBy('status')
+            ->map(fn($orders) => $orders->count())
+            ->toArray();
+
+        return $breakdown;
+    }
+
+    /**
+     * Get abandoned cart items (items in cart for >24 hours)
+     */
+    private function getAbandonedCartItems(User $user): array
+    {
+        $abandonedItems = $user->cartItems
+            ->filter(function ($item) {
+                return $item->created_at->lt(now()->subHours(24));
+            });
+
+        $totalValue = $abandonedItems->sum(function ($item) {
+            return $item->product ? $item->product->price * $item->quantity : 0;
+        });
+
+        return [
+            'count' => $abandonedItems->count(),
+            'total_value' => $totalValue,
+            'items' => $abandonedItems->take(5), // Show top 5 abandoned items
+        ];
+    }
+
+    /**
+     * Get most purchased categories
+     */
+    private function getMostPurchasedCategories(User $user): array
+    {
+        // Get all order items with product relationships
+        $orderItems = \App\Models\OrderItem::whereHas('order', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->with('product.category')
+            ->get();
+
+        // Group by category and sum quantities
+        $categories = $orderItems
+            ->filter(fn($item) => $item->product && $item->product->category)
+            ->groupBy(fn($item) => $item->product->category->id)
+            ->map(function ($items) {
+                $category = $items->first()->product->category;
+                return [
+                    'name' => $category->name,
+                    'quantity' => $items->sum('quantity'),
+                    'total_spent' => $items->sum('subtotal'),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(5)
+            ->values()
+            ->toArray();
+
+        return $categories;
+    }
+
+    /**
+     * Get most purchased products
+     */
+    private function getMostPurchasedProducts(User $user): array
+    {
+        // Get all order items
+        $orderItems = \App\Models\OrderItem::whereHas('order', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->with('product')
+            ->get();
+
+        // Group by product and sum quantities
+        $products = $orderItems
+            ->filter(fn($item) => $item->product)
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                $product = $items->first()->product;
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'quantity' => $items->sum('quantity'),
+                    'total_spent' => $items->sum('subtotal'),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(5)
+            ->values()
+            ->toArray();
+
+        return $products;
+    }
+
+    /**
+     * Get favorite product variants (sizes, colors, etc.)
+     */
+    private function getFavoriteVariants(User $user): array
+    {
+        // Get all order items with variant information
+        $orderItems = \App\Models\OrderItem::whereHas('order', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->whereNotNull('variant_name')
+            ->get();
+
+        // Group by variant name and count
+        $variants = $orderItems
+            ->groupBy('variant_name')
+            ->map(function ($items, $variantName) {
+                return [
+                    'name' => $variantName,
+                    'count' => $items->count(),
+                    'quantity' => $items->sum('quantity'),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(10)
+            ->values()
+            ->toArray();
+
+        return $variants;
     }
 }

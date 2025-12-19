@@ -86,6 +86,37 @@
                             {{ $user->created_at->diffForHumans() }}
                         </p>
                     </div>
+
+                    @if ($user->last_login_at)
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Last
+                                Login</label>
+                            <p class="mt-1 text-sm text-gray-800 dark:text-neutral-200">
+                                {{ $user->last_login_at->format('d M Y, H:i') }}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-neutral-500">
+                                {{ $user->last_login_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Account
+                            Status</label>
+                        <p class="mt-1">
+                            <span
+                                class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-{{ $user->account_status_color }}-100 text-{{ $user->account_status_color }}-800 dark:bg-{{ $user->account_status_color }}-800/30 dark:text-{{ $user->account_status_color }}-500">
+                                @if ($user->account_status === 'active')
+                                    <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" viewBox="0 0 16 16">
+                                        <path
+                                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                    </svg>
+                                @endif
+                                {{ $user->account_status_label }}
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -143,6 +174,22 @@
                                 <p class="text-xs text-gray-500 dark:text-neutral-500">
                                     {{ \Carbon\Carbon::parse($userStats['last_order_date'])->diffForHumans() }}
                                 </p>
+                            </div>
+                        @endif
+
+                        @if (isset($userStats['order_frequency']))
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Order
+                                    Frequency</label>
+                                <p class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                                    {{ $userStats['order_frequency']['orders_per_month'] }} orders/month
+                                </p>
+                                @if ($userStats['order_frequency']['days_between_orders'] > 0)
+                                    <p class="text-xs text-gray-500 dark:text-neutral-500">
+                                        ~{{ round($userStats['order_frequency']['days_between_orders']) }} days between
+                                        orders
+                                    </p>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -228,6 +275,38 @@
                             No orders yet.
                         </div>
                     @endif
+
+                    @if (!empty($orderStatusBreakdown))
+                        <div
+                            class="px-6 py-4 bg-gray-50 dark:bg-neutral-700 border-t border-gray-200 dark:border-neutral-600">
+                            <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">Order Status
+                                Summary</h3>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($orderStatusBreakdown as $status => $count)
+                                    @php
+                                        $statusColor = match ($status) {
+                                            'pending' => 'gray',
+                                            'contacted' => 'blue',
+                                            'confirmed' => 'indigo',
+                                            'payment_pending' => 'yellow',
+                                            'payment_confirmed' => 'green',
+                                            'processing' => 'purple',
+                                            'shipped' => 'cyan',
+                                            'delivered' => 'teal',
+                                            'completed' => 'emerald',
+                                            'cancelled' => 'red',
+                                            default => 'gray',
+                                        };
+                                        $statusLabel = \App\Models\Order::getStatuses()[$status] ?? ucfirst($status);
+                                    @endphp
+                                    <span
+                                        class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-{{ $statusColor }}-100 text-{{ $statusColor }}-800 dark:bg-{{ $statusColor }}-800/30 dark:text-{{ $statusColor }}-500">
+                                        {{ $statusLabel }}: {{ $count }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Addresses -->
@@ -271,6 +350,136 @@
                             No saved addresses.
                         </div>
                     @endif
+                </div>
+
+                <!-- Shopping Behavior -->
+                <div
+                    class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">
+                            Shopping Behavior
+                        </h2>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        <!-- Abandoned Cart -->
+                        @if (isset($shoppingBehavior['abandoned_cart']) && $shoppingBehavior['abandoned_cart']['count'] > 0)
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    ⚠️ Abandoned Cart Items
+                                </h3>
+                                <div
+                                    class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-neutral-300">
+                                            {{ $shoppingBehavior['abandoned_cart']['count'] }} item(s) in cart for >24
+                                            hours
+                                        </span>
+                                        <span class="text-sm font-semibold text-gray-800 dark:text-neutral-200">
+                                            Rp
+                                            {{ number_format($shoppingBehavior['abandoned_cart']['total_value'], 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                    @if ($shoppingBehavior['abandoned_cart']['items']->count() > 0)
+                                        <ul class="mt-3 space-y-2">
+                                            @foreach ($shoppingBehavior['abandoned_cart']['items'] as $item)
+                                                @if ($item->product)
+                                                    <li class="text-xs text-gray-600 dark:text-neutral-400">
+                                                        • {{ $item->product->name }} ({{ $item->quantity }}x) -
+                                                        Added {{ $item->created_at->diffForHumans() }}
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Most Purchased Categories -->
+                        @if (isset($shoppingBehavior['most_purchased_categories']) && count($shoppingBehavior['most_purchased_categories']) > 0)
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    📊 Most Purchased Categories
+                                </h3>
+                                <div class="space-y-2">
+                                    @foreach ($shoppingBehavior['most_purchased_categories'] as $category)
+                                        <div
+                                            class="flex items-center justify-between p-3 bg-gray-50 dark:bg-neutral-700 rounded-lg">
+                                            <div>
+                                                <span class="text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                                    {{ $category['name'] }}
+                                                </span>
+                                                <span class="text-xs text-gray-500 dark:text-neutral-500 ml-2">
+                                                    {{ $category['quantity'] }} items
+                                                </span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-700 dark:text-neutral-300">
+                                                Rp {{ number_format($category['total_spent'], 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Most Purchased Products -->
+                        @if (isset($shoppingBehavior['most_purchased_products']) && count($shoppingBehavior['most_purchased_products']) > 0)
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    ⭐ Most Purchased Products
+                                </h3>
+                                <div class="space-y-2">
+                                    @foreach ($shoppingBehavior['most_purchased_products'] as $product)
+                                        <div
+                                            class="flex items-center justify-between p-3 bg-gray-50 dark:bg-neutral-700 rounded-lg">
+                                            <div>
+                                                <a href="{{ route('products.show', $product['slug']) }}"
+                                                    class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                                    {{ $product['name'] }}
+                                                </a>
+                                                <span class="text-xs text-gray-500 dark:text-neutral-500 ml-2">
+                                                    {{ $product['quantity'] }} purchased
+                                                </span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-700 dark:text-neutral-300">
+                                                Rp {{ number_format($product['total_spent'], 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Favorite Variants -->
+                        @if (isset($shoppingBehavior['favorite_variants']) && count($shoppingBehavior['favorite_variants']) > 0)
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    💎 Favorite Product Variants
+                                </h3>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($shoppingBehavior['favorite_variants'] as $variant)
+                                        <span
+                                            class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-800/30 dark:text-indigo-400">
+                                            {{ $variant['name'] }} ({{ $variant['quantity'] }}x)
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if (
+                            (!isset($shoppingBehavior['abandoned_cart']) || $shoppingBehavior['abandoned_cart']['count'] === 0) &&
+                                (!isset($shoppingBehavior['most_purchased_categories']) ||
+                                    count($shoppingBehavior['most_purchased_categories']) === 0) &&
+                                (!isset($shoppingBehavior['most_purchased_products']) ||
+                                    count($shoppingBehavior['most_purchased_products']) === 0) &&
+                                (!isset($shoppingBehavior['favorite_variants']) || count($shoppingBehavior['favorite_variants']) === 0))
+                            <div class="text-center text-sm text-gray-500 dark:text-neutral-500">
+                                No shopping behavior data available yet.
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @else
                 <!-- Admin Info -->

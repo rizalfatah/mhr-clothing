@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'whatsapp_number',
         'password',
         'role',
+        'account_status',
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -80,5 +82,39 @@ class User extends Authenticatable implements MustVerifyEmail
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Check if user account is active
+     */
+    public function isActive(): bool
+    {
+        return $this->account_status === 'active';
+    }
+
+    /**
+     * Get the account status label
+     */
+    public function getAccountStatusLabelAttribute(): string
+    {
+        return match ($this->account_status) {
+            'active' => 'Active',
+            'suspended' => 'Suspended',
+            'banned' => 'Banned',
+            default => ucfirst($this->account_status),
+        };
+    }
+
+    /**
+     * Get the account status color for UI
+     */
+    public function getAccountStatusColorAttribute(): string
+    {
+        return match ($this->account_status) {
+            'active' => 'green',
+            'suspended' => 'yellow',
+            'banned' => 'red',
+            default => 'gray',
+        };
     }
 }

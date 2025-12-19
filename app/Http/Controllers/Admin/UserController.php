@@ -40,6 +40,8 @@ class UserController extends Controller
             'user' => $data['user'],
             'userStats' => $data['userStats'],
             'recentOrders' => $data['recentOrders'],
+            'orderStatusBreakdown' => $data['orderStatusBreakdown'],
+            'shoppingBehavior' => $data['shoppingBehavior'],
         ]);
     }
 
