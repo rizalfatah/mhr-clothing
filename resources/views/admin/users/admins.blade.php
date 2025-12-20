@@ -6,17 +6,23 @@
 @section('content')
     <!-- Statistics Card -->
     <div class="grid sm:grid-cols-1 gap-4 sm:gap-6 mb-6">
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="p-4 md:p-5">
-                <div class="flex items-center gap-x-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
-                        Total Administrators
-                    </p>
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+            <div class="flex items-center gap-x-3">
+                <div class="shrink-0">
+                    <span
+                        class="inline-flex items-center justify-center size-12 rounded-lg bg-red-100 text-red-600 dark:bg-red-800/30 dark:text-red-500">
+                        <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </span>
                 </div>
-                <div class="mt-1 flex items-center gap-x-2">
-                    <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                        {{ number_format($admins->total()) }}
-                    </h3>
+                <div class="grow">
+                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Total Administrators</p>
+                    <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        {{ number_format($admins->total()) }}</h3>
                 </div>
             </div>
         </div>

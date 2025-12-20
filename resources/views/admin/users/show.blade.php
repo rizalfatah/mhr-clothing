@@ -365,8 +365,17 @@
                         <!-- Abandoned Cart -->
                         @if (isset($shoppingBehavior['abandoned_cart']) && $shoppingBehavior['abandoned_cart']['count'] > 0)
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
-                                    ⚠️ Abandoned Cart Items
+                                <h3
+                                    class="flex items-center gap-x-2 text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    <svg class="size-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z">
+                                        </path>
+                                        <path d="M12 9v4"></path>
+                                        <path d="M12 17h.01"></path>
+                                    </svg>
+                                    Abandoned Cart Items
                                 </h3>
                                 <div
                                     class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
@@ -399,8 +408,15 @@
                         <!-- Most Purchased Categories -->
                         @if (isset($shoppingBehavior['most_purchased_categories']) && count($shoppingBehavior['most_purchased_categories']) > 0)
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
-                                    📊 Most Purchased Categories
+                                <h3
+                                    class="flex items-center gap-x-2 text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    <svg class="size-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 3v18h18"></path>
+                                        <path d="m19 9-5 5-4-4-3 3"></path>
+                                    </svg>
+                                    Most Purchased Categories
                                 </h3>
                                 <div class="space-y-2">
                                     @foreach ($shoppingBehavior['most_purchased_categories'] as $category)
@@ -426,8 +442,16 @@
                         <!-- Most Purchased Products -->
                         @if (isset($shoppingBehavior['most_purchased_products']) && count($shoppingBehavior['most_purchased_products']) > 0)
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
-                                    ⭐ Most Purchased Products
+                                <h3
+                                    class="flex items-center gap-x-2 text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    <svg class="size-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                        </polygon>
+                                    </svg>
+                                    Most Purchased Products
                                 </h3>
                                 <div class="space-y-2">
                                     @foreach ($shoppingBehavior['most_purchased_products'] as $product)
@@ -454,8 +478,16 @@
                         <!-- Favorite Variants -->
                         @if (isset($shoppingBehavior['favorite_variants']) && count($shoppingBehavior['favorite_variants']) > 0)
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
-                                    💎 Favorite Product Variants
+                                <h3
+                                    class="flex items-center gap-x-2 text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-3">
+                                    <svg class="size-4 text-purple-600" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 3h12l4 6-10 13L2 9Z"></path>
+                                        <path d="M11 3 8 9l4 13 4-13-3-6"></path>
+                                        <path d="M2 9h20"></path>
+                                    </svg>
+                                    Favorite Product Variants
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($shoppingBehavior['favorite_variants'] as $variant)
@@ -481,6 +513,162 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Active Sessions -->
+                @if (isset($sessions['active']) && $sessions['active']->count() > 0)
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+                            <h2
+                                class="flex items-center gap-x-2 text-lg font-semibold text-gray-800 dark:text-neutral-200">
+                                <svg class="size-5 text-green-600" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2">
+                                    </rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                Active Sessions
+                            </h2>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                                <thead class="bg-gray-50 dark:bg-neutral-800">
+                                    <tr>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                                            Device</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                                            Location</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                                            IP Address</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                                            Started</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                                            Last Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                                    @foreach ($sessions['active'] as $session)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                                    {{ $session->browser ?? 'Unknown' }}
+                                                </div>
+                                                <div class="text-xs text-gray-500 dark:text-neutral-500">
+                                                    {{ $session->platform ?? 'Unknown' }} •
+                                                    {{ ucfirst($session->device_type ?? 'unknown') }}
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                {{ $session->location }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-neutral-400">
+                                                {{ $session->ip_address }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                {{ $session->started_at->format('d M Y, H:i') }}
+                                                <div class="text-xs text-gray-500 dark:text-neutral-500">
+                                                    {{ $session->started_at->diffForHumans() }}
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                                {{ $session->last_activity_at->format('d M Y, H:i') }}
+                                                <div class="text-xs text-gray-500 dark:text-neutral-500">
+                                                    {{ $session->last_activity_at->diffForHumans() }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Activity Log -->
+                @if (isset($activityLogs) && $activityLogs->count() > 0)
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+                            <h2
+                                class="flex items-center gap-x-2 text-lg font-semibold text-gray-800 dark:text-neutral-200">
+                                <svg class="size-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1">
+                                    </rect>
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                    </path>
+                                    <path d="M9 12h6"></path>
+                                    <path d="M9 16h6"></path>
+                                </svg>
+                                Activity Log
+                            </h2>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                @foreach ($activityLogs as $log)
+                                    <div class="flex gap-x-4">
+                                        <!-- Icon -->
+                                        <div class="flex-shrink-0">
+                                            <span
+                                                class="inline-flex items-center justify-center size-10 rounded-full bg-{{ $log->event_color }}-100 dark:bg-{{ $log->event_color }}-800/30 text-{{ $log->event_color }}-600 dark:text-{{ $log->event_color }}-500">
+                                                {!! $log->event_icon !!}
+                                            </span>
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-start justify-between">
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                                        {{ $log->description }}
+                                                    </p>
+                                                    @if ($log->properties)
+                                                        <div class="mt-1 text-xs text-gray-500 dark:text-neutral-500">
+                                                            @foreach ($log->properties as $key => $value)
+                                                                @if (!is_array($value))
+                                                                    <span
+                                                                        class="mr-3">{{ ucfirst(str_replace('_', ' ', $key)) }}:
+                                                                        {{ $value }}</span>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                    <div
+                                                        class="mt-1 flex items-center gap-x-3 text-xs text-gray-500 dark:text-neutral-500">
+                                                        <span>{{ $log->created_at->format('d M Y, H:i') }}</span>
+                                                        <span>•</span>
+                                                        <span>{{ $log->created_at->diffForHumans() }}</span>
+                                                        @if ($log->ip_address)
+                                                            <span>•</span>
+                                                            <span>{{ $log->ip_address }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (!$loop->last)
+                                        <div class="border-t border-gray-200 dark:border-neutral-700"></div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
             @else
                 <!-- Admin Info -->
                 <div

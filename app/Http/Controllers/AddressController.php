@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AddressController extends Controller
 {
+    protected $activityLogger;
+
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     /**
      * Store a new address
      */
@@ -33,7 +41,10 @@ class AddressController extends Controller
             auth()->user()->addresses()->update(['is_default' => false]);
         }
 
-        Address::create($validated);
+        $address = Address::create($validated);
+
+        // Log activity
+        $this->activityLogger->logAddressCreate($validated['label'] ?? 'New Address');
 
         return redirect()->route('account')->with('success', 'Address added successfully!');
     }
@@ -68,6 +79,9 @@ class AddressController extends Controller
 
         $address->update($validated);
 
+        // Log activity
+        $this->activityLogger->logAddressUpdate($validated['label'] ?? 'Address');
+
         return redirect()->route('account')->with('success', 'Address updated successfully!');
     }
 
@@ -81,7 +95,11 @@ class AddressController extends Controller
             abort(403);
         }
 
+        $label = $address->label ?? 'Address';
         $address->delete();
+
+        // Log activity
+        $this->activityLogger->logAddressDelete($label);
 
         return redirect()->route('account')->with('success', 'Address deleted successfully!');
     }
@@ -103,6 +121,9 @@ class AddressController extends Controller
             // Set this one as default
             $address->update(['is_default' => true]);
         });
+
+        // Log activity
+        $this->activityLogger->logAddressSetDefault($address->label ?? 'Address');
 
         return redirect()->route('account')->with('success', 'Default address updated!');
     }

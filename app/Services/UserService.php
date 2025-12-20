@@ -41,7 +41,9 @@ class UserService
      */
     public function getCustomers(array $filters): LengthAwarePaginator
     {
-        $query = User::where('role', 'customer');
+        $query = User::where('role', 'customer')
+            ->withCount('orders')
+            ->withSum('orders', 'total');
 
         $this->applyFilters($query, $filters);
         $this->applySorting($query, $filters);
@@ -88,12 +90,18 @@ class UserService
             'favorite_variants' => $this->getFavoriteVariants($user),
         ];
 
+        // Get sessions and activity logs for customers
+        $sessions = $user->role === 'customer' ? $this->getUserSessions($user) : [];
+        $activityLogs = $user->role === 'customer' ? $this->getUserActivityLogs($user) : [];
+
         return [
             'user' => $user,
             'userStats' => $userStats,
             'recentOrders' => $recentOrders,
             'orderStatusBreakdown' => $orderStatusBreakdown,
             'shoppingBehavior' => $shoppingBehavior,
+            'sessions' => $sessions,
+            'activityLogs' => $activityLogs,
         ];
     }
 
@@ -404,5 +412,40 @@ class UserService
             ->toArray();
 
         return $variants;
+    }
+
+    /**
+     * Get user sessions (active and recent)
+     */
+    private function getUserSessions(User $user): array
+    {
+        // Get active sessions
+        $activeSessions = \App\Models\UserSession::where('user_id', $user->id)
+            ->active()
+            ->orderBy('last_activity_at', 'desc')
+            ->get();
+
+        // Get recent ended sessions (last 5)
+        $recentSessions = \App\Models\UserSession::where('user_id', $user->id)
+            ->whereNotNull('ended_at')
+            ->orderBy('ended_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return [
+            'active' => $activeSessions,
+            'recent' => $recentSessions,
+        ];
+    }
+
+    /**
+     * Get user activity logs
+     */
+    private function getUserActivityLogs(User $user, int $limit = 20): \Illuminate\Database\Eloquent\Collection
+    {
+        return \App\Models\UserActivityLog::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->take($limit)
+            ->get();
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\CartService;
+use App\Services\SessionTracker;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +14,17 @@ use Illuminate\Support\Facades\RateLimiter;
 class AuthController extends Controller
 {
     protected $cartService;
+    protected $sessionTracker;
+    protected $activityLogger;
 
-    public function __construct(CartService $cartService)
-    {
+    public function __construct(
+        CartService $cartService,
+        SessionTracker $sessionTracker,
+        ActivityLogger $activityLogger
+    ) {
         $this->cartService = $cartService;
+        $this->sessionTracker = $sessionTracker;
+        $this->activityLogger = $activityLogger;
     }
     public function login()
     {
@@ -73,6 +82,12 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // Start session tracking
+            $this->sessionTracker->startSession();
+
+            // Log login activity
+            $this->activityLogger->logLogin($user->id);
+
             // Merge session cart to database for authenticated user
             $this->cartService->mergeSessionToDatabase();
 
@@ -86,6 +101,14 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $userId = auth()->id();
+
+        // Log logout activity
+        $this->activityLogger->logLogout($userId);
+
+        // End session tracking
+        $this->sessionTracker->endSession();
+
         auth()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

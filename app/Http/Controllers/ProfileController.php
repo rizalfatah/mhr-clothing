@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    protected $activityLogger;
+
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     /**
      * Update user's personal information
      */
@@ -28,7 +36,17 @@ class ProfileController extends Controller
             'whatsapp_number.unique' => 'This WhatsApp number is already registered.',
         ]);
 
+        // Track which fields changed
+        $changes = array_keys(array_filter($validated, function ($value, $key) use ($user) {
+            return $user->$key != $value;
+        }, ARRAY_FILTER_USE_BOTH));
+
         $user->update($validated);
+
+        // Log activity if anything changed
+        if (!empty($changes)) {
+            $this->activityLogger->logProfileUpdate($changes);
+        }
 
         return redirect()->route('account')->with('success', 'Personal information updated successfully!');
     }
@@ -54,6 +72,9 @@ class ProfileController extends Controller
         $user->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Log password change
+        $this->activityLogger->logPasswordChange();
 
         return redirect()->route('account')->with('success', 'Password changed successfully!');
     }

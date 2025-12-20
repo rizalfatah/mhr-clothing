@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Services\ActivityLogger;
 use App\Services\CartService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
@@ -16,11 +17,16 @@ class CheckoutController extends Controller
 {
     protected $transactionService;
     protected $cartService;
+    protected $activityLogger;
 
-    public function __construct(TransactionService $transactionService, CartService $cartService)
-    {
+    public function __construct(
+        TransactionService $transactionService,
+        CartService $cartService,
+        ActivityLogger $activityLogger
+    ) {
         $this->transactionService = $transactionService;
         $this->cartService = $cartService;
+        $this->activityLogger = $activityLogger;
     }
 
     /**
@@ -163,6 +169,11 @@ class CheckoutController extends Controller
 
             DB::commit();
 
+            // Log order placement activity
+            if (auth()->check()) {
+                $this->activityLogger->logOrderPlaced($order->order_number, $order->total);
+            }
+
             // Clear cart using service
             $this->cartService->clear();
 
@@ -257,6 +268,14 @@ class CheckoutController extends Controller
 
         $this->cartService->addItem($validated['product_id'], $validated['quantity']);
 
+        // Log activity if user is authenticated
+        if (auth()->check()) {
+            $product = Product::find($validated['product_id']);
+            if ($product) {
+                $this->activityLogger->logCartAdd($product->id, $product->name, $validated['quantity']);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Product added to cart successfully',
@@ -291,6 +310,14 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
         ]);
+
+        // Log activity if user is authenticated before removing
+        if (auth()->check()) {
+            $product = Product::find($validated['product_id']);
+            if ($product) {
+                $this->activityLogger->logCartRemove($product->id, $product->name);
+            }
+        }
 
         $this->cartService->removeItem($validated['product_id']);
 
