@@ -60,7 +60,7 @@
                 <div class="space-y-3">
                     <!-- Banks Row -->
                     <div>
-                        <p class="text-xs mb-2 text-primary-400">Bank Transfer</p>
+                        <p class="text-xs mb-2">Bank Transfer</p>
                         <div class="flex flex-wrap gap-2">
                             <div class="w-14 h-9 bg-white rounded-md flex items-center justify-center p-1.5 shadow-sm hover:shadow-md transition-shadow"
                                 title="BCA">
@@ -86,7 +86,7 @@
                     </div>
                     <!-- E-Wallets & QRIS Row -->
                     <div>
-                        <p class="text-xs mb-2 text-primary-400">E-Wallet & QRIS</p>
+                        <p class="text-xs mb-2">E-Wallet & QRIS</p>
                         <div class="flex flex-wrap gap-2">
                             <div class="w-14 h-9 bg-white rounded-md flex items-center justify-center p-1.5 shadow-sm hover:shadow-md transition-shadow"
                                 title="GoPay">
@@ -114,7 +114,7 @@
     <div class="border-t border-primary-600">
         <div class="container mx-auto px-4 py-5">
             <div class="flex justify-center items-center text-sm">
-                <p class="text-primary-400">&copy; {{ date('Y') }} MHR Clothing. All rights reserved.</p>
+                <p class="">&copy; {{ date('Y') }} MHR Clothing. All rights reserved.</p>
             </div>
         </div>
     </div>

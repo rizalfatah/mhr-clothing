@@ -7,7 +7,7 @@
     <!-- Cart Header -->
     <div class="flex items-center justify-between p-6 border-b border-gray-200">
         <h2 class="text-xl font-bold">Shopping Cart</h2>
-        <button id="cart-close" class="text-gray-500 hover:text-gray-900 transition">
+        <button id="cart-close" class="text-gray-500 hover:text-gray-900 transition" aria-label="Close cart">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -30,7 +30,8 @@
             </svg>
             <p class="text-gray-500 font-medium">Your cart is empty</p>
             <button onclick="closeCart()"
-                class="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition">
+                class="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
+                aria-label="Start shopping">
                 Start Shopping
             </button>
         </div>
@@ -61,7 +62,8 @@
             Lanjut ke Checkout
         </a>
         <button id="continue-shopping"
-            class="w-full border border-gray-300 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+            class="w-full border border-gray-300 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
+            aria-label="Continue shopping">
             Lanjut Belanja
         </button>
     </div>
@@ -159,7 +161,7 @@
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center gap-2">
                                 <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})"
-                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100">
+                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100" aria-label="Decrease quantity">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
@@ -167,7 +169,7 @@
                                 </button>
                                 <span class="text-sm font-medium">${item.quantity}</span>
                                 <button onclick="updateCartQuantity(${item.id}, ${item.quantity + 1})"
-                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100">
+                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100" aria-label="Increase quantity">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
@@ -178,7 +180,7 @@
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${formatPrice(item.price)} x ${item.quantity}</p>
                     </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition">
+                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition" aria-label="Remove item from cart">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                             stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
