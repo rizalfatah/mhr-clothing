@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 
 describe('Checkout Access Control', function () {
@@ -10,6 +11,14 @@ describe('Checkout Access Control', function () {
             'name' => 'Test Product',
             'selling_price' => 100000,
         ]);
+
+        // Create a variant for the product
+        $this->variant = ProductVariant::factory()->create([
+            'product_id' => $this->product->id,
+            'size' => 'M',
+            'stock' => 100,
+            'is_available' => true,
+        ]);
     });
 
     describe('Checkout Page Access', function () {
@@ -17,6 +26,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart as guest
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -41,6 +51,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -56,6 +67,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -71,6 +83,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart as guest
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 2,
             ]);
 
@@ -102,6 +115,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 2,
             ]);
 
@@ -125,6 +139,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -144,6 +159,7 @@ describe('Checkout Access Control', function () {
             // Add item to cart
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -166,6 +182,7 @@ describe('Checkout Access Control', function () {
             // Create order as guest
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -191,6 +208,7 @@ describe('Checkout Access Control', function () {
             // Create order
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -216,6 +234,7 @@ describe('Checkout Access Control', function () {
             // Create order as guest first
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -238,6 +257,7 @@ describe('Checkout Access Control', function () {
         test('middleware allows guest on checkout index', function () {
             $this->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -250,6 +270,7 @@ describe('Checkout Access Control', function () {
 
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
@@ -262,6 +283,7 @@ describe('Checkout Access Control', function () {
 
             $this->actingAs($user)->post(route('cart.add'), [
                 'product_id' => $this->product->id,
+                'product_variant_id' => $this->variant->id,
                 'quantity' => 1,
             ]);
 
