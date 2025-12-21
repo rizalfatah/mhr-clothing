@@ -158,6 +158,7 @@
                     <img src="${imageUrl}" alt="${item.name}" class="w-20 h-20 object-cover rounded">
                     <div class="flex-1">
                         <h3 class="font-semibold text-sm mb-1">${item.name}</h3>
+                        ${item.variant_size ? `<p class="text-xs text-gray-600 mt-0.5">Size: <span class="font-medium">${item.variant_size}</span></p>` : ''}
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center gap-2">
                                 <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})"

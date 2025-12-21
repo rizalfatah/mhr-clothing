@@ -126,6 +126,33 @@
                         @endif
                     </div>
 
+                    <!-- Size Selector -->
+                    @if ($product->variants->count() > 0)
+                        <div class="mb-4 pb-4 border-b border-gray-200">
+                            <label class="block text-sm font-semibold text-gray-900 mb-3">Select Size <span
+                                    class="text-red-500">*</span></label>
+                            <div id="size-selector" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-2">
+                                @foreach ($product->variants->sortBy('size') as $variant)
+                                    <button type="button"
+                                        class="size-option px-4 py-3 border-2 rounded-lg text-sm font-semibold transition
+                                            {{ $variant->hasStock() ? 'border-gray-300 hover:border-gray-900 hover:bg-gray-50' : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' }}"
+                                        data-variant-id="{{ $variant->id }}" data-size="{{ $variant->size }}"
+                                        data-stock="{{ $variant->stock }}"
+                                        data-available="{{ $variant->hasStock() ? 'true' : 'false' }}"
+                                        {{ !$variant->hasStock() ? 'disabled' : '' }}>
+                                        <div>{{ $variant->size }}</div>
+                                        <div
+                                            class="text-xs {{ $variant->hasStock() ? 'text-gray-500' : 'text-gray-400' }}">
+                                            {{ $variant->hasStock() ? $variant->stock . ' left' : 'Out of stock' }}
+                                        </div>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <p id="size-error" class="text-sm text-red-600 mt-2 hidden">Please select a size</p>
+                            <p id="stock-info" class="text-sm text-gray-600 mt-2 hidden"></p>
+                        </div>
+                    @endif
+
                     <!-- Quantity Selector -->
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-900 mb-2">Quantity</label>
@@ -303,6 +330,45 @@
 
 @push('scripts')
     <script>
+        // Size selection
+        let selectedVariantId = null;
+        let selectedMaxStock = null;
+        const sizeButtons = document.querySelectorAll('.size-option');
+        const sizeError = document.getElementById('size-error');
+        const stockInfo = document.getElementById('stock-info');
+
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.dataset.available === 'false') return;
+
+                // Remove selected state from all buttons
+                sizeButtons.forEach(btn => {
+                    btn.classList.remove('border-gray-900', 'bg-gray-900', 'text-white',
+                        'hover:text-gray-900');
+                    btn.classList.add('border-gray-300');
+                });
+
+                // Add selected state to clicked button
+                this.classList.remove('border-gray-300');
+                this.classList.add('border-gray-900', 'bg-gray-900', 'text-white', 'hover:text-gray-900');
+
+                // Store selected variant
+                selectedVariantId = parseInt(this.dataset.variantId);
+                selectedMaxStock = parseInt(this.dataset.stock);
+
+                // Hide error and show stock info
+                sizeError.classList.add('hidden');
+                stockInfo.classList.remove('hidden');
+                stockInfo.textContent = `${selectedMaxStock} pcs available for size ${this.dataset.size}`;
+
+                // Update quantity max
+                quantityInput.max = selectedMaxStock;
+                if (parseInt(quantityInput.value) > selectedMaxStock) {
+                    quantityInput.value = selectedMaxStock;
+                }
+            });
+        });
+
         // Quantity controls
         const quantityInput = document.getElementById('quantity');
         const decreaseBtn = document.getElementById('decrease-qty');
@@ -319,7 +385,8 @@
 
         increaseBtn.addEventListener('click', function() {
             let currentValue = parseInt(quantityInput.value);
-            if (currentValue < 99) {
+            const maxValue = selectedMaxStock || 99;
+            if (currentValue < maxValue) {
                 quantityInput.value = currentValue + 1;
             }
         });
@@ -327,10 +394,11 @@
         // Prevent manual input outside range
         quantityInput.addEventListener('change', function() {
             let value = parseInt(this.value);
+            const maxValue = selectedMaxStock || 99;
             if (isNaN(value) || value < 1) {
                 this.value = 1;
-            } else if (value > 99) {
-                this.value = 99;
+            } else if (value > maxValue) {
+                this.value = maxValue;
             }
         });
 
@@ -338,6 +406,18 @@
         addToCartBtn.addEventListener('click', async function() {
             const productId = this.dataset.productId;
             const quantity = parseInt(quantityInput.value);
+
+            // Validate size selection
+            @if ($product->variants->count() > 0)
+                if (!selectedVariantId) {
+                    sizeError.classList.remove('hidden');
+                    sizeError.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    return;
+                }
+            @endif
 
             // Disable button and show loading state
             const originalContent = this.innerHTML;
@@ -351,16 +431,22 @@
             `;
 
             try {
+                const requestBody = {
+                    product_id: productId,
+                    quantity: quantity
+                };
+
+                @if ($product->variants->count() > 0)
+                    requestBody.product_variant_id = selectedVariantId;
+                @endif
+
                 const response = await fetch('{{ route('cart.add') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({
-                        product_id: productId,
-                        quantity: quantity
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 const data = await response.json();

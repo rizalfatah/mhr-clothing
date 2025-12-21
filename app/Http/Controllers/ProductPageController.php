@@ -50,7 +50,7 @@ class ProductPageController extends Controller
 
     public function show($slug)
     {
-        $product = Product::with(['category', 'images'])
+        $product = Product::with(['category', 'images', 'variants'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();

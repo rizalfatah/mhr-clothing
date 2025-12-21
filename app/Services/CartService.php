@@ -12,12 +12,12 @@ class CartService
     /**
      * Add item to cart (database or session based on auth status)
      */
-    public function addItem(int $productId, int $quantity): void
+    public function addItem(int $productId, int $quantity, ?int $variantId = null): void
     {
         if (Auth::check()) {
-            $this->addItemToDatabase($productId, $quantity);
+            $this->addItemToDatabase($productId, $quantity, $variantId);
         } else {
-            $this->addItemToSession($productId, $quantity);
+            $this->addItemToSession($productId, $quantity, $variantId);
         }
     }
 
@@ -119,10 +119,11 @@ class CartService
     /**
      * Add item to database (for authenticated users)
      */
-    protected function addItemToDatabase(int $productId, int $quantity): void
+    protected function addItemToDatabase(int $productId, int $quantity, ?int $variantId = null): void
     {
         $cartItem = CartItem::where('user_id', Auth::id())
             ->where('product_id', $productId)
+            ->where('product_variant_id', $variantId)
             ->first();
 
         if ($cartItem) {
@@ -132,6 +133,7 @@ class CartService
             CartItem::create([
                 'user_id' => Auth::id(),
                 'product_id' => $productId,
+                'product_variant_id' => $variantId,
                 'quantity' => $quantity,
             ]);
         }
@@ -140,14 +142,17 @@ class CartService
     /**
      * Add item to session (for guest users)
      */
-    protected function addItemToSession(int $productId, int $quantity): void
+    protected function addItemToSession(int $productId, int $quantity, ?int $variantId = null): void
     {
         $cart = Session::get('cart', []);
+        $key = $productId . '_' . $variantId;
 
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] += $quantity;
         } else {
-            $cart[$productId] = [
+            $cart[$key] = [
+                'product_id' => $productId,
+                'variant_id' => $variantId,
                 'quantity' => $quantity,
             ];
         }
@@ -218,19 +223,27 @@ class CartService
      */
     protected function getItemsFromDatabase(): array
     {
-        $cartItems = CartItem::with('product.images')
+        $cartItems = CartItem::with(['product.images', 'variant'])
             ->where('user_id', Auth::id())
             ->get();
 
         return $cartItems->map(function ($cartItem) {
+            $price = $cartItem->product->price;
+            if ($cartItem->variant) {
+                $price += $cartItem->variant->price_adjustment;
+            }
+
             return [
                 'id' => $cartItem->product->id,
                 'name' => $cartItem->product->name,
                 'slug' => $cartItem->product->slug,
-                'price' => $cartItem->product->price,
+                'price' => $price,
                 'quantity' => $cartItem->quantity,
-                'subtotal' => $cartItem->product->price * $cartItem->quantity,
+                'subtotal' => $price * $cartItem->quantity,
                 'image' => $cartItem->product->images->first()?->image_path,
+                'variant_id' => $cartItem->variant?->id,
+                'variant_size' => $cartItem->variant?->size,
+                'variant_sku' => $cartItem->variant?->sku,
             ];
         })->toArray();
     }
@@ -243,17 +256,32 @@ class CartService
         $cart = Session::get('cart', []);
         $cartItems = [];
 
-        foreach ($cart as $productId => $item) {
+        foreach ($cart as $key => $item) {
+            $productId = $item['product_id'] ?? null;
+            $variantId = $item['variant_id'] ?? null;
+
+            if (!$productId) continue;
+
             $product = Product::with('images')->find($productId);
+            $variant = $variantId ? \App\Models\ProductVariant::find($variantId) : null;
+
             if ($product) {
+                $price = $product->price;
+                if ($variant) {
+                    $price += $variant->price_adjustment;
+                }
+
                 $cartItems[] = [
                     'id' => $product->id,
                     'name' => $product->name,
                     'slug' => $product->slug,
-                    'price' => $product->price,
+                    'price' => $price,
                     'quantity' => $item['quantity'],
-                    'subtotal' => $product->price * $item['quantity'],
+                    'subtotal' => $price * $item['quantity'],
                     'image' => $product->images->first()?->image_path,
+                    'variant_id' => $variant?->id,
+                    'variant_size' => $variant?->size,
+                    'variant_sku' => $variant?->sku,
                 ];
             }
         }

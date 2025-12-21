@@ -142,8 +142,10 @@ class CheckoutController extends Controller
 
                 $orderItems[] = [
                     'product_id' => $product->id,
+                    'product_variant_id' => $item['variant_id'] ?? null,
                     'product_name' => $product->name,
-                    'price' => $product->price,
+                    'variant_name' => $item['variant_size'] ?? null,
+                    'price' => $item['price'],
                     'quantity' => $item['quantity'],
                     'subtotal' => $item['subtotal'],
                 ];
@@ -214,6 +216,9 @@ class CheckoutController extends Controller
         foreach ($order->items as $index => $item) {
             $num = $index + 1;
             $orderDetails .= "{$num}. {$item->product_name}\n";
+            if ($item->variant_name) {
+                $orderDetails .= "   Ukuran: {$item->variant_name}\n";
+            }
             $orderDetails .= "   Harga: Rp " . number_format($item->price, 0, ',', '.') . "\n";
             $orderDetails .= "   Jumlah: {$item->quantity}\n";
             $orderDetails .= "   Subtotal: Rp " . number_format($item->subtotal, 0, ',', '.') . "\n\n";
@@ -263,16 +268,39 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'product_variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $this->cartService->addItem($validated['product_id'], $validated['quantity']);
+        // Check if variant belongs to product
+        $product = Product::find($validated['product_id']);
+        $variant = \App\Models\ProductVariant::find($validated['product_variant_id']);
+
+        if (!$variant || $variant->product_id !== $product->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid variant for this product',
+            ], 400);
+        }
+
+        // Check stock availability
+        if (!$variant->hasStock($validated['quantity'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock for selected size. Available: ' . $variant->stock,
+            ], 400);
+        }
+
+        $this->cartService->addItem(
+            $validated['product_id'],
+            $validated['quantity'],
+            $validated['product_variant_id']
+        );
 
         // Log activity if user is authenticated
         if (auth()->check()) {
-            $product = Product::find($validated['product_id']);
             if ($product) {
-                $this->activityLogger->logCartAdd($product->id, $product->name, $validated['quantity']);
+                $this->activityLogger->logCartAdd($product->id, $product->name . ' - ' . $variant->size, $validated['quantity']);
             }
         }
 

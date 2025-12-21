@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -283,6 +284,39 @@ class ProductSeeder extends Seeder
                 } catch (\Exception $e) {
                     $this->command->error("  ✗ Error downloading image: " . $e->getMessage());
                 }
+            }
+
+            // Create product variants with different sizes and stock levels
+            $this->command->info("  Creating product variants...");
+            $sizes = ProductVariant::getAvailableSizes();
+
+            foreach ($sizes as $index => $size) {
+                // Randomize stock levels - some sizes might have more stock than others
+                $baseStock = rand(5, 30);
+
+                // Popular sizes (M, L) tend to have more stock
+                if ($size === 'Medium' || $size === 'Large') {
+                    $stock = $baseStock + rand(10, 20);
+                } elseif ($size === 'XXL') {
+                    // XXL typically has less stock
+                    $stock = rand(0, 15);
+                } else {
+                    $stock = $baseStock;
+                }
+
+                // Some variants might be out of stock
+                $isAvailable = $stock > 0;
+
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'size' => $size,
+                    'sku' => strtoupper(Str::slug($product->name)) . '-' . strtoupper(str_replace(' ', '', $size)) . '-' . str_pad($product->id, 3, '0', STR_PAD_LEFT),
+                    'price_adjustment' => $size === 'XXL' ? 10000 : 0, // XXL has additional cost
+                    'stock' => $stock,
+                    'is_available' => $isAvailable,
+                ]);
+
+                $this->command->info("    ✓ Variant {$size}: {$stock} units" . ($isAvailable ? '' : ' (Out of stock)'));
             }
 
             $this->command->info("✓ Product created successfully\n");

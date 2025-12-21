@@ -69,4 +69,38 @@ class Product extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    /**
+     * Get all variants for this product
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Get only available variants (in stock)
+     */
+    public function availableVariants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)
+            ->where('is_available', true)
+            ->where('stock', '>', 0);
+    }
+
+    /**
+     * Check if product has any available stock
+     */
+    public function hasAvailableStock(): bool
+    {
+        return $this->variants()->where('is_available', true)->where('stock', '>', 0)->exists();
+    }
+
+    /**
+     * Get total stock across all variants
+     */
+    public function getTotalStockAttribute(): int
+    {
+        return $this->variants()->sum('stock');
+    }
 }

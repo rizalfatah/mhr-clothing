@@ -41,6 +41,10 @@
                                     @endif
                                     <div class="flex-1">
                                         <h4 class="font-medium text-gray-900">{{ $item->product_name }}</h4>
+                                        @if ($item->variant_name)
+                                            <p class="text-xs text-gray-600 mt-0.5">Size: <span
+                                                    class="font-medium">{{ $item->variant_name }}</span></p>
+                                        @endif
                                         <p class="text-sm text-gray-500">{{ $item->quantity }} x Rp
                                             {{ number_format($item->price, 0, ',', '.') }}</p>
                                         <p class="text-sm font-medium text-gray-900 mt-1">Rp

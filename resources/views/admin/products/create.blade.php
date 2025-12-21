@@ -205,6 +205,75 @@
                     </div>
                 </div>
 
+                <!-- Sizes & Stock -->
+                <div
+                    class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+                    <div class="p-4 sm:p-7">
+                        <div class="mb-6">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">Ukuran & Stok</h2>
+                            <p class="text-sm text-gray-600 dark:text-neutral-400">Kelola stok untuk setiap ukuran produk
+                            </p>
+                        </div>
+
+                        <div id="variants-container" class="space-y-4">
+                            @foreach ($sizes as $index => $size)
+                                <div class="variant-row border border-gray-200 rounded-lg p-4 dark:border-neutral-700"
+                                    data-index="{{ $index }}">
+                                    <div class="grid sm:grid-cols-4 gap-4">
+                                        <!-- Size -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 dark:text-white">Ukuran</label>
+                                            <input type="text" name="variants[{{ $index }}][size]"
+                                                value="{{ old('variants.' . $index . '.size', $size) }}"
+                                                class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
+                                                readonly>
+                                        </div>
+
+                                        <!-- Stock -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 dark:text-white">Stok <span
+                                                    class="text-red-500">*</span></label>
+                                            <input type="number" name="variants[{{ $index }}][stock]"
+                                                value="{{ old('variants.' . $index . '.stock', 0) }}" min="0"
+                                                class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
+                                                required>
+                                        </div>
+
+                                        <!-- SKU -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 dark:text-white">SKU</label>
+                                            <input type="text" name="variants[{{ $index }}][sku]"
+                                                value="{{ old('variants.' . $index . '.sku') }}" placeholder="Optional"
+                                                class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+                                        </div>
+
+                                        <!-- Price Adjustment -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 dark:text-white">Penyesuaian
+                                                Harga</label>
+                                            <input type="number" name="variants[{{ $index }}][price_adjustment]"
+                                                value="{{ old('variants.' . $index . '.price_adjustment', 0) }}"
+                                                step="0.01" placeholder="0"
+                                                class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+                                        </div>
+                                    </div>
+
+                                    <!-- Is Available -->
+                                    <div class="mt-3">
+                                        <label class="inline-flex items-center">
+                                            <input type="checkbox" name="variants[{{ $index }}][is_available]"
+                                                value="1"
+                                                {{ old('variants.' . $index . '.is_available', true) ? 'checked' : '' }}
+                                                class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700">
+                                            <span class="text-sm text-gray-600 ms-2 dark:text-neutral-400">Tersedia</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Product Images -->
                 <div
                     class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">

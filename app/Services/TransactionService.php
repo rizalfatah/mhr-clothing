@@ -96,11 +96,24 @@ class TransactionService
             // Create order
             $order = Order::create($data);
 
-            // Create order items
+            // Create order items and deduct stock
             foreach ($items as $item) {
                 $item['order_id'] = $order->id;
                 $item['subtotal'] = $item['price'] * $item['quantity'];
                 OrderItem::create($item);
+
+                // Deduct stock from variant if variant_id is present
+                if (isset($item['product_variant_id']) && $item['product_variant_id']) {
+                    $variant = \App\Models\ProductVariant::find($item['product_variant_id']);
+                    if ($variant) {
+                        $variant->decrement('stock', $item['quantity']);
+
+                        // Mark as unavailable if stock is 0
+                        if ($variant->stock <= 0) {
+                            $variant->update(['is_available' => false]);
+                        }
+                    }
+                }
             }
 
             DB::commit();
@@ -119,7 +132,7 @@ class TransactionService
         DB::beginTransaction();
         try {
             $order->status = $status;
-            
+
             if ($notes) {
                 $order->admin_notes = $notes;
             }

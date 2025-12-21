@@ -47,7 +47,9 @@ class ProductController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.products.create', compact('categories'));
+        $sizes = \App\Models\ProductVariant::getAvailableSizes();
+
+        return view('admin.products.create', compact('categories', 'sizes'));
     }
 
     public function store(Request $request)
@@ -78,6 +80,12 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:4096',
+            'variants' => 'nullable|array',
+            'variants.*.size' => 'required|string',
+            'variants.*.sku' => 'nullable|string',
+            'variants.*.stock' => 'required|integer|min:0',
+            'variants.*.price_adjustment' => 'nullable|numeric',
+            'variants.*.is_available' => 'nullable|boolean',
         ], [
             'images.*.image' => 'Setiap file harus berupa gambar.',
             'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',
@@ -102,12 +110,14 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load(['category', 'images']);
+        $product->load(['category', 'images', 'variants']);
         $categories = Category::where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        $sizes = \App\Models\ProductVariant::getAvailableSizes();
+
+        return view('admin.products.edit', compact('product', 'categories', 'sizes'));
     }
 
     public function update(Request $request, Product $product)
@@ -140,6 +150,13 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:4096',
+            'variants' => 'nullable|array',
+            'variants.*.id' => 'nullable|exists:product_variants,id',
+            'variants.*.size' => 'required|string',
+            'variants.*.sku' => 'nullable|string',
+            'variants.*.stock' => 'required|integer|min:0',
+            'variants.*.price_adjustment' => 'nullable|numeric',
+            'variants.*.is_available' => 'nullable|boolean',
         ], [
             'images.*.image' => 'Setiap file harus berupa gambar.',
             'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, atau webp.',

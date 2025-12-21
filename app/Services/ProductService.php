@@ -10,13 +10,14 @@ use Illuminate\Support\Str;
 
 class ProductService
 {
-    /**
-     * Create a new product with images
-     */
     public function createProduct(array $data, ?array $images = null): Product
     {
         DB::beginTransaction();
         try {
+            // Extract variants from data
+            $variants = $data['variants'] ?? null;
+            unset($data['variants']);
+
             $data['slug'] = Str::slug($data['name']);
             $data['is_active'] = $data['is_active'] ?? false;
             $data['is_featured'] = $data['is_featured'] ?? false;
@@ -26,6 +27,9 @@ class ProductService
             if ($images) {
                 $this->uploadImages($product, $images);
             }
+
+            // Sync variants
+            $this->syncVariants($product, $variants);
 
             DB::commit();
             return $product;
@@ -42,6 +46,10 @@ class ProductService
     {
         DB::beginTransaction();
         try {
+            // Extract variants from data
+            $variants = $data['variants'] ?? null;
+            unset($data['variants']);
+
             $data['slug'] = Str::slug($data['name']);
             $data['is_active'] = $data['is_active'] ?? false;
             $data['is_featured'] = $data['is_featured'] ?? false;
@@ -51,6 +59,9 @@ class ProductService
             if ($images) {
                 $this->uploadImages($product, $images, false);
             }
+
+            // Sync variants
+            $this->syncVariants($product, $variants);
 
             DB::commit();
             return $product;
@@ -99,7 +110,7 @@ class ProductService
 
         foreach ($images as $index => $image) {
             $path = $image->store('products', 'public');
-            
+
             ProductImage::create([
                 'product_id' => $product->id,
                 'image_path' => $path,
@@ -118,10 +129,10 @@ class ProductService
         try {
             // Remove primary status from all images
             $product->images()->update(['is_primary' => false]);
-            
+
             // Set new primary image
             $image->update(['is_primary' => true]);
-            
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -141,7 +152,57 @@ class ProductService
                     ->where('id', $imageId)
                     ->update(['sort_order' => $order]);
             }
-            
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Sync product variants
+     */
+    public function syncVariants(Product $product, ?array $variants = null): void
+    {
+        if (!$variants) {
+            return;
+        }
+
+        DB::beginTransaction();
+        try {
+            // Get existing variant IDs from the input
+            $inputVariantIds = collect($variants)->pluck('id')->filter()->toArray();
+
+            // Delete variants not in the input
+            $product->variants()->whereNotIn('id', $inputVariantIds)->delete();
+
+            // Create or update variants
+            foreach ($variants as $variantData) {
+                if (isset($variantData['id']) && $variantData['id']) {
+                    // Update existing variant
+                    $variant = $product->variants()->find($variantData['id']);
+                    if ($variant) {
+                        $variant->update([
+                            'size' => $variantData['size'],
+                            'sku' => $variantData['sku'] ?? null,
+                            'price_adjustment' => $variantData['price_adjustment'] ?? 0,
+                            'stock' => $variantData['stock'] ?? 0,
+                            'is_available' => $variantData['is_available'] ?? true,
+                        ]);
+                    }
+                } else {
+                    // Create new variant
+                    $product->variants()->create([
+                        'size' => $variantData['size'],
+                        'sku' => $variantData['sku'] ?? null,
+                        'price_adjustment' => $variantData['price_adjustment'] ?? 0,
+                        'stock' => $variantData['stock'] ?? 0,
+                        'is_available' => $variantData['is_available'] ?? true,
+                    ]);
+                }
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
