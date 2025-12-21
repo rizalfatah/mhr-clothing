@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductPageController;
@@ -92,6 +93,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/customers', 'customers')->name('customers');
         Route::get('/{user}', 'show')->name('show');
     });
+
+    // Stock Management Routes
+    Route::resource('stock', StockController::class)->only(['index', 'update']);
 });
 
 

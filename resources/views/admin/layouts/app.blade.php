@@ -20,6 +20,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('styles')
+
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 
 <body class="bg-gray-50 dark:bg-neutral-900">
@@ -146,6 +149,22 @@
                                     </li>
                                 </ul>
                             </div>
+                        </li>
+
+                        <!-- Stock -->
+                        <li>
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.stock.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                href="{{ route('admin.stock.index') }}">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                                </svg>
+                                Inventaris
+                            </a>
                         </li>
 
                         <!-- Categories -->
@@ -326,20 +345,7 @@
     <div class="w-full lg:ps-64">
         <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
             <!-- Page Header -->
-            @if (session('success'))
-                <div class="bg-teal-50 border border-teal-200 text-sm text-teal-800 rounded-lg p-4 dark:bg-teal-800/10 dark:border-teal-900 dark:text-teal-500"
-                    role="alert" tabindex="-1" aria-labelledby="hs-soft-color-success-label">
-                    <span id="hs-soft-color-success-label" class="font-bold">Berhasil!</span>
-                    {{ session('success') }}
-                </div>
-            @endif
 
-            @if (session('error'))
-                <div class="bg-red-50 border border-red-200 text-sm text-red-800 rounded-lg p-4 dark:bg-red-800/10 dark:border-red-900 dark:text-red-500"
-                    role="alert" tabindex="-1" aria-labelledby="hs-soft-color-danger-label">
-                    <span id="hs-soft-color-danger-label" class="font-bold">Gagal!</span> {{ session('error') }}
-                </div>
-            @endif
 
             @yield('content')
         </div>
@@ -347,6 +353,33 @@
     <!-- End Content -->
 
     @stack('scripts')
+
+    <!-- Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // Helper function for showing toasts
+        function showToast(message, type = 'success') {
+            Toastify({
+                text: message,
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#10b981" : "#ef4444", // Tailwind Green-500 or Red-500
+                stopOnFocus: true,
+            }).showToast();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showToast("{{ session('success') }}", 'success');
+            @endif
+
+            @if (session('error'))
+                showToast("{{ session('error') }}", 'error');
+            @endif
+        });
+    </script>
 </body>
 
 </html>
