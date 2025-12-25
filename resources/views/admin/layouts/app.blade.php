@@ -167,6 +167,20 @@
                             </a>
                         </li>
 
+                        <!-- Coupons -->
+                        <li>
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.coupons.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                href="{{ route('admin.coupons.index') }}">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 0 10-9.59 1 1 0 0 1 .696 0 10.75 10.75 0 0 0 9.59 10 1 1 0 0 1 0 .696 10.75 10.75 0 0 0-10 9.59 1 1 0 0 1-.696 0 10.75 10.75 0 0 0-9.59-10" />
+                                </svg>
+                                Kupon
+                            </a>
+                        </li>
+
                         <!-- Categories -->
                         <li class="hs-accordion {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
                             id="categories-accordion">

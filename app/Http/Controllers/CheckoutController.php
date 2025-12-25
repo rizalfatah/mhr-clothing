@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -52,23 +53,32 @@ class CheckoutController extends Controller
                     'product' => $product,
                     'quantity' => $item['quantity'],
                     'subtotal' => $item['subtotal'],
+                    'variant_size' => $item['variant_size'] ?? null,
                 ];
                 $subtotal += $item['subtotal'];
             }
+        }
+
+        // Coupon Logic
+        $appliedCoupon = $this->cartService->getAppliedCoupon();
+        $discountAmount = 0;
+        if ($appliedCoupon) {
+            $discountAmount = $this->cartService->getDiscountAmount($subtotal);
         }
 
         // Get shipping cost from settings
         $shippingCost = Setting::get('shipping_cost', 10000);
         $freeShippingMin = Setting::get('free_shipping_min', 100000);
 
-        // Apply free shipping if applicable
+        // Apply free shipping if applicable (check against subtotal after discount? Usually before, but let's stick to subtotal)
+        // Usually free shipping is based on subtotal of items.
         if ($subtotal >= $freeShippingMin) {
             $shippingCost = 0;
         }
 
-        $total = $subtotal + $shippingCost;
+        $total = $subtotal - $discountAmount + $shippingCost;
 
-        return view('checkout', compact('cartItems', 'subtotal', 'shippingCost', 'total'));
+        return view('checkout', compact('cartItems', 'subtotal', 'shippingCost', 'total', 'appliedCoupon', 'discountAmount'));
     }
 
     /**
@@ -113,6 +123,7 @@ class CheckoutController extends Controller
             ];
 
             // Set user_id for authenticated users or guest_customer_id for guests
+            $guestCustomerId = null;
             if (auth()->check()) {
                 $orderData['user_id'] = auth()->id();
             } else {
@@ -151,6 +162,13 @@ class CheckoutController extends Controller
                 ];
             }
 
+            // Coupon Calculation
+            $appliedCoupon = $this->cartService->getAppliedCoupon();
+            $discountAmount = 0;
+            if ($appliedCoupon) {
+                $discountAmount = $this->cartService->getDiscountAmount($subtotal);
+            }
+
             // Calculate shipping
             $shippingCost = Setting::get('shipping_cost', 10000);
             $freeShippingMin = Setting::get('free_shipping_min', 100000);
@@ -161,10 +179,22 @@ class CheckoutController extends Controller
 
             $orderData['subtotal'] = $subtotal;
             $orderData['shipping_cost'] = $shippingCost;
-            $orderData['total'] = $subtotal + $shippingCost;
+            $orderData['discount'] = $discountAmount;
+            $orderData['total'] = $subtotal - $discountAmount + $shippingCost;
 
             // Create order
             $order = $this->transactionService->createOrder($orderData, $orderItems);
+
+            // Record Coupon Usage
+            if ($appliedCoupon && $discountAmount > 0) {
+                CouponUsage::create([
+                    'coupon_id' => $appliedCoupon->id,
+                    'user_id' => auth()->id(),
+                    'order_id' => $order->id,
+                    'guest_customer_id' => $guestCustomerId,
+                    'discount_amount' => $discountAmount,
+                ]);
+            }
 
             // Update order status to contacted (sent to WhatsApp)
             $order->update(['status' => Order::STATUS_CONTACTED]);
@@ -226,6 +256,11 @@ class CheckoutController extends Controller
 
         $orderDetails .= "*Ringkasan Pembayaran:*\n";
         $orderDetails .= "Subtotal: Rp " . number_format($order->subtotal, 0, ',', '.') . "\n";
+
+        if ($order->discount > 0) {
+            $orderDetails .= "Diskon: -Rp " . number_format($order->discount, 0, ',', '.') . "\n";
+        }
+
         $orderDetails .= "Ongkir: Rp " . number_format($order->shipping_cost, 0, ',', '.') . "\n";
         $orderDetails .= "━━━━━━━━━━━━━━━\n";
         $orderDetails .= "*TOTAL: Rp " . number_format($order->total, 0, ',', '.') . "*\n\n";
@@ -323,6 +358,8 @@ class CheckoutController extends Controller
 
         $this->cartService->updateItem($validated['product_id'], $validated['quantity']);
 
+        // Recalculate everything for response if needed, 
+        // but for now simple response is fine, frontend might reload or request cart data
         return response()->json([
             'success' => true,
             'message' => 'Cart updated successfully',
@@ -368,6 +405,9 @@ class CheckoutController extends Controller
             $subtotal += $item['subtotal'];
         }
 
+        // Calculate Discount
+        $discountAmount = $this->cartService->getDiscountAmount($subtotal);
+
         // Get shipping cost
         $shippingCost = Setting::get('shipping_cost', 10000);
         $freeShippingMin = Setting::get('free_shipping_min', 100000);
@@ -376,14 +416,46 @@ class CheckoutController extends Controller
             $shippingCost = 0;
         }
 
-        $total = $subtotal + $shippingCost;
+        $total = $subtotal - $discountAmount + $shippingCost;
 
         return response()->json([
             'items' => $cartItems,
             'subtotal' => $subtotal,
+            'discount' => $discountAmount,
             'shipping_cost' => $shippingCost,
             'total' => $total,
             'count' => count($cartItems),
+        ]);
+    }
+
+    /**
+     * Apply Coupon
+     */
+    public function applyCoupon(Request $request)
+    {
+        $validated = $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $result = $this->cartService->applyCoupon($validated['code']);
+
+        if (!$result['success']) {
+            return response()->json($result, 400);
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Remove Coupon
+     */
+    public function removeCoupon()
+    {
+        $this->cartService->removeCoupon();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kupon berhasil dihapus.'
         ]);
     }
 }

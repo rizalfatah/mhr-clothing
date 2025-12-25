@@ -186,6 +186,11 @@
                                             <h3 class="text-sm font-medium text-gray-900 truncate">
                                                 {{ $item['product']->name }}
                                             </h3>
+                                            @if (isset($item['variant_size']) && $item['variant_size'])
+                                                <p class="text-xs text-gray-600 mt-0.5">
+                                                    Size: {{ $item['variant_size'] }}
+                                                </p>
+                                            @endif
                                             <p class="text-sm text-gray-500">
                                                 {{ $item['quantity'] }} x Rp
                                                 {{ number_format($item['product']->price, 0, ',', '.') }}
@@ -198,12 +203,60 @@
                                 @endforeach
                             </div>
 
+                            <!-- Coupon Section -->
+                            <div class="mb-4 pt-4 border-t border-gray-200">
+                                <label for="coupon_code" class="block text-sm font-medium text-gray-700 mb-2">Coupon
+                                    Code</label>
+                                @if (isset($appliedCoupon) && $appliedCoupon)
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                                        <div>
+                                            <p class="text-sm font-medium text-green-800">{{ $appliedCoupon->code }}</p>
+                                            <p class="text-xs text-green-600">
+                                                {{ $appliedCoupon->type == 'fixed' ? 'Discount Rp ' . number_format($appliedCoupon->value, 0, ',', '.') : 'Discount ' . $appliedCoupon->value . '%' }}
+                                            </p>
+                                        </div>
+                                        <button type="button" onclick="removeCoupon()"
+                                            class="text-red-500 hover:text-red-700 p-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <!-- Remove Coupon Message Container -->
+                                    <div id="remove-coupon-message" class="mt-2 hidden"></div>
+                                @else
+                                    <div class="flex space-x-2">
+                                        <input type="text" id="coupon_code" placeholder="Enter code"
+                                            class="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        <button type="button" onclick="applyCoupon()"
+                                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                                            Apply
+                                        </button>
+                                    </div>
+                                    <!-- Coupon Message Container -->
+                                    <div id="coupon-message" class="mt-2 hidden"></div>
+                                @endif
+                            </div>
+
                             <!-- Price Summary -->
                             <div class="space-y-2 pt-4 border-t border-gray-200">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Subtotal</span>
                                     <span class="font-medium">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                                 </div>
+
+                                @if (isset($discountAmount) && $discountAmount > 0)
+                                    <div class="flex justify-between text-sm text-green-600">
+                                        <span>Diskon</span>
+                                        <span class="font-medium">-Rp
+                                            {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
+
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Shipping</span>
                                     <span class="font-medium">
@@ -220,6 +273,103 @@
                                 </div>
                             </div>
 
+                            @push('scripts')
+                                <script>
+                                    function showCouponMessage(message, type) {
+                                        const messageContainer = document.getElementById('coupon-message');
+                                        if (!messageContainer) return;
+
+                                        const isSuccess = type === 'success';
+                                        messageContainer.className = `mt-2 p-3 rounded-lg text-sm ${
+                                            isSuccess 
+                                                ? 'bg-green-50 border border-green-200 text-green-800' 
+                                                : 'bg-red-50 border border-red-200 text-red-800'
+                                        }`;
+                                        messageContainer.textContent = message;
+                                        messageContainer.classList.remove('hidden');
+                                    }
+
+                                    function hideCouponMessage() {
+                                        const messageContainer = document.getElementById('coupon-message');
+                                        if (messageContainer) {
+                                            messageContainer.classList.add('hidden');
+                                        }
+                                    }
+
+                                    function applyCoupon() {
+                                        const code = document.getElementById('coupon_code').value;
+                                        if (!code) {
+                                            showCouponMessage('Please enter a coupon code', 'error');
+                                            return;
+                                        }
+
+                                        hideCouponMessage();
+
+                                        fetch('{{ route('checkout.coupon.apply') }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                },
+                                                body: JSON.stringify({
+                                                    code: code
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    showCouponMessage(data.message, 'success');
+                                                    setTimeout(() => location.reload(), 1000);
+                                                } else {
+                                                    showCouponMessage(data.message, 'error');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                showCouponMessage('An error occurred while processing the coupon.', 'error');
+                                            });
+                                    }
+
+                                    function showRemoveCouponMessage(message, type) {
+                                        const messageContainer = document.getElementById('remove-coupon-message');
+                                        if (!messageContainer) return;
+
+                                        const isSuccess = type === 'success';
+                                        messageContainer.className = `mt-2 p-3 rounded-lg text-sm ${
+                                            isSuccess 
+                                                ? 'bg-green-50 border border-green-200 text-green-800' 
+                                                : 'bg-red-50 border border-red-200 text-red-800'
+                                        }`;
+                                        messageContainer.textContent = message;
+                                        messageContainer.classList.remove('hidden');
+                                    }
+
+                                    function removeCoupon() {
+                                        if (!confirm('Are you sure you want to remove this coupon?')) return;
+
+                                        fetch('{{ route('checkout.coupon.remove') }}', {
+                                                method: 'DELETE',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                }
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    showRemoveCouponMessage(data.message, 'success');
+                                                    setTimeout(() => location.reload(), 1000);
+                                                } else {
+                                                    showRemoveCouponMessage(data.message, 'error');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                showRemoveCouponMessage('An error occurred while removing the coupon.', 'error');
+                                            });
+                                    }
+                                </script>
+                            @endpush
                             <!-- WhatsApp Info -->
                             <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                                 <div class="flex items-start gap-2">

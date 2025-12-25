@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
@@ -96,6 +97,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Stock Management Routes
     Route::resource('stock', StockController::class)->only(['index', 'update']);
+
+    // Coupon Management Routes
+    Route::get('coupons/bulk-generate', [CouponController::class, 'showBulkGenerate'])->name('coupons.bulk-generate');
+    Route::post('coupons/bulk-generate', [CouponController::class, 'storeBulkGenerate'])->name('coupons.bulk-store');
+    Route::resource('coupons', CouponController::class);
 });
 
 
@@ -124,6 +130,8 @@ Route::prefix('checkout')->name('checkout.')->controller(CheckoutController::cla
     Route::middleware(['check.checkout.access'])->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/process', 'process')->name('process');
+        Route::post('/coupon', 'applyCoupon')->name('coupon.apply');
+        Route::delete('/coupon', 'removeCoupon')->name('coupon.remove');
     });
 
     // Success page - accessible by anyone with the order ID

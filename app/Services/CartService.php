@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CartItem;
+use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -80,6 +81,7 @@ class CartService
         } else {
             Session::forget('cart');
         }
+        $this->removeCoupon();
     }
 
     /**
@@ -287,5 +289,66 @@ class CartService
         }
 
         return $cartItems;
+    }
+
+    /**
+     * Apply coupon
+     */
+    public function applyCoupon(string $code): array
+    {
+        $coupon = Coupon::where('code', $code)->first();
+
+        if (!$coupon) {
+            return ['success' => false, 'message' => 'Kupon tidak ditemukan.'];
+        }
+
+        // Get guest_id if exists
+        $guestId = request()->cookie('guest_customer_id');
+
+        if (!$coupon->isValidForUser(Auth::id(), $guestId)) {
+            return ['success' => false, 'message' => 'Kupon tidak valid atau sudah kadaluarsa.'];
+        }
+
+        Session::put('applied_coupon', $coupon->code);
+
+        return ['success' => true, 'message' => 'Kupon berhasil digunakan.', 'coupon' => $coupon];
+    }
+
+    /**
+     * Remove applied coupon
+     */
+    public function removeCoupon(): void
+    {
+        Session::forget('applied_coupon');
+    }
+
+    /**
+     * Get applied coupon instance
+     */
+    public function getAppliedCoupon(): ?Coupon
+    {
+        $code = Session::get('applied_coupon');
+        if (!$code) return null;
+
+        return Coupon::where('code', $code)->first();
+    }
+
+    /**
+     * Calculate discount amount 
+     */
+    public function getDiscountAmount(float $subtotal): float
+    {
+        $coupon = $this->getAppliedCoupon();
+
+        if (!$coupon) return 0;
+
+        // Re-validate just in case status changed
+        $guestId = request()->cookie('guest_customer_id');
+        if (!$coupon->isValidForUser(Auth::id(), $guestId)) {
+            $this->removeCoupon();
+            return 0;
+        }
+
+        return $coupon->calculateDiscount($subtotal);
     }
 }
