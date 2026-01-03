@@ -62,6 +62,23 @@
                                 <span class="text-gray-600">Subtotal</span>
                                 <span class="font-medium">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                             </div>
+                            @if ($order->discount > 0)
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">
+                                        Discount
+                                        @if ($order->couponUsage && $order->couponUsage->coupon)
+                                            @if ($order->couponUsage->coupon->type === 'percent')
+                                                <span
+                                                    class="text-green-600">({{ number_format($order->couponUsage->coupon->value, 0) }}%)</span>
+                                            @else
+                                                <span class="text-green-600">(Fixed)</span>
+                                            @endif
+                                        @endif
+                                    </span>
+                                    <span class="font-medium text-green-600">-Rp
+                                        {{ number_format($order->discount, 0, ',', '.') }}</span>
+                                </div>
+                            @endif
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Shipping</span>
                                 <span class="font-medium">

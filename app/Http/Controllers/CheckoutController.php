@@ -225,7 +225,7 @@ class CheckoutController extends Controller
      */
     public function success($orderId)
     {
-        $order = Order::findOrFail($orderId);
+        $order = Order::with(['couponUsage.coupon'])->findOrFail($orderId);
         $whatsappUrl = $this->generateWhatsAppUrl($order);
 
         return view('checkout-success', compact('order', 'whatsappUrl'));

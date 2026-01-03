@@ -77,7 +77,7 @@ class Order extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_PENDING => 'gray',
             self::STATUS_CONTACTED => 'blue',
             self::STATUS_CONFIRMED => 'indigo',
@@ -103,6 +103,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function couponUsage()
+    {
+        return $this->hasOne(CouponUsage::class);
+    }
+
     // Scopes
     public function scopeStatus($query, $status)
     {
@@ -111,11 +116,11 @@ class Order extends Model
 
     public function scopeSearch($query, $search)
     {
-        return $query->where(function($q) use ($search) {
+        return $query->where(function ($q) use ($search) {
             $q->where('order_number', 'like', "%{$search}%")
-              ->orWhere('customer_name', 'like', "%{$search}%")
-              ->orWhere('customer_whatsapp', 'like', "%{$search}%")
-              ->orWhere('customer_email', 'like', "%{$search}%");
+                ->orWhere('customer_name', 'like', "%{$search}%")
+                ->orWhere('customer_whatsapp', 'like', "%{$search}%")
+                ->orWhere('customer_email', 'like', "%{$search}%");
         });
     }
 
