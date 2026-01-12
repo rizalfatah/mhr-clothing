@@ -250,6 +250,7 @@ class CartService
                 'variant_id' => $cartItem->variant?->id,
                 'variant_size' => $cartItem->variant?->size,
                 'variant_sku' => $cartItem->variant?->sku,
+                'variant_stock' => $cartItem->variant?->stock,
             ];
         })->toArray();
     }
@@ -288,6 +289,7 @@ class CartService
                     'variant_id' => $variant?->id,
                     'variant_size' => $variant?->size,
                     'variant_sku' => $variant?->sku,
+                    'variant_stock' => $variant?->stock,
                 ];
             }
         }

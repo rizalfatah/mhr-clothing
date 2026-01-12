@@ -357,6 +357,20 @@ class CheckoutController extends Controller
             'product_variant_id' => 'nullable|exists:product_variants,id',
         ]);
 
+        // Check stock availability for the variant
+        if ($validated['product_variant_id']) {
+            $variant = \App\Models\ProductVariant::find($validated['product_variant_id']);
+
+            if ($variant && $validated['quantity'] > 0) {
+                if (!$variant->hasStock($validated['quantity'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Insufficient stock. Available: ' . $variant->stock,
+                    ], 400);
+                }
+            }
+        }
+
         $this->cartService->updateItem(
             $validated['product_id'],
             $validated['quantity'],

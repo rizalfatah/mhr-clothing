@@ -154,6 +154,8 @@
                 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect fill="%23e5e7eb" width="80" height="80"/%3E%3C/svg%3E';
 
             const variantId = item.variant_id ? item.variant_id : null;
+            const stock = item.variant_stock ?? 999; // Default to high number if no stock info
+            const isAtMaxStock = item.quantity >= stock;
 
             return `
                 <div class="flex gap-4 pb-4 border-b border-gray-200">
@@ -161,6 +163,7 @@
                     <div class="flex-1">
                         <h3 class="font-semibold text-sm mb-1">${item.name}</h3>
                         ${item.variant_size ? `<p class="text-xs text-gray-600 mt-0.5">Size: <span class="font-medium">${item.variant_size}</span></p>` : ''}
+                        ${stock < 10 ? `<p class="text-xs text-orange-600 mt-0.5">Only ${stock} left in stock</p>` : ''}
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center gap-2">
                                 <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1}, ${variantId})"
@@ -172,7 +175,9 @@
                                 </button>
                                 <span class="text-sm font-medium">${item.quantity}</span>
                                 <button onclick="updateCartQuantity(${item.id}, ${item.quantity + 1}, ${variantId})"
-                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100" aria-label="Increase quantity">
+                                    class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded ${isAtMaxStock ? 'opacity-50 cursor-not-allowed bg-gray-100' : 'hover:bg-gray-100'}" 
+                                    aria-label="Increase quantity"
+                                    ${isAtMaxStock ? 'disabled' : ''}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5" />
@@ -216,9 +221,13 @@
                     if (typeof window.updateCartCounter === 'function') {
                         window.updateCartCounter();
                     }
+                } else {
+                    // Show error message if stock is insufficient
+                    alert(data.message || 'Unable to update cart');
                 }
             } catch (error) {
                 console.error('Error updating cart:', error);
+                alert('An error occurred while updating the cart');
             }
         }
 
