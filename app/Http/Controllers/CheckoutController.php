@@ -43,6 +43,55 @@ class CheckoutController extends Controller
             return redirect()->route('catalog')->with('error', 'Your cart is empty');
         }
 
+        // Validate stock levels and adjust cart if needed
+        $stockAdjustments = [];
+        foreach ($items as $item) {
+            if ($item['variant_id']) {
+                $variant = \App\Models\ProductVariant::find($item['variant_id']);
+                if ($variant) {
+                    // Check if cart quantity exceeds available stock
+                    if ($item['quantity'] > $variant->stock) {
+                        // Adjust cart to match available stock
+                        if ($variant->stock > 0) {
+                            $this->cartService->updateItem(
+                                $item['id'],
+                                $variant->stock,
+                                $item['variant_id']
+                            );
+                            $stockAdjustments[] = [
+                                'product' => $item['name'],
+                                'size' => $item['variant_size'],
+                                'old_quantity' => $item['quantity'],
+                                'new_quantity' => $variant->stock,
+                            ];
+                        } else {
+                            // Remove item if out of stock
+                            $this->cartService->removeItem($item['id'], $item['variant_id']);
+                            $stockAdjustments[] = [
+                                'product' => $item['name'],
+                                'size' => $item['variant_size'],
+                                'old_quantity' => $item['quantity'],
+                                'new_quantity' => 0,
+                                'removed' => true,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        // Reload cart items after adjustments
+        $items = $this->cartService->getItems();
+
+        // Check if cart is empty after adjustments
+        if (empty($items)) {
+            $message = 'All items in your cart are out of stock.';
+            if (!empty($stockAdjustments)) {
+                $message .= ' Please check the catalog for available products.';
+            }
+            return redirect()->route('catalog')->with('error', $message);
+        }
+
         // Calculate totals
         $subtotal = 0;
         $cartItems = [];
@@ -79,7 +128,8 @@ class CheckoutController extends Controller
 
         $total = $subtotal - $discountAmount + $shippingCost;
 
-        return view('checkout', compact('cartItems', 'subtotal', 'shippingCost', 'total', 'appliedCoupon', 'discountAmount'));
+        // Pass stock adjustments to view
+        return view('checkout', compact('cartItems', 'subtotal', 'shippingCost', 'total', 'appliedCoupon', 'discountAmount', 'stockAdjustments'));
     }
 
     /**

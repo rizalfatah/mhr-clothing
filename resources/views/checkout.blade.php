@@ -44,6 +44,46 @@
                     </div>
                 @endif
 
+                @if (isset($stockAdjustments) && !empty($stockAdjustments))
+                    <div class="mb-6 bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-orange-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-orange-800 mb-2">
+                                    Cart quantities have been adjusted:
+                                </h3>
+                                <ul class="space-y-1 text-sm text-orange-700">
+                                    @foreach ($stockAdjustments as $adjustment)
+                                        <li>
+                                            @if (isset($adjustment['removed']) && $adjustment['removed'])
+                                                <strong>{{ $adjustment['product'] }}</strong>
+                                                @if ($adjustment['size'])
+                                                    (Size: {{ $adjustment['size'] }})
+                                                @endif
+                                                - <span class="font-medium">Removed (out of stock)</span>
+                                            @else
+                                                <strong>{{ $adjustment['product'] }}</strong>
+                                                @if ($adjustment['size'])
+                                                    (Size: {{ $adjustment['size'] }})
+                                                @endif
+                                                - Quantity adjusted from <span
+                                                    class="font-medium">{{ $adjustment['old_quantity'] }}</span>
+                                                to <span class="font-medium">{{ $adjustment['new_quantity'] }}</span>
+                                                (only {{ $adjustment['new_quantity'] }} available)
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="grid lg:grid-cols-3 gap-8">
                     <!-- Left Column: Forms -->
                     <div class="lg:col-span-2 space-y-6">
@@ -154,7 +194,8 @@
                                     <label for="shipping_notes" class="block text-sm font-medium text-gray-700 mb-2">
                                         Shipping Notes (Optional)
                                     </label>
-                                    <textarea id="shipping_notes" name="shipping_notes" rows="2" placeholder="Example: Please contact before delivery"
+                                    <textarea id="shipping_notes" name="shipping_notes" rows="2"
+                                        placeholder="Example: Please contact before delivery"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent @error('shipping_notes') border-red-500 @enderror">{{ old('shipping_notes', auth()->check() && auth()->user()->addresses()->where('is_default', true)->first() ? auth()->user()->addresses()->where('is_default', true)->first()->notes : '') }}</textarea>
                                     @error('shipping_notes')
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
