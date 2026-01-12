@@ -48,7 +48,7 @@
             <span class="font-semibold" id="cart-subtotal">Rp 0</span>
         </div>
         <div class="flex justify-between items-center text-sm">
-            <span class="text-gray-600">Ongkir</span>
+            <span class="text-gray-600">Shipping</span>
             <span class="font-semibold" id="cart-shipping">Rp 0</span>
         </div>
         <div class="border-t pt-4 flex justify-between items-center">
@@ -59,12 +59,12 @@
         <!-- Checkout Button -->
         <a href="{{ route('checkout.index') }}"
             class="block w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition text-center">
-            Lanjut ke Checkout
+            Proceed to Checkout
         </a>
         <button id="continue-shopping"
             class="w-full border border-gray-300 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
             aria-label="Continue shopping">
-            Lanjut Belanja
+            Continue Shopping
         </button>
     </div>
 </div>
@@ -137,7 +137,7 @@
 
                     // Update totals
                     document.getElementById('cart-subtotal').textContent = formatPrice(data.subtotal);
-                    document.getElementById('cart-shipping').textContent = data.shipping_cost === 0 ? 'GRATIS' :
+                    document.getElementById('cart-shipping').textContent = data.shipping_cost === 0 ? 'FREE' :
                         formatPrice(data.shipping_cost);
                     document.getElementById('cart-total').textContent = formatPrice(data.total);
                 }
