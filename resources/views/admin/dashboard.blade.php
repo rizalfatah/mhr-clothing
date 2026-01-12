@@ -232,6 +232,245 @@
     </div>
     <!-- End Order Statistics Section -->
 
+    <!-- Inventory Statistics Section -->
+    <div class="mt-6">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200 mb-4">Inventory Alerts</h2>
+        <div class="grid sm:grid-cols-2 gap-4 sm:gap-6">
+            <!-- Low Stock Count -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-800/30 dark:text-orange-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                </path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Low Stock Variants
+                        </p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($inventory_stats['low_stock_count']) }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-neutral-500">Stock ≤ 10 units</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Out of Stock Count -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-red-100 text-red-600 dark:bg-red-800/30 dark:text-red-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Out of Stock
+                            Variants</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($inventory_stats['out_of_stock_count']) }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-neutral-500">Needs restocking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Inventory Statistics Section -->
+
+    <!-- Low Stock Products Alert Table -->
+    @if ($low_stock_products->count() > 0)
+        <div class="mt-6">
+            <div class="flex flex-col">
+                <div class="-m-1.5 overflow-x-auto">
+                    <div class="p-1.5 min-w-full inline-block align-middle">
+                        <div
+                            class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
+                            <!-- Header -->
+                            <div
+                                class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700">
+                                <div>
+                                    <h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                                        Low Stock Alert
+                                    </h2>
+                                    <p class="text-sm text-gray-600 dark:text-neutral-400">
+                                        Products with variants running low on stock (≤ 10 units)
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <a href="{{ route('admin.products.index') }}"
+                                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
+                                        View All Products
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- End Header -->
+
+                            <!-- Table -->
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                                <thead class="bg-gray-50 dark:bg-neutral-800">
+                                    <tr>
+                                        <th scope="col" class="ps-6 py-3 text-start">
+                                            <span
+                                                class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">Product</span>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-start">
+                                            <span
+                                                class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">Variant</span>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-start">
+                                            <span
+                                                class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">Stock</span>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-start">
+                                            <span
+                                                class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">Status</span>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-end">
+                                            <span
+                                                class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">Action</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                                    @foreach ($low_stock_products as $product)
+                                        @foreach ($product->variants as $variant)
+                                            <tr>
+                                                <td class="size-px whitespace-nowrap">
+                                                    <div class="ps-6 py-3">
+                                                        <div class="flex items-center gap-x-3">
+                                                            @if ($product->primaryImage)
+                                                                <img class="inline-block size-[38px] rounded-lg object-cover"
+                                                                    src="{{ Storage::url($product->primaryImage->image_path) }}"
+                                                                    alt="{{ $product->name }}">
+                                                            @else
+                                                                <span
+                                                                    class="inline-flex items-center justify-center size-[38px] rounded-lg bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200">
+                                                                    <svg class="shrink-0 size-5"
+                                                                        xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                                        stroke="currentColor" stroke-width="2"
+                                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                                        <rect width="18" height="18" x="3" y="3"
+                                                                            rx="2" ry="2" />
+                                                                        <circle cx="9" cy="9" r="2" />
+                                                                        <path
+                                                                            d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                                                                    </svg>
+                                                                </span>
+                                                            @endif
+                                                            <div class="grow">
+                                                                <span
+                                                                    class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $product->name }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="size-px whitespace-nowrap">
+                                                    <div class="px-6 py-3">
+                                                        <span class="text-sm text-gray-600 dark:text-neutral-400">
+                                                            @if ($variant->size && $variant->color)
+                                                                {{ $variant->size }} / {{ $variant->color }}
+                                                            @elseif($variant->size)
+                                                                {{ $variant->size }}
+                                                            @elseif($variant->color)
+                                                                {{ $variant->color }}
+                                                            @else
+                                                                Default
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td class="size-px whitespace-nowrap">
+                                                    <div class="px-6 py-3">
+                                                        <span
+                                                            class="inline-flex items-center gap-1.5 py-1 px-2 rounded-lg text-xs font-medium 
+                                                            @if ($variant->stock <= 3) bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-500
+                                                            @elseif($variant->stock <= 5) bg-orange-100 text-orange-800 dark:bg-orange-500/10 dark:text-orange-500
+                                                            @else bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-500 @endif">
+                                                            {{ $variant->stock }} units
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td class="size-px whitespace-nowrap">
+                                                    <div class="px-6 py-3">
+                                                        @if ($variant->stock <= 3)
+                                                            <span
+                                                                class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
+                                                                <svg class="size-3" xmlns="http://www.w3.org/2000/svg"
+                                                                    width="16" height="16" fill="currentColor"
+                                                                    viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                                                </svg>
+                                                                Critical
+                                                            </span>
+                                                        @elseif($variant->stock <= 5)
+                                                            <span
+                                                                class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full dark:bg-orange-500/10 dark:text-orange-500">
+                                                                <svg class="size-3" xmlns="http://www.w3.org/2000/svg"
+                                                                    width="16" height="16" fill="currentColor"
+                                                                    viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                                                </svg>
+                                                                Urgent
+                                                            </span>
+                                                        @else
+                                                            <span
+                                                                class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full dark:bg-yellow-500/10 dark:text-yellow-500">
+                                                                <svg class="size-3" xmlns="http://www.w3.org/2000/svg"
+                                                                    width="16" height="16" fill="currentColor"
+                                                                    viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                                    <path
+                                                                        d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                                                                </svg>
+                                                                Low
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="size-px whitespace-nowrap">
+                                                    <div class="px-6 py-1.5 flex justify-end gap-x-2">
+                                                        <a href="{{ route('admin.products.edit', $product) }}"
+                                                            class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium dark:text-blue-500">
+                                                            Restock
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <!-- End Table -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    <!-- End Low Stock Products Alert Table -->
+
     <!-- Recent Products -->
     <div class="mt-6">
         <div class="flex flex-col">

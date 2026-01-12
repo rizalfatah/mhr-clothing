@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -37,11 +38,38 @@ class DashboardController extends Controller
             ])->count(),
         ];
 
+        // Low Stock Threshold
+        $low_stock_threshold = 10;
+
+        // Inventory Statistics
+        $inventory_stats = [
+            'low_stock_count' => ProductVariant::where('stock', '>', 0)
+                ->where('stock', '<=', $low_stock_threshold)
+                ->count(),
+            'out_of_stock_count' => ProductVariant::where('stock', 0)
+                ->orWhere('is_available', false)
+                ->count(),
+        ];
+
+        // Get products with low stock variants
+        $low_stock_products = Product::with(['variants' => function ($query) use ($low_stock_threshold) {
+            $query->where('stock', '>', 0)
+                ->where('stock', '<=', $low_stock_threshold)
+                ->orderBy('stock', 'asc');
+        }, 'primaryImage'])
+            ->whereHas('variants', function ($query) use ($low_stock_threshold) {
+                $query->where('stock', '>', 0)
+                    ->where('stock', '<=', $low_stock_threshold);
+            })
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+
         $recent_products = Product::with(['category', 'primaryImage'])
             ->latest()
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'order_stats', 'recent_products'));
+        return view('admin.dashboard', compact('stats', 'order_stats', 'inventory_stats', 'low_stock_products', 'recent_products'));
     }
 }
