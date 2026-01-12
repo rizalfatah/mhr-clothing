@@ -11,6 +11,7 @@ use App\Services\ActivityLogger;
 use App\Services\CartService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -318,11 +319,29 @@ class CheckoutController extends Controller
             ], 400);
         }
 
-        // Check stock availability
-        if (!$variant->hasStock($validated['quantity'])) {
+        // Get current quantity in cart for this variant
+        $currentCartQuantity = 0;
+        if (Auth::check()) {
+            $cartItem = \App\Models\CartItem::where('user_id', Auth::id())
+                ->where('product_id', $validated['product_id'])
+                ->where('product_variant_id', $validated['product_variant_id'])
+                ->first();
+            $currentCartQuantity = $cartItem ? $cartItem->quantity : 0;
+        } else {
+            $cart = Session::get('cart', []);
+            $key = $validated['product_id'] . '_' . $validated['product_variant_id'];
+            $currentCartQuantity = isset($cart[$key]) ? $cart[$key]['quantity'] : 0;
+        }
+
+        // Check if total quantity (current + new) exceeds stock
+        $totalQuantity = $currentCartQuantity + $validated['quantity'];
+        if (!$variant->hasStock($totalQuantity)) {
+            $remainingStock = max(0, $variant->stock - $currentCartQuantity);
             return response()->json([
                 'success' => false,
-                'message' => 'Insufficient stock for selected size. Available: ' . $variant->stock,
+                'message' => $remainingStock > 0
+                    ? "You can only add {$remainingStock} more of this item. Current cart has {$currentCartQuantity}, available stock: {$variant->stock}"
+                    : "This item is already at maximum quantity in your cart. Available stock: {$variant->stock}",
             ], 400);
         }
 

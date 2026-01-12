@@ -474,7 +474,10 @@
                     // Show cart notification or badge update if you have one
                     console.log('Product added to cart:', data);
                 } else {
-                    throw new Error(data.message || 'Failed to add to cart');
+                    // Show error message from backend
+                    alert(data.message || 'Failed to add to cart');
+                    this.innerHTML = originalContent;
+                    this.disabled = false;
                 }
             } catch (error) {
                 console.error('Error adding to cart:', error);
