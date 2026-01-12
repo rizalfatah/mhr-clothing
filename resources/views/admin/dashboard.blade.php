@@ -107,6 +107,131 @@
     </div>
     <!-- End Stats Grid -->
 
+    <!-- Order Statistics Section -->
+    <div class="mt-6">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200 mb-4">Order Statistics</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+            <!-- Total Orders -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-800/30 dark:text-indigo-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Total Orders</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($order_stats['total_orders']) }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Orders -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-800/30 dark:text-yellow-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Pending Orders</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($order_stats['pending_orders']) }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Orders -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-800/30 dark:text-purple-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Processing</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($order_stats['processing_orders']) }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipped Orders -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-cyan-100 text-cyan-600 dark:bg-cyan-800/30 dark:text-cyan-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Shipped</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($order_stats['shipped_orders']) }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Orders -->
+            <div
+                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex items-center gap-x-3">
+                    <div class="shrink-0">
+                        <span
+                            class="inline-flex items-center justify-center size-12 rounded-lg bg-green-100 text-green-600 dark:bg-green-800/30 dark:text-green-500">
+                            <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="grow">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Completed</p>
+                        <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ number_format($order_stats['completed_orders']) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Order Statistics Section -->
+
     <!-- Recent Products -->
     <div class="mt-6">
         <div class="flex flex-col">
