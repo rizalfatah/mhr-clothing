@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -36,6 +37,64 @@ class DashboardController extends Controller
                 Order::STATUS_DELIVERED,
                 Order::STATUS_COMPLETED
             ])->count(),
+        ];
+
+        // Revenue Statistics (only from completed/delivered orders)
+        $completedStatuses = [Order::STATUS_DELIVERED, Order::STATUS_COMPLETED, Order::STATUS_PAYMENT_CONFIRMED];
+
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $startOfWeek = Carbon::now()->startOfWeek();
+
+        $revenue_stats = [
+            'today_revenue' => Order::whereIn('status', $completedStatuses)
+                ->whereDate('created_at', $today)
+                ->sum('total'),
+            'this_week_revenue' => Order::whereIn('status', $completedStatuses)
+                ->whereBetween('created_at', [$startOfWeek, Carbon::now()])
+                ->sum('total'),
+            'this_month_revenue' => Order::whereIn('status', $completedStatuses)
+                ->whereBetween('created_at', [$startOfMonth, Carbon::now()])
+                ->sum('total'),
+            'total_revenue' => Order::whereIn('status', $completedStatuses)
+                ->sum('total'),
+            'average_order_value' => Order::whereIn('status', $completedStatuses)
+                ->avg('total') ?? 0,
+        ];
+
+        // Daily Revenue for last 30 days (for chart)
+        $dailyRevenueData = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $revenue = Order::whereIn('status', $completedStatuses)
+                ->whereDate('created_at', $date)
+                ->sum('total');
+            $dailyRevenueData[] = [
+                'date' => $date->format('d M'),
+                'revenue' => (float) $revenue,
+            ];
+        }
+
+        // Monthly Revenue for last 12 months (for chart)
+        $monthlyRevenueData = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $revenue = Order::whereIn('status', $completedStatuses)
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->sum('total');
+            $monthlyRevenueData[] = [
+                'month' => $month->format('M Y'),
+                'revenue' => (float) $revenue,
+            ];
+        }
+
+        // Order Status Distribution (for pie chart)
+        $orderStatusData = [
+            ['status' => 'Pending', 'count' => $order_stats['pending_orders'], 'color' => '#6b7280'],
+            ['status' => 'Processing', 'count' => $order_stats['processing_orders'], 'color' => '#8b5cf6'],
+            ['status' => 'Shipped', 'count' => $order_stats['shipped_orders'], 'color' => '#06b6d4'],
+            ['status' => 'Completed', 'count' => $order_stats['completed_orders'], 'color' => '#10b981'],
         ];
 
         // Low Stock Threshold
@@ -70,6 +129,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'order_stats', 'inventory_stats', 'low_stock_products', 'recent_products'));
+        // Chart Data
+        $chartData = [
+            'dailyRevenue' => $dailyRevenueData,
+            'monthlyRevenue' => $monthlyRevenueData,
+            'orderStatus' => $orderStatusData,
+        ];
+
+        return view('admin.dashboard', compact(
+            'stats',
+            'order_stats',
+            'revenue_stats',
+            'inventory_stats',
+            'low_stock_products',
+            'recent_products',
+            'chartData'
+        ));
     }
 }
