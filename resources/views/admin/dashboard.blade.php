@@ -15,97 +15,95 @@
 
     <!-- Stats Grid -->
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
-        <!-- Card: Total Products -->
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="p-4 md:p-5">
-                <div class="flex items-center gap-x-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
-                        Total Produk
-                    </p>
-                </div>
-
-                <div class="mt-1 flex items-center gap-x-2">
-                    <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                        {{ $stats['total_products'] }}
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <!-- End Card -->
-
-        <!-- Card: Active Products -->
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="p-4 md:p-5">
-                <div class="flex items-center gap-x-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
-                        Produk Aktif
-                    </p>
-                </div>
-
-                <div class="mt-1 flex items-center gap-x-2">
-                    <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                        {{ $stats['active_products'] }}
-                    </h3>
+        <!-- Total Products -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+            <div class="flex items-center gap-x-3">
+                <div class="shrink-0">
                     <span
-                        class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full bg-green-100 text-green-900 dark:bg-green-800 dark:text-green-100">
-                        <svg class="inline-block size-4 self-center" xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                            <polyline points="16 7 22 7 22 13" />
+                        class="inline-flex items-center justify-center size-12 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-800/30 dark:text-blue-500">
+                        <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
                         </svg>
-                        <span class="inline-block text-xs font-medium">Aktif</span>
                     </span>
                 </div>
-            </div>
-        </div>
-        <!-- End Card -->
-
-        <!-- Card: Categories -->
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="p-4 md:p-5">
-                <div class="flex items-center gap-x-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
-                        Total Kategori
-                    </p>
-                </div>
-
-                <div class="mt-1 flex items-center gap-x-2">
-                    <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                        {{ $stats['total_categories'] }}
-                    </h3>
+                <div class="grow">
+                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Total Produk</p>
+                    <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        {{ number_format($stats['total_products']) }}</h3>
                 </div>
             </div>
         </div>
-        <!-- End Card -->
 
-        <!-- Card: Featured Products -->
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="p-4 md:p-5">
-                <div class="flex items-center gap-x-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
-                        Produk Unggulan
-                    </p>
-                </div>
-
-                <div class="mt-1 flex items-center gap-x-2">
-                    <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                        {{ $stats['featured_products'] }}
-                    </h3>
+        <!-- Active Products -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+            <div class="flex items-center gap-x-3">
+                <div class="shrink-0">
                     <span
-                        class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full bg-yellow-100 text-yellow-900 dark:bg-yellow-800 dark:text-yellow-100">
-                        <svg class="inline-block size-4 self-center" xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
+                        class="inline-flex items-center justify-center size-12 rounded-lg bg-green-100 text-green-600 dark:bg-green-800/30 dark:text-green-500">
+                        <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </span>
+                </div>
+                <div class="grow">
+                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Produk Aktif</p>
+                    <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        {{ number_format($stats['active_products']) }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Categories -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+            <div class="flex items-center gap-x-3">
+                <div class="shrink-0">
+                    <span
+                        class="inline-flex items-center justify-center size-12 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-800/30 dark:text-purple-500">
+                        <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                </div>
+                <div class="grow">
+                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Total Kategori</p>
+                    <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        {{ number_format($stats['total_categories']) }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 dark:bg-neutral-800 dark:border-neutral-700">
+            <div class="flex items-center gap-x-3">
+                <div class="shrink-0">
+                    <span
+                        class="inline-flex items-center justify-center size-12 rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-800/30 dark:text-yellow-500">
+                        <svg class="shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
                             <polygon
                                 points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                         </svg>
-                        <span class="inline-block text-xs font-medium">Unggulan</span>
                     </span>
+                </div>
+                <div class="grow">
+                    <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">Produk Unggulan</p>
+                    <h3 class="mt-1 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        {{ number_format($stats['featured_products']) }}</h3>
                 </div>
             </div>
         </div>
-        <!-- End Card -->
     </div>
     <!-- End Stats Grid -->
 
@@ -177,9 +175,10 @@
                                                     @else
                                                         <span
                                                             class="inline-flex items-center justify-center size-[38px] rounded-lg bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200">
-                                                            <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg"
-                                                                width="24" height="24" viewBox="0 0 24 24"
-                                                                fill="none" stroke="currentColor" stroke-width="2"
+                                                            <svg class="shrink-0 size-5"
+                                                                xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
                                                                 stroke-linecap="round" stroke-linejoin="round">
                                                                 <rect width="18" height="18" x="3" y="3"
                                                                     rx="2" ry="2" />
