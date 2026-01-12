@@ -316,7 +316,7 @@
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         @foreach ($relatedProducts as $relatedProduct)
-                            <x-product-card :name="$relatedProduct->name" :price="number_format($relatedProduct->selling_price, 0, ',', '.')" :oldPrice="number_format($relatedProduct->original_price, 0, ',', '.')" :image="$relatedProduct->primaryImage
+                            <x-related-product-card :name="$relatedProduct->name" :price="number_format($relatedProduct->selling_price, 0, ',', '.')" :oldPrice="number_format($relatedProduct->original_price, 0, ',', '.')" :image="$relatedProduct->primaryImage
                                 ? 'storage/' . $relatedProduct->primaryImage->image_path
                                 : 'images/products/product-1.png'"
                                 :link="route('products.show', $relatedProduct->slug)" :id="$relatedProduct->id" />
