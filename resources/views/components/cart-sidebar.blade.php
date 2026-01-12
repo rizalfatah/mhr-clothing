@@ -153,6 +153,8 @@
             const imageUrl = item.image ? `{{ asset('storage') }}/${item.image}` :
                 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect fill="%23e5e7eb" width="80" height="80"/%3E%3C/svg%3E';
 
+            const variantId = item.variant_id ? item.variant_id : null;
+
             return `
                 <div class="flex gap-4 pb-4 border-b border-gray-200">
                     <img src="${imageUrl}" alt="${item.name}" class="w-20 h-20 object-cover rounded">
@@ -161,7 +163,7 @@
                         ${item.variant_size ? `<p class="text-xs text-gray-600 mt-0.5">Size: <span class="font-medium">${item.variant_size}</span></p>` : ''}
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center gap-2">
-                                <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})"
+                                <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1}, ${variantId})"
                                     class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100" aria-label="Decrease quantity">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-3 h-3">
@@ -169,7 +171,7 @@
                                     </svg>
                                 </button>
                                 <span class="text-sm font-medium">${item.quantity}</span>
-                                <button onclick="updateCartQuantity(${item.id}, ${item.quantity + 1})"
+                                <button onclick="updateCartQuantity(${item.id}, ${item.quantity + 1}, ${variantId})"
                                     class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100" aria-label="Increase quantity">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-3 h-3">
@@ -181,7 +183,7 @@
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${formatPrice(item.price)} x ${item.quantity}</p>
                     </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition" aria-label="Remove item from cart">
+                    <button onclick="removeFromCart(${item.id}, ${variantId})" class="text-gray-400 hover:text-red-500 transition" aria-label="Remove item from cart">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                             stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -192,7 +194,7 @@
         }
 
         // Update cart item quantity
-        async function updateCartQuantity(productId, quantity) {
+        async function updateCartQuantity(productId, quantity, variantId = null) {
             try {
                 const response = await fetch('{{ route('cart.update') }}', {
                     method: 'PUT',
@@ -202,7 +204,8 @@
                     },
                     body: JSON.stringify({
                         product_id: productId,
-                        quantity: quantity
+                        quantity: quantity,
+                        product_variant_id: variantId
                     })
                 });
 
@@ -220,7 +223,7 @@
         }
 
         // Remove item from cart
-        async function removeFromCart(productId) {
+        async function removeFromCart(productId, variantId = null) {
             if (!confirm('Remove product from cart?')) return;
 
             try {
@@ -231,7 +234,8 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        product_id: productId
+                        product_id: productId,
+                        product_variant_id: variantId
                     })
                 });
 

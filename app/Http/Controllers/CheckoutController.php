@@ -354,9 +354,14 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:0',
+            'product_variant_id' => 'nullable|exists:product_variants,id',
         ]);
 
-        $this->cartService->updateItem($validated['product_id'], $validated['quantity']);
+        $this->cartService->updateItem(
+            $validated['product_id'],
+            $validated['quantity'],
+            $validated['product_variant_id'] ?? null
+        );
 
         // Recalculate everything for response if needed, 
         // but for now simple response is fine, frontend might reload or request cart data
@@ -374,6 +379,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'product_variant_id' => 'nullable|exists:product_variants,id',
         ]);
 
         // Log activity if user is authenticated before removing
@@ -384,7 +390,10 @@ class CheckoutController extends Controller
             }
         }
 
-        $this->cartService->removeItem($validated['product_id']);
+        $this->cartService->removeItem(
+            $validated['product_id'],
+            $validated['product_variant_id'] ?? null
+        );
 
         return response()->json([
             'success' => true,

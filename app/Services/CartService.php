@@ -25,24 +25,24 @@ class CartService
     /**
      * Update item quantity in cart
      */
-    public function updateItem(int $productId, int $quantity): void
+    public function updateItem(int $productId, int $quantity, ?int $variantId = null): void
     {
         if (Auth::check()) {
-            $this->updateItemInDatabase($productId, $quantity);
+            $this->updateItemInDatabase($productId, $quantity, $variantId);
         } else {
-            $this->updateItemInSession($productId, $quantity);
+            $this->updateItemInSession($productId, $quantity, $variantId);
         }
     }
 
     /**
      * Remove item from cart
      */
-    public function removeItem(int $productId): void
+    public function removeItem(int $productId, ?int $variantId = null): void
     {
         if (Auth::check()) {
-            $this->removeItemFromDatabase($productId);
+            $this->removeItemFromDatabase($productId, $variantId);
         } else {
-            $this->removeItemFromSession($productId);
+            $this->removeItemFromSession($productId, $variantId);
         }
     }
 
@@ -165,15 +165,16 @@ class CartService
     /**
      * Update item in database (for authenticated users)
      */
-    protected function updateItemInDatabase(int $productId, int $quantity): void
+    protected function updateItemInDatabase(int $productId, int $quantity, ?int $variantId = null): void
     {
         if ($quantity <= 0) {
-            $this->removeItemFromDatabase($productId);
+            $this->removeItemFromDatabase($productId, $variantId);
             return;
         }
 
         $cartItem = CartItem::where('user_id', Auth::id())
             ->where('product_id', $productId)
+            ->where('product_variant_id', $variantId)
             ->first();
 
         if ($cartItem) {
@@ -185,15 +186,16 @@ class CartService
     /**
      * Update item in session (for guest users)
      */
-    protected function updateItemInSession(int $productId, int $quantity): void
+    protected function updateItemInSession(int $productId, int $quantity, ?int $variantId = null): void
     {
         $cart = Session::get('cart', []);
+        $key = $productId . '_' . $variantId;
 
         if ($quantity <= 0) {
-            unset($cart[$productId]);
+            unset($cart[$key]);
         } else {
-            if (isset($cart[$productId])) {
-                $cart[$productId]['quantity'] = $quantity;
+            if (isset($cart[$key])) {
+                $cart[$key]['quantity'] = $quantity;
             }
         }
 
@@ -203,20 +205,22 @@ class CartService
     /**
      * Remove item from database (for authenticated users)
      */
-    protected function removeItemFromDatabase(int $productId): void
+    protected function removeItemFromDatabase(int $productId, ?int $variantId = null): void
     {
         CartItem::where('user_id', Auth::id())
             ->where('product_id', $productId)
+            ->where('product_variant_id', $variantId)
             ->delete();
     }
 
     /**
      * Remove item from session (for guest users)
      */
-    protected function removeItemFromSession(int $productId): void
+    protected function removeItemFromSession(int $productId, ?int $variantId = null): void
     {
         $cart = Session::get('cart', []);
-        unset($cart[$productId]);
+        $key = $productId . '_' . $variantId;
+        unset($cart[$key]);
         Session::put('cart', $cart);
     }
 
