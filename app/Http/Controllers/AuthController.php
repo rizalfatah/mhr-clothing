@@ -69,11 +69,16 @@ class AuthController extends Controller
 
             // Check if email is verified
             if (!$user->hasVerifiedEmail()) {
+                $userEmail = $user->email;
                 auth()->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('verification.notice')
+                // Store email in session for resend verification on login page
+                session(['unverified_email' => $userEmail]);
+
+                return redirect()->route('login')
+                    ->with('email_not_verified', true)
                     ->withErrors(['email' => 'Please verify your email address before logging in.']);
             }
 
@@ -166,5 +171,81 @@ class AuthController extends Controller
         RateLimiter::hit($key, 60); // 60 seconds
 
         return back()->with('success', 'Verification email sent! Please check your inbox.');
+    }
+
+    /**
+     * Resend verification email for guests (from login page)
+     */
+    public function resendVerificationGuest(Request $request)
+    {
+        $email = session('unverified_email');
+
+        if (!$email) {
+            return redirect()->route('login')
+                ->withErrors(['email' => 'No pending verification found. Please try logging in again.']);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            session()->forget('unverified_email');
+            return redirect()->route('login')
+                ->withErrors(['email' => 'User not found. Please try logging in again.']);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            session()->forget('unverified_email');
+            return redirect()->route('login')
+                ->with('success', 'Your email is already verified. Please login.');
+        }
+
+        // Rate limiting
+        $key = 'resend-verification:' . $user->id;
+
+        if (RateLimiter::tooManyAttempts($key, 1)) {
+            $seconds = RateLimiter::availableIn($key);
+            return redirect()->route('login')
+                ->with('email_not_verified', true)
+                ->withErrors(['email' => "Please wait {$seconds} seconds before requesting another verification email."]);
+        }
+
+        $user->sendEmailVerificationNotification();
+        RateLimiter::hit($key, 60);
+
+        return redirect()->route('login')
+            ->with('email_not_verified', true)
+            ->with('success', 'Verification email sent! Please check your inbox.');
+    }
+
+    /**
+     * Verify email address (works for both guests and authenticated users)
+     */
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+
+        // Verify the hash matches the user's email
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Invalid verification link.']);
+        }
+
+        // Check if already verified
+        if ($user->hasVerifiedEmail()) {
+            // Clear unverified email session if exists
+            session()->forget('unverified_email');
+
+            return redirect()->route('login')
+                ->with('success', 'Your email is already verified. Please login.');
+        }
+
+        // Mark email as verified
+        $user->markEmailAsVerified();
+
+        // Clear unverified email session if exists
+        session()->forget('unverified_email');
+
+        return redirect()->route('login')
+            ->with('success', 'Your email has been verified successfully! You can now login.');
     }
 };

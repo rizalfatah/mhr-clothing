@@ -48,6 +48,74 @@
                         </div>
                     @endif
 
+                    <!-- Email Not Verified Section -->
+                    @if (session('email_not_verified'))
+                        <div class="mb-6 space-y-4">
+                            <!-- Error Message -->
+                            @if ($errors->has('email'))
+                                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-red-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <p class="text-sm text-red-700">{{ $errors->first('email') }}</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Email Icon -->
+                            <div class="text-center">
+                                <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary-500"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Verification Instructions -->
+                            <div class="bg-primary-50 rounded-lg p-4">
+                                <h3 class="font-semibold text-primary-900 mb-2 flex items-center">
+                                    <span
+                                        class="inline-flex items-center justify-center w-6 h-6 bg-primary-500 text-white text-xs font-bold rounded-full mr-2">!</span>
+                                    Email Verification Required
+                                </h3>
+                                <p class="text-sm text-primary-700 mb-3">
+                                    We've sent a verification link to your email address. Please check your inbox and click
+                                    the
+                                    link to verify your account before logging in.
+                                </p>
+
+                                <form method="POST" action="{{ route('verification.resend.guest') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full bg-primary-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-500 focus:ring-opacity-30 transition-all duration-200 transform hover:scale-[1.02]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 mr-2"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Resend Verification Email
+                                    </button>
+                                </form>
+                            </div>
+
+                            <p class="text-center text-xs text-primary-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 mr-1"
+                                    fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Check your spam folder if you don't see the email
+                            </p>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('login.auth') }}" class="space-y-6" id="loginForm">
                         @csrf
 

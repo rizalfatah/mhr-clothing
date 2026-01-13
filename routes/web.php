@@ -22,6 +22,7 @@ Route::middleware('guest')->group(function () {
         Route::post('/login', 'authenticate')->name('login.auth');
         Route::get('/register', 'register')->name('register');
         Route::post('/register', 'store')->name('register.store');
+        Route::post('/resend-verification', 'resendVerificationGuest')->name('verification.resend.guest');
     });
 
     // Admin Invite Acceptance (public routes for guests)
@@ -42,11 +43,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.resend');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-
-        return redirect()->route('account')->with('success', 'Your email has been verified successfully!');
-    })->middleware('signed')->name('verification.verify');
+    Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+        ->middleware('signed')
+        ->name('verification.verify')
+        ->withoutMiddleware('auth');
 
     // Profile Routes
     Route::controller(\App\Http\Controllers\ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
