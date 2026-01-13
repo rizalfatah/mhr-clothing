@@ -1,0 +1,113 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Verifikasi Email')
+@section('breadcrumb', 'Verifikasi Email')
+
+@section('content')
+    <!-- Page Header -->
+    <div class="mb-5">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Ganti Password</h1>
+        <p class="text-sm text-gray-600 dark:text-neutral-400">Masukkan kode verifikasi yang dikirim ke email Anda</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="mb-6">
+        <div class="flex items-center gap-x-2">
+            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white text-sm font-semibold">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+            </div>
+            <div class="text-sm text-gray-500 dark:text-neutral-400">Verifikasi Password</div>
+            <div class="flex-1 h-0.5 bg-blue-600 mx-2"></div>
+            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold">
+                2</div>
+            <div class="text-sm font-medium text-gray-800 dark:text-white">Verifikasi Email</div>
+            <div class="flex-1 h-0.5 bg-gray-200 dark:bg-neutral-700 mx-2"></div>
+            <div
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 dark:bg-neutral-700 text-gray-500 dark:text-neutral-400 text-sm font-semibold">
+                3</div>
+            <div class="text-sm text-gray-500 dark:text-neutral-400">Password Baru</div>
+        </div>
+    </div>
+
+    <!-- Verification Form -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-x-2">
+                <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                Masukkan Kode Verifikasi
+            </h2>
+        </div>
+
+        <div class="p-6">
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-blue-700 dark:text-blue-300">
+                            Kode verifikasi telah dikirim ke <strong>{{ auth()->user()->email }}</strong>.
+                            Kode ini berlaku selama 10 menit.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('admin.profile.password.verify-code') }}">
+                @csrf
+
+                <div class="mb-4">
+                    <label for="verification_code"
+                        class="block text-sm font-medium mb-2 text-gray-700 dark:text-neutral-300">
+                        Kode Verifikasi (6 digit)
+                    </label>
+                    <input type="text" id="verification_code" name="verification_code"
+                        class="py-3 px-4 block w-full border-gray-200 rounded-lg text-center tracking-[0.5em] font-mono text-xl focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                        placeholder="000000" maxlength="6" required autofocus
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    @error('verification_code')
+                        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-sm text-gray-500 dark:text-neutral-400">
+                        Tidak menerima kode?
+                    </p>
+                    <a href="{{ route('admin.profile.password.resend') }}"
+                        class="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                        Kirim Ulang Kode
+                    </a>
+                </div>
+
+                <div class="flex justify-end gap-x-2">
+                    <a href="{{ route('admin.profile.password.edit') }}"
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+                        Kembali
+                    </a>
+                    <button type="submit"
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                        Verifikasi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection

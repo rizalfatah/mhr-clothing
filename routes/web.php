@@ -108,6 +108,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('coupons/bulk-generate', [CouponController::class, 'storeBulkGenerate'])->name('coupons.bulk-store');
     Route::resource('coupons', CouponController::class);
 
+    // Admin Profile Routes (Password Change with Email Verification)
+    Route::prefix('profile')->name('profile.')->controller(\App\Http\Controllers\Admin\ProfileController::class)->group(function () {
+        Route::get('/password', 'edit')->name('password.edit');
+        Route::post('/password/send-code', 'sendVerificationCode')->name('password.send-code');
+        Route::get('/password/verify', 'showVerifyForm')->name('password.verify');
+        Route::post('/password/verify', 'verifyCode')->name('password.verify-code');
+        Route::get('/password/resend', 'resendCode')->name('password.resend');
+        Route::get('/password/change', 'showChangeForm')->name('password.change');
+        Route::put('/password', 'updatePassword')->name('password.update');
+    });
+
     // Admin Invite Routes
     Route::resource('invites', AdminInviteController::class)->only(['index', 'create', 'store']);
     Route::delete('invites/{invite}/revoke', [AdminInviteController::class, 'revoke'])->name('invites.revoke');
