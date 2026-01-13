@@ -250,11 +250,11 @@
                         </li>
 
                         <!-- User Management -->
-                        <li class="hs-accordion {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                        <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'active' : '' }}"
                             id="users-accordion">
                             <button type="button"
-                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
-                                aria-expanded="{{ request()->routeIs('admin.users.*') ? 'true' : 'false' }}"
+                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                aria-expanded="{{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'true' : 'false' }}"
                                 aria-controls="users-accordion-child">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -282,7 +282,7 @@
                             </button>
 
                             <div id="users-accordion-child"
-                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') ? '' : 'hidden' }}"
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? '' : 'hidden' }}"
                                 role="region" aria-labelledby="users-accordion">
                                 <ul class="ps-8 pt-1 space-y-1">
                                     <li>
@@ -295,6 +295,12 @@
                                         <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.users.customers') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.users.customers') }}">
                                             Customer
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                            href="{{ route('admin.invites.index') }}">
+                                            Invite Admin
                                         </a>
                                     </li>
                                 </ul>

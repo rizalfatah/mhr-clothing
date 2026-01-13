@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminInviteController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StockController;
@@ -22,6 +23,10 @@ Route::middleware('guest')->group(function () {
         Route::get('/register', 'register')->name('register');
         Route::post('/register', 'store')->name('register.store');
     });
+
+    // Admin Invite Acceptance (public routes for guests)
+    Route::get('/admin/invite/accept/{token}', [AdminInviteController::class, 'showAccept'])->name('admin.invite.accept');
+    Route::post('/admin/invite/accept/{token}', [AdminInviteController::class, 'accept'])->name('admin.invite.accept.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -102,6 +107,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('coupons/bulk-generate', [CouponController::class, 'showBulkGenerate'])->name('coupons.bulk-generate');
     Route::post('coupons/bulk-generate', [CouponController::class, 'storeBulkGenerate'])->name('coupons.bulk-store');
     Route::resource('coupons', CouponController::class);
+
+    // Admin Invite Routes
+    Route::resource('invites', AdminInviteController::class)->only(['index', 'create', 'store']);
+    Route::delete('invites/{invite}/revoke', [AdminInviteController::class, 'revoke'])->name('invites.revoke');
 });
 
 
