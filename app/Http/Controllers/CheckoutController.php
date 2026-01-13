@@ -264,7 +264,7 @@ class CheckoutController extends Controller
             $whatsappUrl = $this->generateWhatsAppUrl($order);
 
             // Redirect to success page with WhatsApp URL
-            return redirect()->route('checkout.success', $order->id)->with('whatsapp_url', $whatsappUrl);
+            return redirect()->route('checkout.success', $order->uuid)->with('whatsapp_url', $whatsappUrl);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -274,9 +274,9 @@ class CheckoutController extends Controller
     /**
      * Show success page
      */
-    public function success($orderId)
+    public function success($orderUuid)
     {
-        $order = Order::with(['couponUsage.coupon'])->findOrFail($orderId);
+        $order = Order::with(['couponUsage.coupon'])->where('uuid', $orderUuid)->firstOrFail();
         $whatsappUrl = $this->generateWhatsAppUrl($order);
 
         return view('checkout-success', compact('order', 'whatsappUrl'));
