@@ -135,7 +135,7 @@
                 </div>
 
                 <!-- WhatsApp CTA -->
-                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-8 text-center mb-6">
+                <div class="bg-green-600 rounded-lg shadow-lg p-8 text-center mb-6">
                     <div class="flex justify-center mb-4">
                         <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path
