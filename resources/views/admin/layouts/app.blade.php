@@ -87,7 +87,7 @@
                     <ul class="flex flex-col space-y-1">
                         <!-- Dashboard -->
                         <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-700 dark:text-white {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 href="{{ route('admin.dashboard') }}">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -103,7 +103,7 @@
                         <li class="hs-accordion {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
                             id="products-accordion">
                             <button type="button"
-                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.products.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.products.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 aria-expanded="{{ request()->routeIs('admin.products.*') ? 'true' : 'false' }}"
                                 aria-controls="products-accordion-child">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -136,13 +136,13 @@
                                 role="region" aria-labelledby="products-accordion">
                                 <ul class="ps-8 pt-1 space-y-1">
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.products.index') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.products.index') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.products.index') }}">
                                             Semua Produk
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.products.create') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.products.create') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.products.create') }}">
                                             Tambah Produk Baru
                                         </a>
@@ -153,7 +153,7 @@
 
                         <!-- Stock -->
                         <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.stock.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.stock.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 href="{{ route('admin.stock.index') }}">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -169,7 +169,7 @@
 
                         <!-- Coupons -->
                         <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.coupons.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.coupons.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 href="{{ route('admin.coupons.index') }}">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -185,7 +185,7 @@
                         <li class="hs-accordion {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
                             id="categories-accordion">
                             <button type="button"
-                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.categories.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.categories.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 aria-expanded="{{ request()->routeIs('admin.categories.*') ? 'true' : 'false' }}"
                                 aria-controls="categories-accordion-child">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -219,13 +219,13 @@
                                 role="region" aria-labelledby="categories-accordion">
                                 <ul class="ps-8 pt-1 space-y-1">
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.categories.index') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.categories.index') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.categories.index') }}">
                                             Semua Kategori
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.categories.create') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.categories.create') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.categories.create') }}">
                                             Tambah Kategori Baru
                                         </a>
@@ -236,7 +236,7 @@
 
                         <!-- Transactions -->
                         <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.transactions.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.transactions.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 href="{{ route('admin.transactions.index') }}">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -253,7 +253,7 @@
                         <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'active' : '' }}"
                             id="users-accordion">
                             <button type="button"
-                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 aria-expanded="{{ request()->routeIs('admin.users.*') || request()->routeIs('admin.invites.*') ? 'true' : 'false' }}"
                                 aria-controls="users-accordion-child">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -286,19 +286,19 @@
                                 role="region" aria-labelledby="users-accordion">
                                 <ul class="ps-8 pt-1 space-y-1">
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.users.admins') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.admins') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.users.admins') }}">
                                             Admin
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.users.customers') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.users.customers') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.users.customers') }}">
                                             Customer
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 {{ request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                        <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.invites.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                             href="{{ route('admin.invites.index') }}">
                                             Invite Admin
                                         </a>
@@ -309,7 +309,7 @@
 
                         <!-- Settings -->
                         <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-200 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
                                 href="{{ route('admin.settings.index') }}">
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
