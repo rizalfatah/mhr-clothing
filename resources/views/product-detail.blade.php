@@ -492,6 +492,18 @@
             const productId = this.dataset.productId;
             const quantity = parseInt(quantityInput.value);
 
+            // Validate size selection
+            @if ($product->variants->count() > 0)
+                if (!selectedVariantId) {
+                    sizeError.classList.remove('hidden');
+                    sizeError.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    return;
+                }
+            @endif
+
             // Disable button and show loading state
             const originalContent = this.innerHTML;
             this.disabled = true;
@@ -503,16 +515,22 @@
             `;
 
             try {
+                const requestBody = {
+                    product_id: productId,
+                    quantity: quantity
+                };
+
+                @if ($product->variants->count() > 0)
+                    requestBody.product_variant_id = selectedVariantId;
+                @endif
+
                 const response = await fetch('{{ route('cart.add') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({
-                        product_id: productId,
-                        quantity: quantity
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 const data = await response.json();
