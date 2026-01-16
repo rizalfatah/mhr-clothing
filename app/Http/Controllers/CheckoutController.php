@@ -516,7 +516,7 @@ class CheckoutController extends Controller
             'discount' => $discountAmount,
             'shipping_cost' => $shippingCost,
             'total' => $total,
-            'count' => count($cartItems),
+            'count' => $this->cartService->getCount(),
         ]);
     }
 

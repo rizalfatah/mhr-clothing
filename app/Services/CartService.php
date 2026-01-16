@@ -59,15 +59,15 @@ class CartService
     }
 
     /**
-     * Get total number of unique items in cart
+     * Get total quantity of all items in cart
      */
     public function getCount(): int
     {
         if (Auth::check()) {
-            return Auth::user()->cartItems()->count();
+            return (int) Auth::user()->cartItems()->sum('quantity');
         } else {
             $cart = Session::get('cart', []);
-            return count($cart);
+            return array_sum(array_column($cart, 'quantity'));
         }
     }
 
