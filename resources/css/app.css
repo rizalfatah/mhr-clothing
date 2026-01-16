@@ -4,6 +4,9 @@
 @source "preline/dist/*.js";
 @import "preline/variants.css";
 
+/* Override dark mode to use class-based selector instead of media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Plugins */
 @plugin "@tailwindcss/forms";
 

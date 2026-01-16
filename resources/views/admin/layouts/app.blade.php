@@ -329,6 +329,43 @@
             <!-- Footer -->
             <div class="mt-auto">
                 <div class="p-3 border-t border-gray-200 dark:border-neutral-700">
+                    <!-- Theme Toggle Button -->
+                    <button type="button" id="theme-toggle"
+                        class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 dark:text-neutral-200 mb-1">
+                        <!-- Sun Icon (for light mode) -->
+                        <svg id="theme-toggle-light-icon" class="shrink-0 size-4 hidden"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="m4.93 4.93 1.41 1.41" />
+                            <path d="m17.66 17.66 1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="m6.34 17.66-1.41 1.41" />
+                            <path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                        <!-- Moon Icon (for dark mode) -->
+                        <svg id="theme-toggle-dark-icon" class="shrink-0 size-4 hidden"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                        </svg>
+                        <!-- System/Auto Icon (for system preference) -->
+                        <svg id="theme-toggle-system-icon" class="shrink-0 size-4 hidden"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" />
+                            <line x1="8" x2="16" y1="21" y2="21" />
+                            <line x1="12" x2="12" y1="17" y2="21" />
+                        </svg>
+                        <span id="theme-toggle-text">Mode Gelap</span>
+                    </button>
+
                     <button type="button"
                         class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 dark:text-neutral-200">
                         <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -399,6 +436,85 @@
                 stopOnFocus: true,
             }).showToast();
         }
+
+        // Theme Toggle Functionality
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleSystemIcon = document.getElementById('theme-toggle-system-icon');
+        const themeToggleText = document.getElementById('theme-toggle-text');
+
+        // Theme modes: 'light', 'dark', 'system'
+        function getCurrentTheme() {
+            return localStorage.getItem('color-theme') || 'system';
+        }
+
+        function getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'system') {
+                const systemTheme = getSystemTheme();
+                document.documentElement.classList.toggle('dark', systemTheme === 'dark');
+            } else {
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+            }
+        }
+
+        // Update icons and text based on current theme setting
+        function updateThemeUI() {
+            const theme = getCurrentTheme();
+
+            // Hide all icons first
+            themeToggleLightIcon.classList.add('hidden');
+            themeToggleDarkIcon.classList.add('hidden');
+            themeToggleSystemIcon.classList.add('hidden');
+
+            // Show appropriate icon and text for the CURRENT active mode
+            if (theme === 'light') {
+                themeToggleLightIcon.classList.remove('hidden');
+                themeToggleText.textContent = 'Mode Terang';
+            } else if (theme === 'dark') {
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleText.textContent = 'Mode Gelap';
+            } else { // system
+                themeToggleSystemIcon.classList.remove('hidden');
+                themeToggleText.textContent = 'Mode Sistem';
+            }
+        }
+
+        // Cycle through themes: light → dark → system → light
+        function cycleTheme() {
+            const currentTheme = getCurrentTheme();
+            let newTheme;
+
+            if (currentTheme === 'light') {
+                newTheme = 'dark';
+            } else if (currentTheme === 'dark') {
+                newTheme = 'system';
+            } else {
+                newTheme = 'light';
+            }
+
+            localStorage.setItem('color-theme', newTheme);
+            applyTheme(newTheme);
+            updateThemeUI();
+        }
+
+        // Listen for system theme changes (for system mode)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (getCurrentTheme() === 'system') {
+                applyTheme('system');
+            }
+        });
+
+        // Initialize theme
+        applyTheme(getCurrentTheme());
+        updateThemeUI();
+
+        // Toggle theme on button click
+        themeToggleBtn.addEventListener('click', cycleTheme);
 
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
