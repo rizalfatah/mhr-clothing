@@ -110,6 +110,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Admin Profile Routes (Password Change with Email Verification)
     Route::prefix('profile')->name('profile.')->controller(\App\Http\Controllers\Admin\ProfileController::class)->group(function () {
+        // Profile Management
+        Route::get('/', 'index')->name('index');
+        Route::put('/update', 'updateProfile')->name('update');
+
+        // Email Change with Dual Verification
+        Route::post('/email/initiate', 'initiateEmailChange')->name('email.initiate');
+        Route::get('/email/verify-old', 'showVerifyOldEmailForm')->name('email.verify-old');
+        Route::post('/email/verify-old', 'verifyOldEmail')->name('email.verify-old-code');
+        Route::get('/email/verify-new', 'showVerifyNewEmailForm')->name('email.verify-new');
+        Route::post('/email/verify-new', 'verifyNewEmail')->name('email.verify-new-code');
+        Route::get('/email/resend-old', 'resendOldEmailCode')->name('email.resend-old');
+        Route::get('/email/resend-new', 'resendNewEmailCode')->name('email.resend-new');
+
+        // Password Change
         Route::get('/password', 'edit')->name('password.edit');
         Route::post('/password/send-code', 'sendVerificationCode')->name('password.send-code');
         Route::get('/password/verify', 'showVerifyForm')->name('password.verify');
