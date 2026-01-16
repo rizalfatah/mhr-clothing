@@ -5,7 +5,7 @@
 @section('content')
     <style>
         .full-screen {
-            height: 100vh;
+            min-height: calc(100vh - var(--header-height, 0px));
             position: relative;
             display: flex;
             justify-content: center;

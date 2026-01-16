@@ -336,5 +336,15 @@
                 console.error('Error updating cart counter:', error);
             }
         };
+
+        // Set header height CSS variable for full-screen sections
+        function updateHeaderHeight() {
+            const header = document.querySelector('header');
+            if (header) {
+                document.documentElement.style.setProperty('--header-height', header.offsetHeight + 'px');
+            }
+        }
+        updateHeaderHeight();
+        window.addEventListener('resize', updateHeaderHeight);
     </script>
 @endpush
