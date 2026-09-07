@@ -3,6 +3,8 @@ import "preline";
 
 // DOM Content Loaded
 document.addEventListener("DOMContentLoaded", function () {
+    setupMasonryGrids();
+
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
@@ -56,6 +58,96 @@ document.addEventListener("DOMContentLoaded", function () {
     // Cart functionality
     // setupCart();
 });
+
+function setupMasonryGrids() {
+    document.querySelectorAll("[data-masonry-grid]").forEach((grid) => {
+        const items = Array.from(grid.querySelectorAll("[data-masonry-item]"));
+
+        if (items.length === 0) {
+            return;
+        }
+
+        let animationFrame;
+        let lastGridWidth;
+
+        const layoutItems = () => {
+            const gridStyles = window.getComputedStyle(grid);
+            const rowHeight = Number.parseFloat(gridStyles.gridAutoRows);
+            const rowGap = Number.parseFloat(gridStyles.rowGap);
+            const columnCount = gridStyles.gridTemplateColumns
+                .split(" ")
+                .filter(Boolean).length;
+
+            if (
+                !Number.isFinite(rowHeight) ||
+                !Number.isFinite(rowGap) ||
+                columnCount === 0
+            ) {
+                return;
+            }
+
+            items.forEach((item) => {
+                const content = item.querySelector("[data-masonry-content]");
+                const image = item.querySelector("img");
+
+                if (!content || !image) {
+                    return;
+                }
+
+                const imageWidth = Number.parseFloat(image.getAttribute("width"));
+                const imageHeight = Number.parseFloat(image.getAttribute("height"));
+                const aspectRatio = imageWidth / imageHeight;
+                const columnSpan =
+                    columnCount >= 4 && aspectRatio >= 1.25 ? 2 : 1;
+
+                item.style.gridColumnEnd = `span ${columnSpan}`;
+
+                const contentHeight = content.getBoundingClientRect().height;
+                const rowSpan = Math.max(
+                    1,
+                    Math.ceil((contentHeight + rowGap) / (rowHeight + rowGap)),
+                );
+
+                item.style.gridRowEnd = `span ${rowSpan}`;
+            });
+        };
+
+        const scheduleLayout = () => {
+            window.cancelAnimationFrame(animationFrame);
+            animationFrame = window.requestAnimationFrame(layoutItems);
+        };
+
+        items.forEach((item) => {
+            const image = item.querySelector("img");
+
+            if (!image) {
+                return;
+            }
+
+            image.addEventListener("load", scheduleLayout, { once: true });
+            image.addEventListener("error", scheduleLayout, { once: true });
+        });
+
+        if ("ResizeObserver" in window) {
+            const resizeObserver = new ResizeObserver((entries) => {
+                const gridWidth = entries[0].contentRect.width;
+
+                if (gridWidth === lastGridWidth) {
+                    return;
+                }
+
+                lastGridWidth = gridWidth;
+                scheduleLayout();
+            });
+
+            resizeObserver.observe(grid);
+        } else {
+            window.addEventListener("resize", scheduleLayout);
+        }
+
+        scheduleLayout();
+    });
+}
 
 // Create Scroll to Top Button
 function createScrollToTopButton() {

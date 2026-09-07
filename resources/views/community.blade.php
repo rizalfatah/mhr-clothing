@@ -12,58 +12,28 @@
             </div>
 
             <!-- Masonry Gallery Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
-                <!-- Image 1 -->
-                <div
-                    class="sm:row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
-                    <img src="{{ asset('images/community/1.png') }}" alt="Community Member"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white">
-                            <p class="font-semibold">Style Inspiration</p>
-                        </div>
-                    </div>
-                </div>
+            <div data-masonry-grid
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 [grid-auto-rows:8px] [grid-auto-flow:dense]">
+                @foreach ($communityImages as $image)
+                    <article data-masonry-item>
+                        <figure data-masonry-content
+                            class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                            <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" width="{{ $image['width'] }}"
+                                height="{{ $image['height'] }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                                fetchpriority="{{ $loop->first ? 'high' : 'auto' }}" decoding="async"
+                                class="block w-full h-auto group-hover:scale-110 transition-transform duration-300">
 
-                <!-- Image 2 -->
-                <div
-                    class="sm:col-span-2 sm:row-span-2 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
-                    <img src="{{ asset('images/community/2.png') }}" alt="Community Member"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white">
-                            <p class="font-semibold">Fashion Forward</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Image 3 -->
-                <div
-                    class="sm:row-span-3 lg:col-start-4 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[400px] lg:min-h-0">
-                    <img src="{{ asset('images/community/3.png') }}" alt="Community Member"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white">
-                            <p class="font-semibold">Street Style</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Image 4 -->
-                <div
-                    class="sm:col-span-2 sm:row-span-2 lg:col-span-3 lg:row-start-3 group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[300px] lg:min-h-0">
-                    <img src="{{ asset('images/community/4.png') }}" alt="Community Member"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white">
-                            <p class="font-semibold">Urban Vibes</p>
-                        </div>
-                    </div>
-                </div>
+                            @if (!empty($image['caption']))
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <figcaption data-masonry-caption class="absolute bottom-4 left-4 text-white font-semibold">
+                                        {{ $image['caption'] }}
+                                    </figcaption>
+                                </div>
+                            @endif
+                        </figure>
+                    </article>
+                @endforeach
             </div>
 
             <!-- Call to Action -->

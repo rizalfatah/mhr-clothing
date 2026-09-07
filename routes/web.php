@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CommunityImageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\ProductPageController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +74,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Product image delete route must be BEFORE resource route to avoid conflict
     Route::delete('/products/images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.delete-image');
     Route::resource('products', ProductController::class);
+
+    Route::resource('community-images', CommunityImageController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
 
     // Transaction Routes
     Route::prefix('transactions')->name('transactions.')->group(function () {
@@ -143,9 +148,7 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/community', function () {
-    return view('community');
-});
+Route::get('/community', [CommunityController::class, 'index'])->name('community');
 
 Route::get('/catalog', [ProductPageController::class, 'catalog'])->name('catalog');
 

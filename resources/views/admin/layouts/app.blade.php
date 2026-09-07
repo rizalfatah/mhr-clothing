@@ -151,6 +151,21 @@
                             </div>
                         </li>
 
+                        <!-- Community Showcase -->
+                        <li>
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.community-images.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                href="{{ route('admin.community-images.index') }}">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                                    <circle cx="9" cy="9" r="2" />
+                                    <path d="m21 15-5-5L5 21" />
+                                </svg>
+                                Galeri Komunitas
+                            </a>
+                        </li>
+
                         <!-- Stock -->
                         <li>
                             <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.stock.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
