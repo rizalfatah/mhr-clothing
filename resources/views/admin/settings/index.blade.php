@@ -11,7 +11,7 @@
     </div>
 
     <!-- Settings Form -->
-    <form method="POST" action="{{ route('admin.settings.update') }}">
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -44,6 +44,10 @@
                                     🎯 Pengaturan Promosi
                                 @break
 
+                                @case('homepage')
+                                    🏠 Banner Halaman Beranda
+                                @break
+
                                 @default
                                     {{ ucfirst($group) }}
                             @endswitch
@@ -60,7 +64,37 @@
                                         {{ $setting->description }}
                                     </label>
 
-                                    @if ($setting->type === 'boolean')
+                                    @if ($setting->type === 'image')
+                                        @php
+                                            $hasCustomBanner = filled($setting->value);
+                                            $bannerUrl = $hasCustomBanner
+                                                ? \Illuminate\Support\Facades\Storage::disk('public')->url($setting->value)
+                                                : asset('images/banner.webp');
+                                        @endphp
+
+                                        <img src="{{ $bannerUrl }}" alt="Pratinjau banner halaman beranda"
+                                            class="mb-4 h-40 w-full rounded-lg border border-gray-200 object-cover dark:border-neutral-700">
+
+                                        <input type="file" id="setting_{{ $setting->key }}" name="homepage_banner"
+                                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                            class="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400 @error('homepage_banner') border-red-500 @enderror">
+                                        <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">JPG, JPEG, PNG, atau WEBP, maksimal 5MB.</p>
+
+                                        @if ($hasCustomBanner)
+                                            <label class="mt-3 inline-flex items-center">
+                                                <input type="checkbox" name="remove_homepage_banner" value="1"
+                                                    class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700">
+                                                <span class="text-sm text-gray-500 ms-2 dark:text-neutral-400">Pulihkan banner bawaan</span>
+                                            </label>
+                                        @endif
+
+                                        @error('homepage_banner')
+                                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                                        @enderror
+                                        @error('remove_homepage_banner')
+                                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                                        @enderror
+                                    @elseif ($setting->type === 'boolean')
                                         <!-- Toggle Switch for Boolean -->
                                         <div class="flex items-center">
                                             <input type="checkbox" id="setting_{{ $setting->key }}"

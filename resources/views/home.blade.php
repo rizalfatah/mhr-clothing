@@ -3,6 +3,13 @@
 @section('title', 'Fashion & Style')
 
 @section('content')
+    @php
+        $homepageBanner = \App\Models\Setting::get('homepage_banner');
+        $homepageBannerUrl = filled($homepageBanner)
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($homepageBanner)
+            : asset('images/banner.webp');
+    @endphp
+
     <style>
         .full-screen {
             min-height: calc(100vh - var(--header-height, 0px));
@@ -14,7 +21,7 @@
     </style>
 
     <div class="full-screen">
-        <img src="{{ asset('images/banner.webp') }}" fetchpriority="high" alt="Banner Home"
+        <img src="{{ $homepageBannerUrl }}" fetchpriority="high" alt="Banner Home"
             class="w-full h-full object-cover absolute inset-0">
         <a href="/catalog"
             class="group relative z-10 px-8 py-4 bg-white text-black text-xl font-bold rounded-full border-2 border-black shadow-2xl hover:shadow-black/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 overflow-hidden">

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -62,6 +61,15 @@ class SettingSeeder extends Seeder
                 'type' => 'text',
                 'group' => 'promotional',
                 'description' => 'Pesan promosi yang ditampilkan di top bar header',
+            ],
+
+            // Homepage Settings
+            [
+                'key' => 'homepage_banner',
+                'value' => '',
+                'type' => 'image',
+                'group' => 'homepage',
+                'description' => 'Banner utama yang ditampilkan di halaman beranda',
             ],
         ];
 

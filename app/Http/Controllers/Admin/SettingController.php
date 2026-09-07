@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
@@ -26,9 +28,23 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'settings' => 'required|array',
+            'settings' => 'nullable|array',
             'settings.*' => 'nullable',
+            'homepage_banner' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'remove_homepage_banner' => 'nullable|boolean',
+        ], [
+            'homepage_banner.image' => 'Banner harus berupa gambar.',
+            'homepage_banner.mimes' => 'Format banner harus JPG, JPEG, PNG, atau WEBP.',
+            'homepage_banner.max' => 'Ukuran banner maksimal 5MB.',
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($request->hasFile('homepage_banner') && $request->boolean('remove_homepage_banner')) {
+                $message = 'Unggah banner baru atau pulihkan banner default, bukan keduanya.';
+                $validator->errors()->add('homepage_banner', $message);
+                $validator->errors()->add('remove_homepage_banner', $message);
+            }
+        });
 
         if ($validator->fails()) {
             return back()
@@ -37,11 +53,48 @@ class SettingController extends Controller
                 ->with('error', 'Validasi gagal. Mohon periksa kembali input Anda.');
         }
 
+        $oldBannerPath = Setting::query()
+            ->where('key', 'homepage_banner')
+            ->value('value');
+        $newBannerPath = null;
+        $settingsPersisted = false;
+        $removeBanner = $request->boolean('remove_homepage_banner');
+
         try {
-            foreach ($request->settings as $key => $value) {
-                Setting::where('key', $key)->update([
-                    'value' => $value ?? '',
-                ]);
+            if ($request->hasFile('homepage_banner')) {
+                $newBannerPath = $request->file('homepage_banner')->store('homepage-banners', 'public');
+            }
+
+            DB::transaction(function () use ($request, $newBannerPath, $removeBanner) {
+                foreach ($request->input('settings', []) as $key => $value) {
+                    // The banner path is only managed by the uploaded file flow below.
+                    if ($key === 'homepage_banner') {
+                        continue;
+                    }
+
+                    Setting::where('key', $key)->update([
+                        'value' => $value ?? '',
+                    ]);
+                }
+
+                if ($newBannerPath !== null) {
+                    Setting::updateOrCreate(
+                        ['key' => 'homepage_banner'],
+                        [
+                            'value' => $newBannerPath,
+                            'type' => 'image',
+                            'group' => 'homepage',
+                            'description' => 'Banner utama yang ditampilkan di halaman beranda',
+                        ]
+                    );
+                } elseif ($removeBanner) {
+                    Setting::where('key', 'homepage_banner')->update(['value' => '']);
+                }
+            });
+            $settingsPersisted = true;
+
+            if (($newBannerPath !== null || $removeBanner) && $this->isManagedHomepageBanner($oldBannerPath)) {
+                Storage::disk('public')->delete($oldBannerPath);
             }
 
             // Clear cache so changes reflect immediately
@@ -50,10 +103,19 @@ class SettingController extends Controller
             return redirect()
                 ->route('admin.settings.index')
                 ->with('success', 'Pengaturan berhasil disimpan.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            if ($newBannerPath !== null && ! $settingsPersisted) {
+                Storage::disk('public')->delete($newBannerPath);
+            }
+
             return back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
+    }
+
+    private function isManagedHomepageBanner(?string $path): bool
+    {
+        return is_string($path) && str_starts_with($path, 'homepage-banners/');
     }
 }
