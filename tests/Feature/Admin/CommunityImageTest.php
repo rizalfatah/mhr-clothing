@@ -16,7 +16,8 @@ test('admin can access community image management', function () {
         ->assertOk()
         ->assertViewIs('admin.community-images.index')
         ->assertViewHas('communityImages')
-        ->assertSee('Tambah Gambar Baru');
+        ->assertSee('Tambah Gambar Baru')
+        ->assertSee('Simpan Semua Urutan');
 });
 
 test('customer cannot access community image management', function () {
@@ -90,7 +91,6 @@ test('admin can replace and update a community image', function () {
             'image' => UploadedFile::fake()->image('replacement.png', 600, 900),
             'alt_text' => 'Updated accessible description',
             'caption' => 'Updated caption',
-            'sort_order' => 2,
             'is_active' => false,
         ]
     );
@@ -103,7 +103,7 @@ test('admin can replace and update a community image', function () {
 
     expect($communityImage->alt_text)->toBe('Updated accessible description')
         ->and($communityImage->caption)->toBe('Updated caption')
-        ->and($communityImage->sort_order)->toBe(2)
+        ->and($communityImage->sort_order)->toBe(10)
         ->and($communityImage->width)->toBe(600)
         ->and($communityImage->height)->toBe(900)
         ->and($communityImage->is_active)->toBeFalse();
@@ -113,6 +113,47 @@ test('admin can replace and update a community image', function () {
 
     $this->get(route('community'))
         ->assertDontSee('Updated accessible description');
+});
+
+test('admin can save every community image order at once', function () {
+    $images = CommunityImage::query()->orderBy('sort_order')->get();
+    $orders = $images->values()->mapWithKeys(
+        fn (CommunityImage $image, int $index): array => [$image->id => $images->count() - $index - 1]
+    )->all();
+
+    $response = $this->actingAs($this->admin)->patch(
+        route('admin.community-images.update-order'),
+        ['orders' => $orders]
+    );
+
+    $response
+        ->assertRedirect(route('admin.community-images.index'))
+        ->assertSessionHasNoErrors()
+        ->assertSessionHas('success', 'Urutan seluruh gambar berhasil disimpan.');
+
+    $images->each(function (CommunityImage $image) use ($orders): void {
+        expect($image->refresh()->sort_order)->toBe($orders[$image->id]);
+    });
+});
+
+test('bulk community image order requires every image and unique positions', function () {
+    $images = CommunityImage::query()->orderBy('sort_order')->get();
+    $orders = $images->mapWithKeys(
+        fn (CommunityImage $image): array => [$image->id => $image->sort_order]
+    )->all();
+    $orders[$images[1]->id] = $orders[$images[0]->id];
+
+    $this->actingAs($this->admin)
+        ->from(route('admin.community-images.index'))
+        ->patch(route('admin.community-images.update-order'), [
+            'orders' => $orders,
+        ])
+        ->assertRedirect(route('admin.community-images.index'))
+        ->assertSessionHasErrors('orders.'.$images[1]->id);
+
+    $images->each(function (CommunityImage $image): void {
+        expect($image->refresh()->sort_order)->toBe($image->getOriginal('sort_order'));
+    });
 });
 
 test('admin can delete an uploaded community image and its file', function () {

@@ -7,6 +7,7 @@ use App\Models\CommunityImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -25,7 +26,10 @@ class CommunityImageController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate($this->rules(true), $this->messages());
+        $validated = $request->validate([
+            ...$this->rules(true),
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ], $this->messages());
         $path = null;
 
         try {
@@ -71,7 +75,6 @@ class CommunityImageController extends Controller
             $attributes = [
                 'alt_text' => $validated['alt_text'],
                 'caption' => $validated['caption'] ?? null,
-                'sort_order' => $validated['sort_order'],
                 'is_active' => $request->boolean('is_active'),
             ];
 
@@ -115,6 +118,44 @@ class CommunityImageController extends Controller
         }
     }
 
+    public function updateOrder(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'orders' => ['required', 'array'],
+            'orders.*' => ['required', 'integer', 'min:0', 'distinct'],
+        ], [
+            'orders.required' => 'Urutan gambar wajib diisi.',
+            'orders.*.required' => 'Setiap gambar harus memiliki urutan.',
+            'orders.*.integer' => 'Urutan gambar harus berupa angka.',
+            'orders.*.min' => 'Urutan gambar tidak boleh kurang dari 0.',
+            'orders.*.distinct' => 'Setiap gambar harus memiliki urutan yang berbeda.',
+        ]);
+
+        $orders = collect($validated['orders'])
+            ->mapWithKeys(fn (int $sortOrder, string|int $id): array => [(int) $id => $sortOrder]);
+
+        $submittedIds = $orders->keys()->sort()->values()->all();
+        $currentIds = CommunityImage::query()->pluck('id')->sort()->values()->all();
+
+        if ($submittedIds !== $currentIds) {
+            throw ValidationException::withMessages([
+                'orders' => 'Daftar gambar telah berubah. Muat ulang halaman lalu atur kembali urutannya.',
+            ]);
+        }
+
+        DB::transaction(function () use ($orders): void {
+            $orders->each(function (int $sortOrder, int $id): void {
+                CommunityImage::query()
+                    ->whereKey($id)
+                    ->update(['sort_order' => $sortOrder]);
+            });
+        });
+
+        return redirect()
+            ->route('admin.community-images.index')
+            ->with('success', 'Urutan seluruh gambar berhasil disimpan.');
+    }
+
     public function destroy(CommunityImage $communityImage): RedirectResponse
     {
         try {
@@ -141,7 +182,6 @@ class CommunityImageController extends Controller
             'image' => [$imageRequired ? 'required' : 'nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'alt_text' => ['required', 'string', 'max:255'],
             'caption' => ['nullable', 'string', 'max:255'],
-            'sort_order' => [$imageRequired ? 'nullable' : 'required', 'integer', 'min:0'],
             'is_active' => ['required', 'boolean'],
         ];
     }

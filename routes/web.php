@@ -75,6 +75,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/products/images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.delete-image');
     Route::resource('products', ProductController::class);
 
+    Route::patch('community-images/order', [CommunityImageController::class, 'updateOrder'])
+        ->name('community-images.update-order');
     Route::resource('community-images', CommunityImageController::class)
         ->only(['index', 'store', 'update', 'destroy']);
 

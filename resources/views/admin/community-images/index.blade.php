@@ -83,16 +83,37 @@
         </section>
 
         <section>
-            <div class="mb-4 flex items-center justify-between gap-4">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h2 class="font-semibold text-gray-800 dark:text-white">Gambar Showcase</h2>
                     <p class="text-sm text-gray-500 dark:text-neutral-400">{{ $communityImages->count() }} gambar tersimpan</p>
                 </div>
-                <a href="{{ route('community') }}" target="_blank" rel="noopener"
-                    class="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700">
-                    Lihat Halaman
-                </a>
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('community') }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700">
+                        Lihat Halaman
+                    </a>
+
+                    @if ($communityImages->isNotEmpty())
+                        <form id="community-order-form" action="{{ route('admin.community-images.update-order') }}"
+                            method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                class="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:bg-emerald-700 focus:outline-none">
+                                Simpan Semua Urutan
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
+
+            @if ($communityImages->isNotEmpty())
+                <p class="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300">
+                    Ubah nomor urutan pada setiap gambar, lalu klik <strong>Simpan Semua Urutan</strong> satu kali.
+                    Setiap nomor harus berbeda.
+                </p>
+            @endif
 
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 @forelse ($communityImages as $communityImage)
@@ -110,6 +131,19 @@
                             </span>
                         </div>
 
+                        <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800/60">
+                            <label for="sort_order_{{ $communityImage->id }}"
+                                class="flex items-center justify-between gap-4 text-sm font-medium text-gray-700 dark:text-neutral-300">
+                                <span>Urutan galeri</span>
+                                <input id="sort_order_{{ $communityImage->id }}"
+                                    form="community-order-form"
+                                    name="orders[{{ $communityImage->id }}]"
+                                    type="number" min="0"
+                                    value="{{ old('orders.'.$communityImage->id, $communityImage->sort_order) }}" required
+                                    class="block w-24 rounded-lg border-gray-200 text-center text-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+                            </label>
+                        </div>
+
                         <form action="{{ route('admin.community-images.update', $communityImage) }}" method="POST"
                             enctype="multipart/form-data" class="space-y-3 p-4">
                             @csrf
@@ -123,21 +157,12 @@
                                     class="block w-full rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
                             </div>
 
-                            <div class="grid grid-cols-[minmax(0,1fr)_100px] gap-3">
-                                <div>
-                                    <label for="caption_{{ $communityImage->id }}"
-                                        class="mb-1 block text-xs font-medium text-gray-600 dark:text-neutral-400">Caption</label>
-                                    <input id="caption_{{ $communityImage->id }}" name="caption" type="text"
-                                        value="{{ $communityImage->caption }}" maxlength="255"
-                                        class="block w-full rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
-                                </div>
-                                <div>
-                                    <label for="sort_order_{{ $communityImage->id }}"
-                                        class="mb-1 block text-xs font-medium text-gray-600 dark:text-neutral-400">Urutan</label>
-                                    <input id="sort_order_{{ $communityImage->id }}" name="sort_order" type="number"
-                                        min="0" value="{{ $communityImage->sort_order }}" required
-                                        class="block w-full rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
-                                </div>
+                            <div>
+                                <label for="caption_{{ $communityImage->id }}"
+                                    class="mb-1 block text-xs font-medium text-gray-600 dark:text-neutral-400">Caption</label>
+                                <input id="caption_{{ $communityImage->id }}" name="caption" type="text"
+                                    value="{{ $communityImage->caption }}" maxlength="255"
+                                    class="block w-full rounded-lg border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
                             </div>
 
                             <div>
