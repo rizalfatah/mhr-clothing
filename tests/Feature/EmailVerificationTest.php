@@ -54,8 +54,10 @@ describe('Email Verification', function () {
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect(route('verification.notice'));
+        $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
+        $response->assertSessionHas('email_not_verified', true);
+        $response->assertSessionHas('unverified_email', 'test@example.com');
         $this->assertGuest();
     });
 
@@ -103,7 +105,7 @@ describe('Email Verification', function () {
 
         $response = $this->get($verificationUrl);
 
-        $response->assertRedirect(route('account'));
+        $response->assertRedirect(route('login'));
         $response->assertSessionHas('success');
 
         $user->refresh();
@@ -122,7 +124,48 @@ describe('Email Verification', function () {
 
         $response = $this->get($invalidUrl);
 
-        $response->assertStatus(403);
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHasErrors('email');
+
+        $user->refresh();
+        expect($user->email_verified_at)->toBeNull();
+    });
+
+    test('guest can verify email with valid link', function () {
+        $user = User::factory()->unverified()->create();
+        $this->withSession(['unverified_email' => $user->email]);
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $response = $this->get($verificationUrl);
+
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHas('success');
+        $response->assertSessionMissing('unverified_email');
+        $this->assertGuest();
+
+        $user->refresh();
+        expect($user->email_verified_at)->not->toBeNull();
+    });
+
+    test('guest cannot verify email with invalid hash', function () {
+        $user = User::factory()->unverified()->create();
+
+        $invalidUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => 'invalid-hash']
+        );
+
+        $response = $this->get($invalidUrl);
+
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
 
         $user->refresh();
         expect($user->email_verified_at)->toBeNull();
