@@ -80,6 +80,43 @@ test('admin can update whatsapp admin number', function () {
     ]);
 });
 
+test('admin can save a WhatsApp template and use a custom destination number', function () {
+    $response = $this->actingAs($this->admin)->put(route('admin.settings.update'), [
+        'settings' => [
+            'whatsapp_message_template' => 'Halo {customer_name}, pesanan {order_number}',
+            'whatsapp_template_use_header_number' => '0',
+            'whatsapp_template_number' => '6281234567890',
+        ],
+    ]);
+
+    $response->assertRedirect(route('admin.settings.index'));
+    $this->assertDatabaseHas('settings', [
+        'key' => 'whatsapp_message_template',
+        'value' => 'Halo {customer_name}, pesanan {order_number}',
+    ]);
+    $this->assertDatabaseHas('settings', [
+        'key' => 'whatsapp_template_use_header_number',
+        'value' => '0',
+    ]);
+    $this->assertDatabaseHas('settings', [
+        'key' => 'whatsapp_template_number',
+        'value' => '6281234567890',
+    ]);
+});
+
+test('custom WhatsApp destination number is required and must use the 62 format', function () {
+    $response = $this->actingAs($this->admin)->from(route('admin.settings.index'))
+        ->put(route('admin.settings.update'), [
+            'settings' => [
+                'whatsapp_template_use_header_number' => '0',
+                'whatsapp_template_number' => '081234567890',
+            ],
+        ]);
+
+    $response->assertRedirect(route('admin.settings.index'));
+    $response->assertSessionHasErrors('settings.whatsapp_template_number');
+});
+
 test('settings are grouped by category', function () {
     Setting::factory()->create(['key' => 'site_name', 'group' => 'general']);
     Setting::factory()->create(['key' => 'whatsapp_admin_number', 'group' => 'whatsapp']);

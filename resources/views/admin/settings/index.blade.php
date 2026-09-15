@@ -94,9 +94,45 @@
                                         @error('remove_homepage_banner')
                                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                                         @enderror
+                                    @elseif ($setting->key === 'whatsapp_message_template')
+                                        <textarea id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]" rows="14"
+                                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm font-mono focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                                            placeholder="{{ $setting->description }}">{{ old('settings.' . $setting->key, $setting->value) }}</textarea>
+                                        <div class="mt-3 rounded-lg bg-gray-50 p-3 text-xs text-gray-600 dark:bg-neutral-900 dark:text-neutral-400">
+                                            <p class="font-medium text-gray-700 dark:text-neutral-300">Placeholder yang tersedia</p>
+                                            <p class="mt-1 leading-5"><code>{admin_name}</code>, <code>{order_number}</code>, <code>{order_items}</code>, <code>{subtotal}</code>, <code>{discount}</code>, <code>{discount_line}</code>, <code>{shipping_cost}</code>, <code>{total}</code></p>
+                                            <p class="leading-5"><code>{customer_name}</code>, <code>{customer_whatsapp}</code>, <code>{customer_email}</code>, <code>{customer_email_line}</code>, <code>{shipping_address}</code>, <code>{shipping_city}</code>, <code>{shipping_province}</code>, <code>{shipping_postal_code}</code>, <code>{shipping_postal_code_line}</code>, <code>{shipping_notes}</code>, <code>{shipping_notes_line}</code></p>
+                                        </div>
+                                    @elseif ($setting->key === 'whatsapp_template_use_header_number')
+                                        @php
+                                            $useHeaderNumber = old('settings.whatsapp_template_use_header_number', $setting->value) == '1';
+                                        @endphp
+                                        <input type="hidden" name="settings[{{ $setting->key }}]" value="0">
+                                        <label class="inline-flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" id="setting_{{ $setting->key }}"
+                                                name="settings[{{ $setting->key }}]" value="1"
+                                                {{ $useHeaderNumber ? 'checked' : '' }}
+                                                class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700">
+                                            <span class="text-sm text-gray-600 dark:text-neutral-400">Gunakan nomor WhatsApp yang tampil di header sebagai tujuan pesan checkout</span>
+                                        </label>
+                                    @elseif ($setting->key === 'whatsapp_template_number')
+                                        @php
+                                            $useHeaderNumber = old('settings.whatsapp_template_use_header_number', \App\Models\Setting::get('whatsapp_template_use_header_number', true)) == '1';
+                                        @endphp
+                                        <div id="whatsapp-template-number-field" class="{{ $useHeaderNumber ? 'hidden' : '' }}">
+                                            <input type="text" id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]"
+                                                value="{{ old('settings.' . $setting->key, $setting->value) }}"
+                                                {{ $useHeaderNumber ? 'disabled' : '' }}
+                                                inputmode="numeric" autocomplete="tel"
+                                                class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('settings.' . $setting->key) border-red-500 @enderror"
+                                                placeholder="628xxxxxxxxxx">
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-500">Format: 628xxxxxxxxxx (tanpa tanda + atau spasi).</p>
+                                        </div>
                                     @elseif ($setting->type === 'boolean')
                                         <!-- Toggle Switch for Boolean -->
                                         <div class="flex items-center">
+                                            <!-- Hidden input to ensure value is sent even when unchecked -->
+                                            <input type="hidden" name="settings[{{ $setting->key }}]" value="0">
                                             <input type="checkbox" id="setting_{{ $setting->key }}"
                                                 name="settings[{{ $setting->key }}]" value="1"
                                                 {{ old('settings.' . $setting->key, $setting->value) == '1' ? 'checked' : '' }}
@@ -108,13 +144,6 @@
                                                 {{ old('settings.' . $setting->key, $setting->value) == '1' ? 'Aktif' : 'Tidak Aktif' }}
                                             </label>
                                         </div>
-                                        <!-- Hidden input to ensure value is sent even when unchecked -->
-                                        <input type="hidden" name="settings[{{ $setting->key }}]" value="0">
-                                    @elseif($setting->type === 'text' && $setting->key === 'whatsapp_message_template')
-                                        <!-- Textarea for Template -->
-                                        <textarea id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]" rows="5"
-                                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                                            placeholder="{{ $setting->description }}">{{ old('settings.' . $setting->key, $setting->value) }}</textarea>
                                     @else
                                         <!-- Regular Input -->
                                         <input type="{{ $setting->type === 'number' ? 'number' : 'text' }}"
@@ -168,4 +197,25 @@
             </div>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const useHeaderCheckbox = document.getElementById('setting_whatsapp_template_use_header_number');
+            const customNumberField = document.getElementById('whatsapp-template-number-field');
+            const customNumberInput = document.getElementById('setting_whatsapp_template_number');
+
+            if (!useHeaderCheckbox || !customNumberField || !customNumberInput) {
+                return;
+            }
+
+            const toggleCustomNumberField = function () {
+                const useHeaderNumber = useHeaderCheckbox.checked;
+                customNumberField.classList.toggle('hidden', useHeaderNumber);
+                customNumberInput.disabled = useHeaderNumber;
+            };
+
+            useHeaderCheckbox.addEventListener('change', toggleCustomNumberField);
+            toggleCustomNumberField();
+        });
+    </script>
 @endsection

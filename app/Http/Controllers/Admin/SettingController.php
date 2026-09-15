@@ -30,6 +30,9 @@ class SettingController extends Controller
         $validator = Validator::make($request->all(), [
             'settings' => 'nullable|array',
             'settings.*' => 'nullable',
+            'settings.whatsapp_message_template' => 'sometimes|required|string|max:10000',
+            'settings.whatsapp_template_use_header_number' => 'sometimes|boolean',
+            'settings.whatsapp_template_number' => 'sometimes|nullable|string|max:20',
             'homepage_banner' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_homepage_banner' => 'nullable|boolean',
         ], [
@@ -43,6 +46,28 @@ class SettingController extends Controller
                 $message = 'Unggah banner baru atau pulihkan banner default, bukan keduanya.';
                 $validator->errors()->add('homepage_banner', $message);
                 $validator->errors()->add('remove_homepage_banner', $message);
+            }
+
+            $settings = $request->input('settings', []);
+            $usesHeaderNumber = filter_var(
+                $settings['whatsapp_template_use_header_number'] ?? true,
+                FILTER_VALIDATE_BOOLEAN
+            );
+
+            if (! $usesHeaderNumber) {
+                $templateNumber = $settings['whatsapp_template_number'] ?? '';
+
+                if ($templateNumber === '') {
+                    $validator->errors()->add(
+                        'settings.whatsapp_template_number',
+                        'Nomor WhatsApp tujuan khusus wajib diisi.'
+                    );
+                } elseif (! preg_match('/^62[0-9]{8,13}$/', $templateNumber)) {
+                    $validator->errors()->add(
+                        'settings.whatsapp_template_number',
+                        'Nomor WhatsApp harus menggunakan format 62xxxxxxxxxx tanpa tanda + atau spasi.'
+                    );
+                }
             }
         });
 

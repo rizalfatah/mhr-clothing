@@ -287,64 +287,88 @@ class CheckoutController extends Controller
      */
     protected function generateWhatsAppUrl(Order $order): string
     {
-        $adminNumber = Setting::get('whatsapp_admin_number', '6281234567890');
+        $usesHeaderNumber = Setting::get('whatsapp_template_use_header_number', true);
+        $adminNumber = $usesHeaderNumber
+            ? Setting::get('whatsapp_admin_number', '6281234567890')
+            : Setting::get('whatsapp_template_number', Setting::get('whatsapp_admin_number', '6281234567890'));
         $adminName = Setting::get('whatsapp_admin_name', 'Admin');
 
-        // Build order details
-        $orderDetails = "*Nomor Pesanan: {$order->order_number}*\n\n";
-        $orderDetails .= "*Daftar Produk:*\n";
+        $orderItems = '';
 
         foreach ($order->items as $index => $item) {
             $num = $index + 1;
-            $orderDetails .= "{$num}. {$item->product_name}\n";
+            $orderItems .= "{$num}. {$item->product_name}\n";
             if ($item->variant_name) {
-                $orderDetails .= "   Ukuran: {$item->variant_name}\n";
+                $orderItems .= "   Ukuran: {$item->variant_name}\n";
             }
-            $orderDetails .= "   Harga: Rp " . number_format($item->price, 0, ',', '.') . "\n";
-            $orderDetails .= "   Jumlah: {$item->quantity}\n";
-            $orderDetails .= "   Subtotal: Rp " . number_format($item->subtotal, 0, ',', '.') . "\n\n";
+            $orderItems .= '   Harga: Rp '.number_format($item->price, 0, ',', '.')."\n";
+            $orderItems .= "   Jumlah: {$item->quantity}\n";
+            $orderItems .= '   Subtotal: Rp '.number_format($item->subtotal, 0, ',', '.')."\n\n";
         }
 
-        $orderDetails .= "*Ringkasan Pembayaran:*\n";
-        $orderDetails .= "Subtotal: Rp " . number_format($order->subtotal, 0, ',', '.') . "\n";
-
-        if ($order->discount > 0) {
-            $orderDetails .= "Diskon: -Rp " . number_format($order->discount, 0, ',', '.') . "\n";
-        }
-
-        $orderDetails .= "Ongkir: Rp " . number_format($order->shipping_cost, 0, ',', '.') . "\n";
-        $orderDetails .= "━━━━━━━━━━━━━━━\n";
-        $orderDetails .= "*TOTAL: Rp " . number_format($order->total, 0, ',', '.') . "*\n\n";
-
-        // Build shipping info
-        $shippingInfo = "*Informasi Pengiriman:*\n";
-        $shippingInfo .= "Nama: {$order->customer_name}\n";
-        $shippingInfo .= "WhatsApp: {$order->customer_whatsapp}\n";
-        if ($order->customer_email) {
-            $shippingInfo .= "Email: {$order->customer_email}\n";
-        }
-        $shippingInfo .= "Alamat: {$order->shipping_address}\n";
-        $shippingInfo .= "Kota: {$order->shipping_city}\n";
-        $shippingInfo .= "Provinsi: {$order->shipping_province}\n";
-        if ($order->shipping_postal_code) {
-            $shippingInfo .= "Kode Pos: {$order->shipping_postal_code}\n";
-        }
-        if ($order->shipping_notes) {
-            $shippingInfo .= "Catatan: {$order->shipping_notes}\n";
-        }
-
-        // Complete message
-        $message = "Halo *{$adminName}*,\n\n";
-        $message .= "Saya ingin melakukan pemesanan dengan detail sebagai berikut:\n\n";
-        $message .= $orderDetails;
-        $message .= $shippingInfo;
-        $message .= "\n\nMohon dikonfirmasi. Terima kasih!";
+        $template = Setting::get('whatsapp_message_template', $this->defaultWhatsAppMessageTemplate());
+        $template = filled($template) ? $template : $this->defaultWhatsAppMessageTemplate();
+        $message = strtr($template, [
+            '{admin_name}' => $adminName,
+            '{order_number}' => $order->order_number,
+            '{order_items}' => rtrim($orderItems),
+            '{subtotal}' => 'Rp '.number_format($order->subtotal, 0, ',', '.'),
+            '{discount}' => 'Rp '.number_format($order->discount, 0, ',', '.'),
+            '{discount_line}' => $order->discount > 0
+                ? 'Diskon: -Rp '.number_format($order->discount, 0, ',', '.')."\n"
+                : '',
+            '{shipping_cost}' => 'Rp '.number_format($order->shipping_cost, 0, ',', '.'),
+            '{total}' => 'Rp '.number_format($order->total, 0, ',', '.'),
+            '{customer_name}' => $order->customer_name,
+            '{customer_whatsapp}' => $order->customer_whatsapp,
+            '{customer_email}' => $order->customer_email ?? '',
+            '{customer_email_line}' => $order->customer_email ? "Email: {$order->customer_email}\n" : '',
+            '{shipping_address}' => $order->shipping_address,
+            '{shipping_city}' => $order->shipping_city,
+            '{shipping_province}' => $order->shipping_province,
+            '{shipping_postal_code}' => $order->shipping_postal_code ?? '',
+            '{shipping_postal_code_line}' => $order->shipping_postal_code
+                ? "Kode Pos: {$order->shipping_postal_code}\n"
+                : '',
+            '{shipping_notes}' => $order->shipping_notes ?? '',
+            '{shipping_notes_line}' => $order->shipping_notes ? "Catatan: {$order->shipping_notes}\n" : '',
+        ]);
 
         // Encode message for URL
         $encodedMessage = urlencode($message);
 
         // Generate wa.me URL
         return "https://wa.me/{$adminNumber}?text={$encodedMessage}";
+    }
+
+    private function defaultWhatsAppMessageTemplate(): string
+    {
+        return <<<'TEMPLATE'
+Halo *{admin_name}*,
+
+Saya ingin melakukan pemesanan dengan detail sebagai berikut:
+
+*Nomor Pesanan: {order_number}*
+
+*Daftar Produk:*
+{order_items}
+
+*Ringkasan Pembayaran:*
+Subtotal: {subtotal}
+{discount_line}Ongkir: {shipping_cost}
+━━━━━━━━━━━━━━━
+*TOTAL: {total}*
+
+*Informasi Pengiriman:*
+Nama: {customer_name}
+WhatsApp: {customer_whatsapp}
+{customer_email_line}Alamat: {shipping_address}
+Kota: {shipping_city}
+Provinsi: {shipping_province}
+{shipping_postal_code_line}{shipping_notes_line}
+
+Mohon dikonfirmasi. Terima kasih!
+TEMPLATE;
     }
 
     /**

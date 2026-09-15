@@ -37,6 +37,52 @@ class SettingSeeder extends Seeder
                 'group' => 'whatsapp',
                 'description' => 'Nama admin WhatsApp',
             ],
+            [
+                'key' => 'whatsapp_message_template',
+                'value' => <<<'TEMPLATE'
+Halo *{admin_name}*,
+
+Saya ingin melakukan pemesanan dengan detail sebagai berikut:
+
+*Nomor Pesanan: {order_number}*
+
+*Daftar Produk:*
+{order_items}
+
+*Ringkasan Pembayaran:*
+Subtotal: {subtotal}
+{discount_line}Ongkir: {shipping_cost}
+━━━━━━━━━━━━━━━
+*TOTAL: {total}*
+
+*Informasi Pengiriman:*
+Nama: {customer_name}
+WhatsApp: {customer_whatsapp}
+{customer_email_line}Alamat: {shipping_address}
+Kota: {shipping_city}
+Provinsi: {shipping_province}
+{shipping_postal_code_line}{shipping_notes_line}
+
+Mohon dikonfirmasi. Terima kasih!
+TEMPLATE,
+                'type' => 'text',
+                'group' => 'whatsapp',
+                'description' => 'Template pesan WhatsApp untuk pesanan',
+            ],
+            [
+                'key' => 'whatsapp_template_use_header_number',
+                'value' => '1',
+                'type' => 'boolean',
+                'group' => 'whatsapp',
+                'description' => 'Gunakan nomor WhatsApp di header sebagai tujuan pesan checkout',
+            ],
+            [
+                'key' => 'whatsapp_template_number',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'whatsapp',
+                'description' => 'Nomor WhatsApp tujuan khusus untuk pesan checkout',
+            ],
 
             // Shipping Settings
             [
