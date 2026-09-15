@@ -1,7 +1,7 @@
 <footer class="bg-primary-500 text-primary-300 mt-auto">
     <!-- Main Footer Content -->
     <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
             <!-- About Section -->
             <div class="space-y-4">
                 <h3 class="text-white text-lg font-bold mb-4">MHR Clothing</h3>
@@ -27,20 +27,6 @@
                         </svg>
                     </a>
                 </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="space-y-4">
-                <h3 class="text-white text-lg font-bold mb-4">Quick Links</h3>
-                <ul class="space-y-2.5 text-sm">
-                    <li><a href="{{ route('home') }}"
-                            class="hover:text-white hover:pl-2 transition-all duration-200">Home</a></li>
-                    <li><a href="{{ route('catalog') }}"
-                            class="hover:text-white hover:pl-2 transition-all duration-200">Shop</a></li>
-                    <li><a href="#" class="hover:text-white hover:pl-2 transition-all duration-200">About </a>
-                    </li>
-
-                </ul>
             </div>
 
             <!-- Customer Service -->
