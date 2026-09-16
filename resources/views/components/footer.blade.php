@@ -33,10 +33,17 @@
             <div class="space-y-4">
                 <h3 class="text-white text-lg font-bold mb-4">Customer Service</h3>
                 <ul class="space-y-2.5 text-sm">
-                    <li><a href="#" class="hover:text-white hover:pl-2 transition-all duration-200">My Account</a>
+                    <li><a href="{{ route('account') }}"
+                            class="hover:text-white hover:pl-2 transition-all duration-200">My Account</a>
                     </li>
-                    <li><a href="#" class="hover:text-white hover:pl-2 transition-all duration-200">Shipping
-                            Info</a></li>
+                    @if ($customerServiceAddress = \App\Models\Setting::get('customer_service_address', ''))
+                        <li>
+                            <p class="font-semibold text-white">Customer Service Address</p>
+                            <address class="mt-1 not-italic leading-relaxed">
+                                {{ $customerServiceAddress }}
+                            </address>
+                        </li>
+                    @endif
                 </ul>
             </div>
 

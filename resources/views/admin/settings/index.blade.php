@@ -136,29 +136,33 @@
                                         @error('remove_homepage_banner')
                                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                                         @enderror
-                                    @elseif ($setting->key === 'whatsapp_message_template')
-                                        <textarea id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]" rows="14"
-                                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm font-mono focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                                    @elseif ($setting->type === 'textarea' || $setting->key === 'whatsapp_message_template')
+                                        <textarea id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]"
+                                            rows="{{ $setting->key === 'whatsapp_message_template' ? 14 : 4 }}"
+                                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 {{ $setting->key === 'whatsapp_message_template' ? 'font-mono' : '' }}"
                                             placeholder="{{ $setting->description }}">{{ old('settings.' . $setting->key, $setting->value) }}</textarea>
-                                        <div
-                                            class="mt-3 rounded-lg bg-gray-50 p-3 text-xs text-gray-600 dark:bg-neutral-900 dark:text-neutral-400">
-                                            <p class="font-medium text-gray-700 dark:text-neutral-300">Placeholder yang
-                                                tersedia</p>
-                                            <p class="mt-1 leading-5"><code>{admin_name}</code>,
-                                                <code>{order_number}</code>, <code>{order_items}</code>,
-                                                <code>{subtotal}</code>, <code>{discount}</code>,
-                                                <code>{discount_line}</code>, <code>{shipping_cost}</code>,
-                                                <code>{total}</code>
-                                            </p>
-                                            <p class="leading-5"><code>{customer_name}</code>,
-                                                <code>{customer_whatsapp}</code>, <code>{customer_email}</code>,
-                                                <code>{customer_email_line}</code>, <code>{shipping_address}</code>,
-                                                <code>{shipping_city}</code>, <code>{shipping_province}</code>,
-                                                <code>{shipping_postal_code}</code>,
-                                                <code>{shipping_postal_code_line}</code>, <code>{shipping_notes}</code>,
-                                                <code>{shipping_notes_line}</code>
-                                            </p>
-                                        </div>
+
+                                        @if ($setting->key === 'whatsapp_message_template')
+                                            <div
+                                                class="mt-3 rounded-lg bg-gray-50 p-3 text-xs text-gray-600 dark:bg-neutral-900 dark:text-neutral-400">
+                                                <p class="font-medium text-gray-700 dark:text-neutral-300">Placeholder yang
+                                                    tersedia</p>
+                                                <p class="mt-1 leading-5"><code>{admin_name}</code>,
+                                                    <code>{order_number}</code>, <code>{order_items}</code>,
+                                                    <code>{subtotal}</code>, <code>{discount}</code>,
+                                                    <code>{discount_line}</code>, <code>{shipping_cost}</code>,
+                                                    <code>{total}</code>
+                                                </p>
+                                                <p class="leading-5"><code>{customer_name}</code>,
+                                                    <code>{customer_whatsapp}</code>, <code>{customer_email}</code>,
+                                                    <code>{customer_email_line}</code>, <code>{shipping_address}</code>,
+                                                    <code>{shipping_city}</code>, <code>{shipping_province}</code>,
+                                                    <code>{shipping_postal_code}</code>,
+                                                    <code>{shipping_postal_code_line}</code>, <code>{shipping_notes}</code>,
+                                                    <code>{shipping_notes_line}</code>
+                                                </p>
+                                            </div>
+                                        @endif
                                     @elseif ($setting->key === 'whatsapp_template_use_header_number')
                                         @php
                                             $useHeaderNumber =

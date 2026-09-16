@@ -80,6 +80,66 @@ test('admin can update whatsapp admin number', function () {
     ]);
 });
 
+test('admin can update the customer service address shown in the footer', function () {
+    Setting::updateOrCreate(
+        ['key' => 'customer_service_address'],
+        [
+            'value' => 'Alamat Lama',
+            'type' => 'textarea',
+            'group' => 'contact',
+            'description' => 'Alamat Customer Service untuk ditampilkan di footer',
+        ]
+    );
+
+    $newAddress = 'Jl. Laksda Adisucipto No.26, Ambarukmo, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281';
+
+    $response = $this->actingAs($this->admin)->put(route('admin.settings.update'), [
+        'settings' => [
+            'customer_service_address' => $newAddress,
+        ],
+    ]);
+
+    $response->assertRedirect(route('admin.settings.index'));
+    $this->assertDatabaseHas('settings', [
+        'key' => 'customer_service_address',
+        'value' => $newAddress,
+    ]);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('Customer Service Address')
+        ->assertSee($newAddress)
+        ->assertDontSee('Shipping Info');
+});
+
+test('customer service address is hidden from the footer when it has not been configured', function () {
+    Setting::updateOrCreate(
+        ['key' => 'customer_service_address'],
+        [
+            'value' => '',
+            'type' => 'textarea',
+            'group' => 'contact',
+            'description' => 'Alamat Customer Service untuk ditampilkan di footer',
+        ]
+    );
+
+    $this->get('/')
+        ->assertOk()
+        ->assertDontSee('Customer Service Address');
+});
+
+test('customer service address is required when submitted', function () {
+    $response = $this->actingAs($this->admin)->from(route('admin.settings.index'))
+        ->put(route('admin.settings.update'), [
+            'settings' => [
+                'customer_service_address' => '',
+            ],
+        ]);
+
+    $response->assertRedirect(route('admin.settings.index'));
+    $response->assertSessionHasErrors('settings.customer_service_address');
+});
+
 test('admin can save a WhatsApp template and use a custom destination number', function () {
     $response = $this->actingAs($this->admin)->put(route('admin.settings.update'), [
         'settings' => [

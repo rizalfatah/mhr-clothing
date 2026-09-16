@@ -33,6 +33,7 @@ class SettingController extends Controller
             'settings.whatsapp_message_template' => 'sometimes|required|string|max:10000',
             'settings.whatsapp_template_use_header_number' => 'sometimes|boolean',
             'settings.whatsapp_template_number' => 'sometimes|nullable|string|max:20',
+            'settings.customer_service_address' => 'sometimes|required|string|max:1000',
             'homepage_banner' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_homepage_banner' => 'nullable|boolean',
         ], [

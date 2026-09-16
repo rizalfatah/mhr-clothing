@@ -21,6 +21,13 @@ class SettingSeeder extends Seeder
                 'group' => 'contact',
                 'description' => 'Email kontak untuk ditampilkan di header',
             ],
+            [
+                'key' => 'customer_service_address',
+                'value' => '',
+                'type' => 'textarea',
+                'group' => 'contact',
+                'description' => 'Alamat Customer Service untuk ditampilkan di footer',
+            ],
 
             // WhatsApp Settings
             [
