@@ -6,8 +6,8 @@
             <div class="space-y-4">
                 <h3 class="text-white text-lg font-bold mb-4">MHR Clothing</h3>
                 <p class="text-sm leading-relaxed">
-                    Your destination for premium streetwear and contemporary fashion. Quality clothing that defines your
-                    style.
+                    MHR Clothing creates refined everyday pieces that balance comfort, craftsmanship, and contemporary
+                    style for modern living with effortless confidence, always.
                 </p>
                 <!-- Social Media Links -->
                 <div class="flex gap-4 pt-2">
