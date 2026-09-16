@@ -64,7 +64,9 @@ class CartService
     public function getCount(): int
     {
         if (Auth::check()) {
-            return (int) Auth::user()->cartItems()->sum('quantity');
+            return (int) Auth::user()->cartItems()
+                ->whereHas('product')
+                ->sum('quantity');
         } else {
             $cart = Session::get('cart', []);
             return array_sum(array_column($cart, 'quantity'));
@@ -232,6 +234,16 @@ class CartService
         $cartItems = CartItem::with(['product.images', 'variant'])
             ->where('user_id', Auth::id())
             ->get();
+
+        // Products use soft deletes, so their database rows still exist and the
+        // foreign key cannot cascade-delete the corresponding cart items. Remove
+        // those stale items before mapping the product data.
+        $staleCartItems = $cartItems->filter(fn ($cartItem) => $cartItem->product === null);
+
+        if ($staleCartItems->isNotEmpty()) {
+            CartItem::whereKey($staleCartItems->modelKeys())->delete();
+            $cartItems = $cartItems->reject(fn ($cartItem) => $cartItem->product === null);
+        }
 
         return $cartItems->map(function ($cartItem) {
             $price = $cartItem->product->price;
