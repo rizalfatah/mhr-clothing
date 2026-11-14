@@ -6,7 +6,9 @@ return [
     'whatsapp' => env('MOMENT_WHATSAPP', '6285867480640'),
     'address' => 'Jl. Laksda Adisucipto No.26, Ambarukmo, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281',
     'instagram_url' => env('MOMENT_INSTAGRAM_URL'),
-    'hero' => 'images/moment/portrait.webp',
+    'hero' => 'images/moment/photography/hero-night.webp',
+    'brand_logo' => 'images/moment/branding/sepulang-moment-white.webp',
+    'collaboration_logo' => 'images/moment/branding/sepulang-mahrm.webp',
     // Temporary estimates for preview; these are NOT verified Figma prices.
     'prices_confirmed' => false,
     'packages' => [
@@ -16,9 +18,9 @@ return [
             'eyebrow' => 'Just you, and your story.',
             'description' => 'Satu perjalanan panjang. Satu momen yang sepenuhnya tentang kamu.',
             'price' => 250000,
-            'image' => 'images/moment/portrait.webp',
-            'image_alt' => 'Potret wisudawati berhijab dengan toga di area kampus',
-            'position' => '50% 35%',
+            'image' => 'images/moment/photography/graduation-portrait.webp',
+            'image_alt' => 'Wisudawati berhijab mengenakan toga dan selempang merah sambil memegang map kelulusan',
+            'position' => '50% 30%',
             'benefits' => [
                 '60 Minute Photo Session', '25 Edited Photos',
                 '5 Express Edits (Delivered the Next Day)',
@@ -26,7 +28,12 @@ return [
                 'Professional Lighting Setup (Request)', '5 Slide Graduation Design',
                 'Google Drive Delivery', '7-Day File Storage',
             ],
-            'gallery' => ['images/moment/portrait.webp', 'images/moment/exclusive.webp', 'images/moment/group.webp'],
+            'gallery' => [
+                'images/moment/photography/graduation-portrait.webp',
+                'images/moment/photography/graduation-street.webp',
+                'images/moment/photography/graduation-family.webp',
+                'images/moment/photography/graduation-family-group.webp',
+            ],
         ],
         'exclusive' => [
             'name' => 'Moment Exclusive',
@@ -34,9 +41,9 @@ return [
             'eyebrow' => 'A little more, for your once-in-a-lifetime.',
             'description' => 'Ruang lebih untuk setiap cerita, setiap tawa, dan orang-orang tersayang.',
             'price' => 300000,
-            'image' => 'images/moment/exclusive.webp',
-            'image_alt' => 'Wisudawati tersenyum mengenakan toga dan selempang merah',
-            'position' => '50% 30%',
+            'image' => 'images/moment/photography/portrait-arch.webp',
+            'image_alt' => 'Potret wisudawati berhijab mengenakan kebaya dan blazer di area kampus',
+            'position' => '50% 40%',
             'benefits' => [
                 '60 Minute Photo Session', '30 Edited Photos',
                 '7 Express Edits (Delivered the Next Day)',
@@ -44,7 +51,14 @@ return [
                 'Professional Lighting Setup', 'Dedicated Assistant',
                 'Graduation Design', 'Google Drive Delivery', '14-Day File Storage',
             ],
-            'gallery' => ['images/moment/exclusive.webp', 'images/moment/portrait.webp', 'images/moment/group.webp'],
+            'gallery' => [
+                'images/moment/photography/portrait-arch.webp',
+                'images/moment/photography/portrait-campus-bouquet.webp',
+                'images/moment/photography/portrait-campus-wide.webp',
+                'images/moment/photography/portrait-campus-back.webp',
+                'images/moment/photography/portrait-campus-steps.webp',
+                'images/moment/photography/portrait-couple-steps.webp',
+            ],
         ],
         'group-portrait' => [
             'name' => 'Moment Group Portrait',
@@ -52,9 +66,9 @@ return [
             'eyebrow' => 'Better, together.',
             'description' => 'Karena perjalanan ini juga tentang mereka yang selalu ada di sampingmu.',
             'price' => 450000,
-            'image' => 'images/moment/group.webp',
-            'image_alt' => 'Empat sahabat merayakan wisuda bersama di jalan kampus yang rindang',
-            'position' => '50% 42%',
+            'image' => 'images/moment/photography/group-night.webp',
+            'image_alt' => 'Dua wisudawati berfoto bersama dengan latar jejak cahaya kendaraan pada malam hari',
+            'position' => '50% 50%',
             'benefits' => [
                 '60 Minute Photo Session', '25 Edited Photos',
                 '5 Express Edits (Delivered the Next Day)',
@@ -67,9 +81,9 @@ return [
     ],
     // Proposed content: the Preset & Design Figma frame has no readable catalogue.
     'presets' => [
-        ['name' => 'Warm Memories', 'type' => 'preset', 'label' => 'Preset', 'description' => 'Warna hangat untuk cerita yang terasa dekat.', 'image' => 'images/moment/portrait.webp', 'style' => 'warm'],
-        ['name' => 'True to You', 'type' => 'preset', 'label' => 'Preset', 'description' => 'Natural, lembut, dan tetap menjadi dirimu.', 'image' => 'images/moment/exclusive.webp', 'style' => 'natural'],
-        ['name' => 'The Graduation Edit', 'type' => 'design', 'label' => 'Desain', 'description' => 'Satu halaman baru. Satu cerita untuk dibagikan.', 'image' => 'images/moment/portrait.webp', 'style' => 'editorial'],
-        ['name' => 'Our Little Chapter', 'type' => 'design', 'label' => 'Desain', 'description' => 'Bingkai sederhana untuk kenangan bersama.', 'image' => 'images/moment/group.webp', 'style' => 'chapter'],
+        ['name' => 'Warm Memories', 'type' => 'preset', 'label' => 'Preset', 'description' => 'Warna hangat untuk cerita yang terasa dekat.', 'image' => 'images/moment/photography/portrait-campus-bouquet.webp', 'style' => 'warm'],
+        ['name' => 'True to You', 'type' => 'preset', 'label' => 'Preset', 'description' => 'Natural, lembut, dan tetap menjadi dirimu.', 'image' => 'images/moment/photography/graduation-portrait.webp', 'style' => 'natural'],
+        ['name' => 'The Graduation Edit', 'type' => 'design', 'label' => 'Desain', 'description' => 'Satu halaman baru. Satu cerita untuk dibagikan.', 'image' => 'images/moment/photography/portrait-campus-bouquet.webp', 'style' => 'editorial'],
+        ['name' => 'Our Little Chapter', 'type' => 'design', 'label' => 'Desain', 'description' => 'Bingkai sederhana untuk kenangan bersama.', 'image' => 'images/moment/photography/group-night.webp', 'style' => 'chapter'],
     ],
 ];

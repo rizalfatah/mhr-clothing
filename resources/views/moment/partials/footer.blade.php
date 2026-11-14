@@ -1,9 +1,7 @@
 <footer class="site-footer" id="contact">
     <div class="footer-inner">
         <div class="brand-collaboration">
-            @include('moment.partials.wordmark')
-            <span class="collaboration-times" aria-hidden="true">×</span>
-            <span class="mahrm-wordmark">MAHRM<span>CULTURE</span></span>
+            <img src="{{ asset($collaboration_logo) }}" alt="Sepulang Moment × MAHRM Culture" width="193" height="54" loading="lazy">
         </div>
         <div class="footer-columns">
             <section class="footer-contact" aria-labelledby="customer-center">

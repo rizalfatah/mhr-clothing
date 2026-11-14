@@ -1,3 +1,1 @@
-<span class="wordmark {{ $wordmarkClass ?? '' }}" aria-label="Sepulang Moment">
-    <span class="wordmark__small">Sepulang</span><span class="wordmark__large">Moment<span class="wordmark__star" aria-hidden="true">✦</span></span>
-</span>
+<img class="wordmark {{ $wordmarkClass ?? '' }}" src="{{ asset($brand_logo) }}" alt="Sepulang Moment" width="1080" height="500">

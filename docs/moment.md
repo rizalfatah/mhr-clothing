@@ -59,20 +59,36 @@ Biarkan cookie session bersifat host-only (`SESSION_DOMAIN=null`) bila kedua web
 - `config/moment.php`: daftar paket, benefit, estimasi harga, kontak, serta koleksi preset/desain.
 - `resources/views/moment`: layout, komponen, dan halaman Blade Moment.
 - `resources/css/moment.css` dan `resources/js/moment.js`: tampilan mobile first dan interaksi.
-- `public/images/moment`: foto dummy WebP yang tersimpan lokal.
+- `public/images/moment/photography`: 12 foto WebP dari aset pengguna.
+- `public/images/moment/branding`: logo Sepulang Moment putih dan logo kolaborasi Sepulang × MAHRM.
 - `routes/moment.php` dan `routes/mahrm.php`: route masing-masing website.
 
 Implementasi memakai struktur Figma dan screenshot Landing serta Group Portrait yang sudah berhasil dibaca. Pengambilan detail Figma berikutnya terkena batas Starter; pengguna menyetujui pendekatan dari referensi yang tersedia dengan aset sementara. Tampilan ini belum diklaim sebagai salinan presisi seluruh frame.
 
-Harga Rp250.000 / Rp300.000 / Rp450.000 adalah **estimasi untuk preview**, bukan harga yang diverifikasi dari Figma. `prices_confirmed=false` menampilkan penjelasan estimasi di website. Verifikasi harga sebelum mengubah flag tersebut. Nama dan contoh koleksi Preset & Desain merupakan usulan konten karena katalog pada frame itu belum terbaca. Wordmark Sepulang dan MAHRM menggunakan teks sementara. Footer menyediakan dialog informasi untuk meminta ketentuan layanan dan privasi; dokumen kebijakan final perlu disiapkan sebelum publikasi.
+Harga Rp250.000 / Rp300.000 / Rp450.000 adalah **estimasi untuk preview**, bukan harga yang diverifikasi dari Figma. `prices_confirmed=false` menampilkan penjelasan estimasi di website. Verifikasi harga sebelum mengubah flag tersebut. Nama dan contoh koleksi Preset & Desain merupakan usulan konten karena katalog pada frame itu belum terbaca. Footer menyediakan dialog informasi untuk meminta ketentuan layanan dan privasi; dokumen kebijakan final perlu disiapkan sebelum publikasi.
 
-Foto dummy dari Unsplash (bukan hasil karya Sepulang Moment):
+Foto dan logo asli dipindahkan dari folder `result_webp` ke direktori aset publik di atas. File diberi nama berdasarkan isi, dengan data gambar dan transparansi tetap dipertahankan. Foto stok Unsplash sebelumnya sudah dihapus. Hero memakai foto malam, paket Group Portrait memakai foto dua wisudawati pada malam hari, dan galeri Portrait/Exclusive memakai seri foto kampus, keluarga, serta pasangan dari folder yang diberikan.
 
-- `portrait.webp`: Galuh Hari Setiawan — https://unsplash.com/photos/a-woman-in-a-graduation-cap-and-gown-TKVd-GfohVk
-- `exclusive.webp`: 150 Billi — https://unsplash.com/photos/a-woman-in-a-graduation-cap-and-gown-6oO5mI-Zikk
-- `group.webp`: Satria Perkasa — https://unsplash.com/photos/four-women-in-blac-academic-dresses-standing-on-road-between-trees-z9RZbpIAqKg
+Pemetaan aset sumber:
 
-Foto dioptimalkan menjadi WebP; tidak ada URL aset Figma sementara yang dipakai oleh halaman. Ganti foto dengan aset pemilik sebelum website dipublikasikan sebagai portofolio. Instagram tidak ditampilkan sampai `MOMENT_INSTAGRAM_URL` diisi.
+| Nama sumber di `result_webp` | Path di `public/images/moment` |
+| --- | --- |
+| `1c46793b98453ba176fb0c233a7c2bd7047812cc.webp` | `photography/portrait-arch.webp` |
+| `52761405c54cbf43cf8688435e9acc75d7e9d133.webp` | `photography/group-night.webp` |
+| `58fb417557b855086978bc34af44362c4e57c388.webp` | `photography/portrait-campus-wide.webp` |
+| `64b148a78fd99a9cdd91b35e99124fa3f97d8fa4.webp` | `photography/graduation-family.webp` |
+| `7569e03cc49638cf1ee8d4eb41066365fa9f9b86.webp` | `photography/portrait-campus-back.webp` |
+| `8401c6e74ad72aa430f2b3c53ed7aafbab42f952.webp` | `photography/portrait-campus-steps.webp` |
+| `c5eb2446fd91d54d90d5a08335571468200c6a44.webp` | `photography/graduation-portrait.webp` |
+| `c6f68306a6a7859c64eb789c7397ccc398a58ee2.webp` | `photography/graduation-family-group.webp` |
+| `cb35ce8ebef9c022f2a1c857b7d9da85769fe5ce.webp` | `photography/portrait-couple-steps.webp` |
+| `d43a02409c1c69e2c6b8d4725fa3db8dbb527dbb.webp` | `photography/portrait-campus-bouquet.webp` |
+| `ec23c8924cfc1b213a02ffc418d9108190ab123e.webp` | `photography/graduation-street.webp` |
+| `fce9c628683d5d56ed037cea5feca715c0fbace0.webp` | `photography/hero-night.webp` |
+| `logo_Sepulang_x_MHR 1.webp` | `branding/sepulang-mahrm.webp` |
+| `logo_sepulang_moment_putih.webp` | `branding/sepulang-moment-white.webp` |
+
+Tidak ada URL aset Figma sementara yang dipakai oleh halaman. Instagram tidak ditampilkan sampai `MOMENT_INSTAGRAM_URL` diisi.
 
 Implementasi ini mencakup halaman publik pada Figma. **CMS/admin pengelolaan konten belum dibuat**; konten masih terpusat pada konfigurasi agar sumber datanya dapat dihubungkan ke CMS pada tahap berikutnya.
 

@@ -3,7 +3,7 @@
 @section('body-class', 'home-page')
 @section('content')
     <section class="home-hero" aria-label="Sepulang Moment, fotografi wisuda Yogyakarta">
-        <img class="home-hero__photo" src="{{ asset($hero) }}" alt="Momen kelulusan wisudawati di kampus" width="1200" height="1800" fetchpriority="high">
+        <img class="home-hero__photo" src="{{ asset($hero) }}" alt="Potret wisudawati berhijab biru dengan latar cahaya malam" width="2731" height="4096" fetchpriority="high">
         <div class="home-hero__signature">@include('moment.partials.wordmark')</div>
         <a class="hero-scroll" href="#about" aria-label="Kenali Sepulang Moment"><span>SCROLL TO YOUR STORY</span><span aria-hidden="true">↓</span></a>
     </section>

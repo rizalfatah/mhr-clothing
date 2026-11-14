@@ -57,8 +57,8 @@ test('package pages show their own benefits and booking message', function () {
         ->assertDontSee('Dedicated Assistant');
 });
 
-test('all configured photo slots use nonempty local assets', function () {
-    $assets = [config('moment.hero')];
+test('all configured image slots use nonempty local assets', function () {
+    $assets = [config('moment.hero'), config('moment.brand_logo'), config('moment.collaboration_logo')];
     foreach (config('moment.packages') as $package) {
         $assets[] = $package['image'];
         array_push($assets, ...$package['gallery']);
