@@ -19,7 +19,7 @@ test('only administrators can manage Moment content', function () {
 });
 test('all Moment admin tabs render for an administrator', function () {
     $this->actingAs(User::factory()->create(['role' => 'admin']));
-    foreach (['home', 'packages', 'collections', 'contact', 'policy', 'copy', 'media'] as $tab) {
+    foreach (['home', 'packages', 'collections', 'contact', 'media'] as $tab) {
         $this->get(route('admin.moment.index', ['tab' => $tab]))->assertOk()->assertSee('Konten Moment');
     }
 });
@@ -50,9 +50,9 @@ test('uploads are validated and referenced media cannot be deleted', function ()
 });
 test('initialisation preserves edits and an empty catalogue renders gracefully', function () {
     $s = MomentSetting::find(1);
-    $s->update(['data' => [...$s->data, 'brand_name' => 'Brand baru']]);
+    $s->update(['data' => [...$s->data, 'address' => 'Alamat baru']]);
     MomentContent::initialize();
-    expect(MomentSetting::find(1)->data['brand_name'])->toBe('Brand baru');
+    expect(MomentSetting::find(1)->data['address'])->toBe('Alamat baru');
     MomentPackage::query()->update(['is_active' => false]);
     $this->get('https://'.config('moment.domain').'/')->assertOk()->assertDontSee('data-package-carousel', false)->assertSee('Konsultasikan paket');
 });
@@ -66,7 +66,7 @@ test('collections support editing order and visibility', function () {
     $this->get('https://'.config('moment.domain').'/preset-desain')->assertOk()->assertDontSee('Koleksi Baru');
 });
 
-test('uploaded media resolves on the Moment hostname and policy text is escaped', function () {
+test('uploaded media resolves on the Moment hostname and stored policy overrides are ignored', function () {
     Storage::fake('public');
     $this->actingAs(User::factory()->create(['role' => 'admin']));
     $this->post(route('admin.moment.media.store'), ['image' => UploadedFile::fake()->image('hero.png'), 'alt_text' => 'Hero baru']);
@@ -82,4 +82,24 @@ test('invalid package edits leave stored prices and identity unchanged', functio
     $p = MomentPackage::where('slug', 'portrait')->firstOrFail();
     $this->put(route('admin.moment.update', ['packages', $p->id]), ['name' => 'Changed', 'price' => -1])->assertSessionHasErrors();
     expect($p->fresh()->name)->toBe($p->name)->and($p->fresh()->data['price'])->toBe($p->data['price']);
+});
+
+test('rarely changed settings are fixed in code and unavailable to operators', function () {
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    foreach (['policy', 'copy'] as $section) {
+        $this->get(route('admin.moment.index', ['tab' => $section]))->assertNotFound();
+        $this->put(route('admin.moment.settings', $section), ['terms' => 'Changed'])->assertNotFound();
+    }
+    $settings = MomentSetting::findOrFail(1);
+    $settings->update(['data' => [...$settings->data, 'brand_name' => 'Unexpected brand', 'booking_template' => 'Unexpected booking', 'copy' => ['text_2' => 'Unexpected heading']]]);
+    $content = app(MomentContent::class)->read();
+    expect($content['brand_name'])->toBe('Sepulang Moment')->and($content['copy']['text_2'])->toBe('About')->and($content['booking_template'])->not->toBe('Unexpected booking');
+});
+
+test('operator forms omit advanced controls and packages need only routine fields', function () {
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $this->get(route('admin.moment.index', ['tab' => 'packages']))->assertOk()->assertDontSee('name="seo_title"', false)->assertDontSee('name="eyebrow"', false)->assertDontSee('name="title"', false);
+    $this->get(route('admin.moment.index', ['tab' => 'media']))->assertOk()->assertDontSee('name="focus_x"', false)->assertDontSee('name="focus_y"', false);
+    $this->post(route('admin.moment.store', 'packages'), ['name' => 'Paket Operator', 'description' => 'Paket praktis', 'price' => 500000, 'price_status' => 'final', 'image' => MomentMedia::first()->path, 'benefits' => '60 menit sesi foto', 'sort_order' => 5, 'is_active' => 1])->assertRedirect()->assertSessionHasNoErrors();
+    $this->withoutMiddleware(TrackUserSession::class)->get('https://'.config('moment.domain').'/paket-operator')->assertOk()->assertSee('Paket Operator')->assertSee('500.000');
 });

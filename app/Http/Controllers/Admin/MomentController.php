@@ -19,10 +19,8 @@ class MomentController extends Controller
     public static function sections(): array
     {
         return [
-            'home' => ['hero', 'bouquet_image', 'budget_initial'],
-            'contact' => ['brand_name', 'brand_logo', 'collaboration_logo', 'favicon', 'address', 'maps_url', 'phone', 'whatsapp', 'instagram_url', 'facebook_url', 'threads_url', 'tiktok_url'],
-            'policy' => ['booking_template', 'consultation_template', 'terms', 'privacy'],
-            'copy' => ['copy'],
+            'home' => ['hero'],
+            'contact' => ['address', 'maps_url', 'phone', 'whatsapp', 'instagram_url', 'facebook_url', 'threads_url', 'tiktok_url'],
         ];
     }
 
@@ -41,28 +39,15 @@ class MomentController extends Controller
         $paths = MomentMedia::pluck('path')->all();
         foreach (self::sections()[$section] as $key) {
             $rules[$key] = match ($key) {
-                'hero','brand_logo','collaboration_logo' => ['required', Rule::in($paths)],
-                'bouquet_image' => ['nullable', Rule::in($paths)],
-                'favicon' => ['required', Rule::in([...$paths, 'moment-favicon.svg'])],
-                'budget_initial' => ['required', 'integer', 'min:0', 'max:1000000000'],
-                'prices_confirmed' => ['required', 'boolean'],
+                'hero' => ['required', Rule::in($paths)],
                 'whatsapp' => ['required', 'regex:/^62[0-9]{8,13}$/'],
                 'maps_url','instagram_url','facebook_url','threads_url','tiktok_url' => ['nullable', 'url:http,https', 'max:2000'],
-                'copy' => ['required', 'array'],
                 default => ['required', 'string', 'max:10000'],
             };
         }
         $old = MomentSetting::findOrFail(1);
         $data = $old->data;
-        if ($section === 'copy') {
-            foreach (array_keys($data['copy']) as $key) {
-                $rules['copy.'.$key] = ['required', 'string', 'max:10000'];
-            }
-        }
         $valid = $r->validate($rules);
-        if (isset($valid['copy'])) {
-            $valid['copy'] = array_intersect_key($valid['copy'], $data['copy']);
-        }
         $old->update(['data' => array_replace($data, $valid)]);
 
         return back()->with('success', 'Konten Moment berhasil disimpan dan langsung ditampilkan.');
@@ -76,9 +61,9 @@ class MomentController extends Controller
         $paths = MomentMedia::pluck('path')->all();
         $rules = ['name' => ['required', 'string', 'max:150'], 'image' => ['required', Rule::in($paths)], 'description' => ['required', 'string', 'max:5000'], 'is_active' => ['required', 'boolean'], 'sort_order' => ['required', 'integer', 'min:0', 'max:100000']];
         if ($type === 'packages') {
-            $rules += ['price_status' => ['required', Rule::in(['estimate', 'final'])], 'seo_title' => ['nullable', 'string', 'max:200'], 'seo_description' => ['nullable', 'string', 'max:500'], 'title' => ['required', 'string', 'max:150'], 'eyebrow' => ['required', 'string', 'max:255'], 'price' => ['required', 'integer', 'min:0', 'max:1000000000'], 'benefits' => ['required', 'string', 'max:10000'], 'gallery' => ['nullable', 'array', 'max:30'], 'gallery.*' => ['nullable', Rule::in($paths)]];
+            $rules += ['price_status' => ['required', Rule::in(['estimate', 'final'])], 'price' => ['required', 'integer', 'min:0', 'max:1000000000'], 'benefits' => ['required', 'string', 'max:10000'], 'gallery' => ['nullable', 'array', 'max:30'], 'gallery.*' => ['nullable', Rule::in($paths)]];
         } else {
-            $rules += ['type' => ['required', Rule::in(['preset', 'design'])], 'style' => ['required', Rule::in(['warm', 'natural', 'editorial', 'chapter'])], 'overlay_top' => ['nullable', 'string', 'max:150'], 'overlay_title' => ['nullable', 'string', 'max:150'], 'overlay_caption' => ['nullable', 'string', 'max:255']];
+            $rules += ['type' => ['required', Rule::in(['preset', 'design'])]];
         }
         $data = $r->validate($rules);
         if (! $id) {
@@ -98,6 +83,7 @@ class MomentController extends Controller
             $data['gallery'] = array_values(array_filter($data['gallery'] ?? []));
         } else {
             $data['label'] = $data['type'] === 'preset' ? 'Preset' : 'Desain';
+            $data['style'] = $entry->data['style'] ?? ($data['type'] === 'preset' ? 'natural' : 'editorial');
         }
         $entry->fill(['name' => $data['name'], 'is_active' => $data['is_active'], 'sort_order' => $data['sort_order'], 'data' => $data])->save();
 
@@ -122,7 +108,7 @@ class MomentController extends Controller
 
     public function media(Request $r, MomentMedia $media)
     {
-        $media->update($r->validate(['alt_text' => ['required', 'string', 'max:255'], 'focus_x' => ['required', 'integer', 'between:0,100'], 'focus_y' => ['required', 'integer', 'between:0,100']]));
+        $media->update($r->validate(['alt_text' => ['required', 'string', 'max:255']]));
 
         return back()->with('success', 'Informasi gambar diperbarui.');
     }
@@ -138,6 +124,6 @@ class MomentController extends Controller
             Storage::disk('public')->delete($path);
         }
 
-        return back()->with('success','Gambar dihapus dari pustaka media.');
+        return back()->with('success', 'Gambar dihapus dari pustaka media.');
     }
 }

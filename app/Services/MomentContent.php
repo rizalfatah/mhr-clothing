@@ -45,18 +45,20 @@ class MomentContent
 
     public function read(): array
     {
-        $data = MomentSetting::findOrFail(1)->data;
+        $stored = MomentSetting::findOrFail(1)->data;
+        $editable = ['hero', 'address', 'maps_url', 'phone', 'whatsapp', 'instagram_url', 'facebook_url', 'threads_url', 'tiktok_url'];
+        $data = array_replace(self::defaults(), array_intersect_key($stored, array_flip($editable)));
         $media = MomentMedia::all()->keyBy('path');
         $packages = [];
         foreach (MomentPackage::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get() as $p) {
             $image = $media->get($p->data['image']);
-            $packages[$p->slug] = [...$p->data, 'name' => $p->name, 'slug' => $p->slug, 'seo_title' => $p->data['seo_title'] ?? '', 'seo_description' => $p->data['seo_description'] ?? '', 'prices_confirmed' => isset($p->data['price_status']) ? $p->data['price_status'] === 'final' : $data['prices_confirmed'], 'image_alt' => $image?->alt_text ?? $p->name, 'position' => ($image?->focus_x ?? 50).'% '.($image?->focus_y ?? 50).'%'];
+            $packages[$p->slug] = [...$p->data, 'name' => $p->name, 'slug' => $p->slug, 'title' => Str::replaceFirst('Moment ', '', $p->name), 'eyebrow' => config('moment.packages.'.$p->slug.'.eyebrow', 'Abadikan cerita wisudamu.'), 'seo_title' => '', 'seo_description' => '', 'prices_confirmed' => isset($p->data['price_status']) ? $p->data['price_status'] === 'final' : $data['prices_confirmed'], 'image_alt' => $image?->alt_text ?? $p->name, 'position' => ($image?->focus_x ?? 50).'% '.($image?->focus_y ?? 50).'%'];
         }
         $data['packages'] = $packages;
         $data['prices_confirmed'] = count($packages) > 0 && collect($packages)->every(fn ($p) => $p['prices_confirmed']);
         $data['mediaPositions'] = $media->map(fn ($m) => $m->focus_x.'% '.$m->focus_y.'%')->all();
         $data['hero_alt'] = $media->get($data['hero'])?->alt_text ?? $data['brand_name'];
-        $data['presets'] = MomentCollection::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get()->map(fn ($p) => [...$p->data, 'name' => $p->name])->all();
+        $data['presets'] = MomentCollection::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get()->map(fn ($p) => [...array_diff_key($p->data, array_flip(['overlay_top', 'overlay_title', 'overlay_caption'])), 'name' => $p->name])->all();
         $data['whatsappUrl'] = 'https://wa.me/'.$data['whatsapp'];
         $data['mapsUrl'] = $data['maps_url'] ?: 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($data['address']);
         $data['budget_min'] = count($packages) ? min(array_column($packages, 'price')) : 0;

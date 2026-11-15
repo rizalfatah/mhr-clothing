@@ -92,13 +92,13 @@ Tidak ada URL aset Figma sementara yang dipakai oleh halaman. Tautan media sosia
 
 ## Admin Konten Moment
 
-Buka dashboard MAHRM → **Konten Moment**, atau `/admin/moment` pada domain toko. Gunakan akun admin MAHRM yang sudah ada. Tersedia tab Beranda, Paket, Preset & Desain, Identitas & Kontak, Kebijakan & Pesan, Teks Halaman & SEO, dan Media. Perubahan langsung tampil setelah disimpan.
+Buka dashboard MAHRM → **Konten Moment**, atau `/admin/moment` pada domain toko. Gunakan akun admin MAHRM yang sudah ada. Tersedia lima tab: Foto Beranda, Paket, Preset & Desain, Kontak, dan Media. Hanya pengaturan rutin operator yang ditampilkan. Perubahan langsung tampil setelah disimpan.
 
-- Upload JPG, PNG, atau WebP maksimal 5 MB pada tab Media, lalu pilih pada form konten. Gambar dapat dipakai ulang. Atur deskripsi serta titik fokus horizontal/vertikal dalam persen. Gambar yang masih digunakan tidak dapat dihapus.
+- Upload JPG, PNG, atau WebP maksimal 5 MB pada tab Media, lalu pilih pada form konten. Gambar dapat dipakai ulang. Atur deskripsi foto. Posisi fokus yang sudah tersimpan tetap dipakai tanpa menampilkan angka teknis kepada operator. Gambar yang masih digunakan tidak dapat dihapus.
 - Paket dapat ditambah, diurutkan, dan dinonaktifkan. Slug tetap setelah dibuat; nama boleh berubah. Benefit diisi satu per baris. Pilih galeri sesuai urutan pada slot yang tersedia. Status harga estimasi/final diatur per paket.
-- Koleksi dapat ditambah, diurutkan, dinonaktifkan, dan memakai salah satu gaya tampilan yang tersedia. Teks desain dapat diubah per koleksi.
-- Form teks menerima teks biasa, bukan HTML. Template booking mendukung `{package_name}` dan `{price}`. Pengaturan ini terpisah dari pengaturan toko MAHRM.
-- Data awal mempertahankan foto, pertukaran galeri Portrait/Exclusive, paket, dan konten terbaru. `config/moment.php` merupakan sumber nilai awal; konten website selanjutnya dibaca dari tabel khusus Moment. Tidak ada cache konten yang perlu dihapus setelah menyimpan.
+- Koleksi dapat ditambah, diurutkan, dinonaktifkan, serta diganti nama, deskripsi, jenis, dan gambarnya. Gaya serta teks dekorasi desain ditentukan oleh kode.
+- Teks halaman, About, SEO, kebijakan, template pesan, identitas/logo, favicon, serta budget awal ditentukan di kode. Nilai lama untuk pengaturan tersebut di database tidak lagi mengubah tampilan website. Pengaturan kontak dan konten rutin tetap terpisah dari toko MAHRM.
+- Data awal mempertahankan foto, pertukaran galeri Portrait/Exclusive, paket, dan konten terbaru. `config/moment.php` dan `resources/moment-copy.php` menentukan nilai tetap. Hanya konten operasional website yang dibaca dari tabel khusus Moment. Tidak ada cache konten yang perlu dihapus setelah menyimpan.
 
 Saat deployment, jalankan:
 
