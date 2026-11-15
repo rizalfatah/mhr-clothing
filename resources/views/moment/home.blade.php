@@ -22,8 +22,9 @@
         <div class="budget-control">
             <label for="moment-budget">{{ $copy['text_8'] }}<strong>{{ $copy['text_9'] }}</strong></label>
             <div class="budget-display"><span>{{ $copy['text_10'] }}</span><output for="moment-budget" data-budget-output>{{ number_format($budget_initial,0,',','.') }}</output></div>
-            <input type="range" id="moment-budget" min="{{ $budget_min }}" max="{{ $budget_max }}" step="1" value="{{ $budget_initial }}" aria-valuetext="{{ $budget_initial }} rupiah" data-budget>
+            <input type="range" id="moment-budget" min="{{ $budget_min }}" max="{{ $budget_max }}" step="{{ $budget_step }}" value="{{ $budget_initial }}" aria-valuetext="{{ number_format($budget_initial,0,',','.') }} rupiah" aria-describedby="moment-budget-hint" data-budget>
             <div class="budget-limits"><span>{{ number_format($budget_min,0,',','.') }}</span><span>{{ number_format($budget_max,0,',','.') }}</span></div>
+            <p class="budget-hint" id="moment-budget-hint">Geser per Rp{{ number_format($budget_step,0,',','.') }}</p>
         </div>
         <div class="picker-heading"><h2 id="package-picker-title">{{ $copy['text_11'] }}<br>{{ $copy['text_12'] }}</h2><span class="budget-sticker" aria-hidden="true">{{ $copy['text_13'] }}<br><strong>{{ $copy['text_14'] }}</strong>↙</span></div>
         <p class="budget-status" data-budget-status role="status" aria-live="polite">{{ $copy['text_15'] }}</p>

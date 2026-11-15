@@ -61,9 +61,17 @@ class MomentContent
         $data['presets'] = MomentCollection::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get()->map(fn ($p) => [...array_diff_key($p->data, array_flip(['overlay_top', 'overlay_title', 'overlay_caption'])), 'name' => $p->name])->all();
         $data['whatsappUrl'] = 'https://wa.me/'.$data['whatsapp'];
         $data['mapsUrl'] = $data['maps_url'] ?: 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($data['address']);
-        $data['budget_min'] = count($packages) ? min(array_column($packages, 'price')) : 0;
-        $data['budget_max'] = max($data['budget_min'] + 50000, count($packages) ? max(array_column($packages, 'price')) : 50000);
-        $data['budget_initial'] = max($data['budget_min'], min($data['budget_max'], $data['budget_initial']));
+        $budgetStep = 50000;
+        $minimumPrice = count($packages) ? min(array_column($packages, 'price')) : 0;
+        $maximumPrice = count($packages) ? max(array_column($packages, 'price')) : 0;
+        $data['budget_step'] = $budgetStep;
+        // Keep every slider position on a round amount, including after price edits.
+        $data['budget_min'] = (int) (floor($minimumPrice / $budgetStep) * $budgetStep);
+        $data['budget_max'] = max($data['budget_min'] + $budgetStep, (int) (ceil($maximumPrice / $budgetStep) * $budgetStep));
+        $data['budget_initial'] = (int) max(
+            ceil($minimumPrice / $budgetStep) * $budgetStep,
+            min($data['budget_max'], round($data['budget_initial'] / $budgetStep) * $budgetStep),
+        );
 
         return $data;
     }

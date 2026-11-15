@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Moment\PageController;
+use App\Models\MomentPackage;
+use App\Services\MomentContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +37,35 @@ test('the two homepages resolve independently', function () {
         ->and($moment->getActionName())->toBe(PageController::class.'@home')
         ->and($store->getName())->toBe('home');
 });
+
+test('budget steps stay rounded and cover active package prices after edits', function (array $prices, int $minimum, int $maximum, int $initial) {
+    $packages = MomentPackage::orderBy('id')->get();
+    foreach ($packages as $index => $package) {
+        $package->update([
+            'is_active' => isset($prices[$index]),
+            'data' => [...$package->data, 'price' => $prices[$index] ?? $package->data['price']],
+        ]);
+    }
+
+    $this->get('https://'.config('moment.domain').'/')
+        ->assertOk()
+        ->assertViewHas('budget_step', 50000)
+        ->assertViewHas('budget_min', $minimum)
+        ->assertViewHas('budget_max', $maximum)
+        ->assertViewHas('budget_initial', $initial);
+
+    if ($prices) {
+        expect($minimum)->toBeLessThanOrEqual(min($prices))
+            ->and($maximum)->toBeGreaterThanOrEqual(max($prices))
+            ->and($initial)->toBeGreaterThanOrEqual(min($prices));
+    }
+})->with([
+    'default prices' => [[250000, 300000, 450000], 250000, 450000, 300000],
+    'prices between steps' => [[275000, 325000, 479000], 250000, 500000, 300000],
+    'single package above initial budget' => [[410000], 400000, 450000, 450000],
+    'equal prices' => [[100000, 100000], 100000, 150000, 150000],
+    'no active packages' => [[], 0, 50000, 50000],
+]);
 
 test('Moment package URLs are unavailable on the MAHRM domain', function () {
     $this->get('https://mahrmofficial.com/exclusive')->assertNotFound();
