@@ -9,5 +9,7 @@ Route::get('/portrait', [PageController::class, 'package'])->defaults('package',
 Route::get('/group-portrait', [PageController::class, 'package'])->defaults('package', 'group-portrait')->name('group-portrait');
 Route::get('/preset-desain', [PageController::class, 'presets'])->name('presets');
 
+Route::get('/{package}', [PageController::class, 'package'])->name('packages.show');
+
 // Keep every unrecognised Moment URL out of the store routes, including auth.
 Route::any('/{path}', [PageController::class, 'notFound'])->where('path', '.*')->name('not-found');

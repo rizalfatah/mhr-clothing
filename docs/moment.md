@@ -88,19 +88,39 @@ Pemetaan aset sumber:
 | `logo_Sepulang_x_MHR 1.webp` | `branding/sepulang-mahrm.webp` |
 | `logo_sepulang_moment_putih.webp` | `branding/sepulang-moment-white.webp` |
 
-Tidak ada URL aset Figma sementara yang dipakai oleh halaman. Instagram tidak ditampilkan sampai `MOMENT_INSTAGRAM_URL` diisi.
+Tidak ada URL aset Figma sementara yang dipakai oleh halaman. Tautan media sosial ditampilkan setelah diisi melalui admin Moment. Environment hanya menjadi nilai awal saat inisialisasi.
 
-Implementasi ini mencakup halaman publik pada Figma. **CMS/admin pengelolaan konten belum dibuat**; konten masih terpusat pada konfigurasi agar sumber datanya dapat dihubungkan ke CMS pada tahap berikutnya.
+## Admin Konten Moment
+
+Buka dashboard MAHRM → **Konten Moment**, atau `/admin/moment` pada domain toko. Gunakan akun admin MAHRM yang sudah ada. Tersedia tab Beranda, Paket, Preset & Desain, Identitas & Kontak, Kebijakan & Pesan, Teks Halaman & SEO, dan Media. Perubahan langsung tampil setelah disimpan.
+
+- Upload JPG, PNG, atau WebP maksimal 5 MB pada tab Media, lalu pilih pada form konten. Gambar dapat dipakai ulang. Atur deskripsi serta titik fokus horizontal/vertikal dalam persen. Gambar yang masih digunakan tidak dapat dihapus.
+- Paket dapat ditambah, diurutkan, dan dinonaktifkan. Slug tetap setelah dibuat; nama boleh berubah. Benefit diisi satu per baris. Pilih galeri sesuai urutan pada slot yang tersedia. Status harga estimasi/final diatur per paket.
+- Koleksi dapat ditambah, diurutkan, dinonaktifkan, dan memakai salah satu gaya tampilan yang tersedia. Teks desain dapat diubah per koleksi.
+- Form teks menerima teks biasa, bukan HTML. Template booking mendukung `{package_name}` dan `{price}`. Pengaturan ini terpisah dari pengaturan toko MAHRM.
+- Data awal mempertahankan foto, pertukaran galeri Portrait/Exclusive, paket, dan konten terbaru. `config/moment.php` merupakan sumber nilai awal; konten website selanjutnya dibaca dari tabel khusus Moment. Tidak ada cache konten yang perlu dihapus setelah menyimpan.
+
+Saat deployment, jalankan:
+
+```sh
+php artisan migrate
+php artisan storage:link
+npm run build
+```
+
+Migrasi menginisialisasi konten sekali. `php artisan moment:initialize` dapat dijalankan ulang untuk melengkapi data bawaan tanpa menimpa edit admin. Upload tersimpan di `storage/app/public/moment`; sertakan database dan direktori upload dalam backup. URL media pada website Moment menggunakan hostname Moment, bukan APP_URL toko.
 
 ## Verifikasi
 
 ```sh
-php artisan test tests/Unit/MomentWebsiteTest.php
+DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test tests/Unit/MomentWebsiteTest.php tests/Feature/Admin/MomentContentTest.php
 npm run build
 ```
 
-Pengujian Laravel ini tidak melakukan migrasi atau mengubah database. Tes memeriksa render kelima halaman, pemisahan domain, benefit dan tautan booking per paket, serta keberadaan aset lokal. Browser QA mencakup navigasi, budget, panel harga, galeri, filter preset, dan pemeriksaan overflow pada layar mobile.
+Pengujian menggunakan migrasi pada database pengujian terisolasi; jangan menjalankannya pada database produksi. Tes memeriksa render kelima halaman, pemisahan domain, benefit dan tautan booking per paket, serta keberadaan aset lokal. Browser QA mencakup navigasi, budget, panel harga, galeri, filter preset, dan pemeriksaan overflow pada layar mobile.
 
 Hasil regression test SQLite in-memory: **233 lulus, 1 gagal**. Kegagalan berada pada tes lama `settings page shows custom homepage banner preview`: assertion mencari `Pulihkan banner bawaan` sebagai satu string, sedangkan template yang tidak berubah memisahkan kata-katanya dengan newline (`resources/views/admin/settings/index.blade.php:128`). Ke-13 tes khusus Moment lulus.
 
 QA browser: 30 kombinasi dari lima halaman pada lebar 320, 360, 390, 430, 768, dan 1280 px selesai tanpa overflow horizontal atau gambar rusak. Menu, budget minimum/maksimum, harga, galeri, filter Desain, preview komposisi, dan dialog footer telah dicoba. Screenshot QA tersedia di `output/playwright/` (diabaikan Git). Build Vite, pemeriksaan format PHP untuk file baru, serta pembuatan dan penghapusan route cache berhasil.
+
+Verifikasi CMS: 22 tes khusus halaman/admin Moment lulus (119 assertions). Regression test sebelum tiga tes tambahan: 239 lulus, satu kegagalan lama pada assertion teks banner admin. Browser QA berhasil login pada database sementara, menyimpan budget, melihat hasilnya langsung pada domain Moment, dan membuka tujuh tab admin serta lima halaman publik pada viewport 390 px. Migrasi CMS telah diterapkan pada database lokal project.

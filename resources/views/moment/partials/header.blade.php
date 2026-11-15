@@ -5,12 +5,12 @@
             <span></span><span></span><span></span>
         </button>
         <nav class="site-navigation" id="moment-navigation" aria-label="Menu utama" data-navigation>
-            <a href="{{ route('moment.home', [], false) }}" @if(request()->routeIs('moment.home')) aria-current="page" @endif>Beranda <span>01</span></a>
-            <a href="{{ route('moment.exclusive', [], false) }}" @if(request()->routeIs('moment.exclusive')) aria-current="page" @endif>Moment Exclusive <span>02</span></a>
-            <a href="{{ route('moment.portrait', [], false) }}" @if(request()->routeIs('moment.portrait')) aria-current="page" @endif>Moment Portrait <span>03</span></a>
-            <a href="{{ route('moment.group-portrait', [], false) }}" @if(request()->routeIs('moment.group-portrait')) aria-current="page" @endif>Group Portrait <span>04</span></a>
-            <a href="{{ route('moment.presets', [], false) }}" @if(request()->routeIs('moment.presets')) aria-current="page" @endif>Preset & Desain <span>05</span></a>
-            <a class="navigation-contact" href="{{ $whatsappUrl }}?text={{ rawurlencode('Halo Sepulang Moment, saya ingin konsultasi foto wisuda.') }}" target="_blank" rel="noopener">Let’s make a moment @include('moment.partials.icon', ['icon' => 'arrow'])</a>
+            <a href="{{ route('moment.home', [], false) }}" @if(request()->routeIs('moment.home')) aria-current="page" @endif>{{ $copy['text_70'] }}<span>01</span></a>
+            @foreach($packages as $slug=>$item)
+            <a href="{{ route('moment.packages.show',['package'=>$slug],false) }}" @if(request()->path()===$slug) aria-current="page" @endif>{{ $item['name'] }} <span>{{ sprintf('%02d',$loop->iteration+1) }}</span></a>
+            @endforeach
+            <a href="{{ route('moment.presets', [], false) }}" @if(request()->routeIs('moment.presets')) aria-current="page" @endif>{{ $copy['text_74'] }}<span>05</span></a>
+            <a class="navigation-contact" href="{{ $whatsappUrl }}?text={{ rawurlencode($consultation_template) }}" target="_blank" rel="noopener">{{ $copy['navigation_contact'] }} @include('moment.partials.icon', ['icon' => 'arrow'])</a>
         </nav>
     </div>
 </header>

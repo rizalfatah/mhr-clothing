@@ -1,40 +1,45 @@
 @extends('moment.layout')
-@section('title', 'Sepulang Moment — Cerita Wisudamu, Selamanya')
+@section('title', $copy['seo_home_title'])
+@section('description', $copy['seo_home_description'])
 @section('body-class', 'home-page')
 @section('content')
     <section class="home-hero" aria-label="Sepulang Moment, fotografi wisuda Yogyakarta">
-        <img class="home-hero__photo" src="{{ asset($hero) }}" alt="Potret wisudawati berhijab biru dengan latar cahaya malam" width="2731" height="4096" fetchpriority="high">
+        <img class="home-hero__photo" src="{{ \App\Services\MomentContent::imageUrl($hero) }}" alt="{{ $hero_alt }}" style="object-position: {{ $mediaPositions[$hero] ?? '50% 50%' }}" width="2731" height="4096" fetchpriority="high">
         <div class="home-hero__signature">@include('moment.partials.wordmark')</div>
-        <a class="hero-scroll" href="#about" aria-label="Kenali Sepulang Moment"><span>SCROLL TO YOUR STORY</span><span aria-hidden="true">↓</span></a>
+        <a class="hero-scroll" href="#about" aria-label="Kenali Sepulang Moment"><span>{{ $copy['text_1'] }}</span><span aria-hidden="true">↓</span></a>
     </section>
     <section class="about-section content-container" id="about" aria-labelledby="about-title">
         <div class="about-copy">
-            <h1 id="about-title">About</h1>
-            <h2>Every Graduation Has a<br class="desktop-break"> Story Worth Remembering.</h2>
-            <p>Sepulang Moment adalah layanan jasa fotografi yang berfokus pada dokumentasi momen wisuda di Yogyakarta.</p>
-            <p>Kami percaya bahwa setiap perjalanan memiliki cerita yang layak dikenang. Karena itu, kami berusaha menghadirkan pengalaman pemotretan yang nyaman dengan hasil foto yang dapat menjadi kenangan berharga untuk waktu yang lama.</p>
+            <h1 id="about-title">{{ $copy['text_2'] }}</h1>
+            <h2>{{ $copy['text_3'] }}<br class="desktop-break">{{ $copy['text_4'] }}</h2>
+            <p>{{ $copy['text_5'] }}</p>
+            <p>{{ $copy['text_6'] }}</p>
         </div>
-        <div class="bouquet-scene" aria-hidden="true"><div class="bouquet-tile"><span>💐</span></div><span class="bouquet-note">for your next chapter.</span></div>
+        <div class="bouquet-scene" aria-hidden="true"><div class="bouquet-tile">@if($bouquet_image)<img src="{{ \App\Services\MomentContent::imageUrl($bouquet_image) }}" alt="" width="142" height="142">@else<span>💐</span>@endif</div><span class="bouquet-note">{{ $copy['text_7'] }}</span></div>
     </section>
+    @if(count($packages))
     <section class="package-picker" id="packages" aria-labelledby="package-picker-title" data-package-picker>
         <div class="budget-control">
-            <label for="moment-budget">Your <strong>Budget</strong></label>
-            <div class="budget-display"><span>IDR</span><output for="moment-budget" data-budget-output>300.000</output></div>
-            <input type="range" id="moment-budget" min="150000" max="750000" step="50000" value="300000" aria-valuetext="300.000 rupiah" data-budget>
-            <div class="budget-limits"><span>150rb</span><span>750rb</span></div>
+            <label for="moment-budget">{{ $copy['text_8'] }}<strong>{{ $copy['text_9'] }}</strong></label>
+            <div class="budget-display"><span>{{ $copy['text_10'] }}</span><output for="moment-budget" data-budget-output>{{ number_format($budget_initial,0,',','.') }}</output></div>
+            <input type="range" id="moment-budget" min="{{ $budget_min }}" max="{{ $budget_max }}" step="1" value="{{ $budget_initial }}" aria-valuetext="{{ $budget_initial }} rupiah" data-budget>
+            <div class="budget-limits"><span>{{ number_format($budget_min,0,',','.') }}</span><span>{{ number_format($budget_max,0,',','.') }}</span></div>
         </div>
-        <div class="picker-heading"><h2 id="package-picker-title">Pilih Paket<br>Moment Kamu</h2><span class="budget-sticker" aria-hidden="true">Sesuai<br><strong>Budget</strong>↙</span></div>
-        <p class="budget-status" data-budget-status role="status" aria-live="polite">Moment Exclusive cocok dengan budget kamu.</p>
+        <div class="picker-heading"><h2 id="package-picker-title">{{ $copy['text_11'] }}<br>{{ $copy['text_12'] }}</h2><span class="budget-sticker" aria-hidden="true">{{ $copy['text_13'] }}<br><strong>{{ $copy['text_14'] }}</strong>↙</span></div>
+        <p class="budget-status" data-budget-status role="status" aria-live="polite">{{ $copy['text_15'] }}</p>
         <div class="package-carousel" data-package-carousel aria-label="Pilihan paket foto wisuda" tabindex="0">
             @foreach($packages as $slug => $item)
-                <a class="package-card {{ $slug === 'exclusive' ? 'is-recommended' : '' }}" href="{{ route('moment.'.$slug, [], false) }}" data-package-card data-price="{{ $item['price'] }}" data-name="{{ $item['name'] }}" @if($slug === 'exclusive') data-recommended="true" @endif>
-                    <img src="{{ asset($item['image']) }}" alt="{{ $item['image_alt'] }}" width="600" height="800" loading="lazy" style="object-position: {{ $item['position'] }}">
+                <a class="package-card {{ $slug === 'exclusive' ? 'is-recommended' : '' }}" href="{{ route('moment.packages.show', ['package'=>$slug], false) }}" data-package-card data-price="{{ $item['price'] }}" data-name="{{ $item['name'] }}" @if($slug === 'exclusive') data-recommended="true" @endif>
+                    <img src="{{ \App\Services\MomentContent::imageUrl($item['image']) }}" alt="{{ $item['image_alt'] }}" width="600" height="800" loading="lazy" style="object-position: {{ $item['position'] }}">
                     <span class="package-card__tag" data-recommendation-tag @if($slug !== 'exclusive') hidden @endif>Pilihan untukmu ✦</span>
-                    <div class="package-card__caption"><h3>{{ $item['name'] }}</h3><span>Lihat paket @include('moment.partials.icon', ['icon' => 'arrow'])</span></div>
+                    <div class="package-card__caption"><h3>{{ $item['name'] }}</h3><span>{{ $copy['view_package'] }} @include('moment.partials.icon', ['icon' => 'arrow'])</span></div>
                 </a>
             @endforeach
         </div>
-        <div class="carousel-controls"><button type="button" class="icon-button previous" data-carousel-previous aria-label="Paket sebelumnya">@include('moment.partials.icon', ['icon' => 'chevron'])</button><span>Temukan yang paling kamu banget.</span><button type="button" class="icon-button" data-carousel-next aria-label="Paket berikutnya">@include('moment.partials.icon', ['icon' => 'chevron'])</button></div>
-        @unless($prices_confirmed)<p class="price-disclaimer">Pilihan budget menggunakan estimasi awal.<br>Konfirmasi harga final bersama tim kami.</p>@endunless
+        <div class="carousel-controls"><button type="button" class="icon-button previous" data-carousel-previous aria-label="Paket sebelumnya">@include('moment.partials.icon', ['icon' => 'chevron'])</button><span>{{ $copy['text_18'] }}</span><button type="button" class="icon-button" data-carousel-next aria-label="Paket berikutnya">@include('moment.partials.icon', ['icon' => 'chevron'])</button></div>
+        @unless($prices_confirmed)<p class="price-disclaimer">{{ $copy['text_20'] }}<br>{{ $copy['text_21'] }}</p>@endunless
     </section>
+    @else
+    <section class="preset-cta content-container"><a class="pill-button" href="{{ $whatsappUrl }}">{{ $copy['empty_packages'] }}</a></section>
+    @endif
 @endsection

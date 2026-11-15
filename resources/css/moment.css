@@ -289,3 +289,5 @@ dialog::backdrop { background: #00102ad9; backdrop-filter: blur(6px); }
 .lightbox-stage { display: flex; justify-content: center; }
 .lightbox-composition { width: min(100%, calc((100dvh - 110px) * .8)); margin-inline: auto; cursor: default; }
 .lightbox-composition.preset-preview--chapter { transform: none; }
+
+.info-dialog [data-info-content] p, .about-copy p { white-space: pre-line; }

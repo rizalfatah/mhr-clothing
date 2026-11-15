@@ -1,3 +1,4 @@
+const savedContent = JSON.parse(document.querySelector('#moment-content').textContent);
 const menuToggle = document.querySelector('[data-menu-toggle]');
 const navigation = document.querySelector('[data-navigation]');
 
@@ -59,8 +60,8 @@ function updateBudget() {
         else delete card.dataset.recommended;
     });
     document.querySelector('[data-budget-status]').textContent = recommendation
-        ? `${recommendation.dataset.name} cocok dengan budget kamu.`
-        : 'Estimasi paket mulai Rp250.000. Yuk, konsultasikan budget kamu.';
+        ? savedContent.copy.budget_match.replace('{package_name}',recommendation.dataset.name)
+        : savedContent.copy.minimum_budget.replace('{price}',new Intl.NumberFormat('id-ID').format(Math.min(...cards.map(card => Number(card.dataset.price)))));
     if (recommendation) centerCard(recommendation);
 }
 budgetInput?.addEventListener('input', updateBudget);
@@ -109,6 +110,7 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
     const thumbnails = [...gallery.querySelectorAll('[data-gallery-thumbnail]')];
     thumbnails.forEach((thumbnail) => thumbnail.addEventListener('click', () => {
         gallery.querySelector('[data-gallery-image]').src = thumbnail.dataset.src;
+        gallery.querySelector('[data-gallery-image]').style.objectPosition = thumbnail.dataset.position;
         gallery.querySelector('[data-gallery-counter]').textContent = `${String(Number(thumbnail.dataset.index) + 1).padStart(2, '0')} / ${String(thumbnails.length).padStart(2, '0')}`;
         thumbnails.forEach((item) => {
             item.classList.toggle('is-active', item === thumbnail);
@@ -125,14 +127,14 @@ document.querySelectorAll('[data-filter]').forEach((button) => {
         });
         const items = [...document.querySelectorAll('[data-preset-item]')];
         items.forEach((item) => { item.hidden = button.dataset.filter !== 'all' && item.dataset.type !== button.dataset.filter; });
-        document.querySelector('[data-filter-status]').textContent = `${items.filter((item) => !item.hidden).length} koleksi ditampilkan`;
+        document.querySelector('[data-filter-status]').textContent = savedContent.copy.filter_count.replace('{count}',items.filter((item) => !item.hidden).length);
     });
 });
 
 const infoDialog = document.querySelector('#info-dialog');
 const information = {
-    terms: { title: 'Terms and Conditions', text: 'Informasi lengkap mengenai pemesanan, jadwal, pembayaran, perubahan sesi, dan penyerahan foto dapat diminta kepada tim Sepulang Moment sebelum melakukan pemesanan. Hubungi kami untuk mendapatkan ketentuan layanan yang berlaku.' },
-    privacy: { title: 'Privacy Policy', text: 'Untuk informasi mengenai penggunaan data pemesanan dan izin publikasi foto, silakan hubungi tim Sepulang Moment. Pemesanan melalui WhatsApp juga mengikuti kebijakan privasi layanan WhatsApp.' },
+    terms: { title: savedContent.copy.text_68, text: savedContent.terms },
+    privacy: { title: savedContent.copy.text_69, text: savedContent.privacy },
 };
 document.querySelectorAll('[data-info]').forEach((button) => button.addEventListener('click', () => {
     const item = information[button.dataset.info];
@@ -140,7 +142,7 @@ document.querySelectorAll('[data-info]').forEach((button) => button.addEventList
     const paragraph = document.createElement('p');
     paragraph.textContent = item.text;
     const link = document.createElement('a');
-    link.href = document.querySelector('.footer-contact a[href^="https://wa.me/"]').href;
+    link.href = savedContent.whatsapp;
     link.textContent = 'Hubungi Sepulang Moment ↗';
     link.target = '_blank';
     link.rel = 'noopener';

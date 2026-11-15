@@ -182,3 +182,13 @@ Route::get('/about', function () {
 });
 
 Route::get('/account', [AccountController::class, 'index'])->name('account');
+
+Route::middleware(['auth','admin'])->prefix('admin/moment')->name('admin.moment.')->group(function () {
+ Route::get('/', [\App\Http\Controllers\Admin\MomentController::class,'index'])->name('index');
+ Route::put('/settings/{section}', [\App\Http\Controllers\Admin\MomentController::class,'settings'])->name('settings');
+ Route::post('/entries/{type}', [\App\Http\Controllers\Admin\MomentController::class,'save'])->name('store');
+ Route::put('/entries/{type}/{id}', [\App\Http\Controllers\Admin\MomentController::class,'save'])->whereNumber('id')->name('update');
+ Route::post('/media', [\App\Http\Controllers\Admin\MomentController::class,'upload'])->name('media.store');
+ Route::put('/media/{media}', [\App\Http\Controllers\Admin\MomentController::class,'media'])->name('media.update');
+ Route::delete('/media/{media}', [\App\Http\Controllers\Admin\MomentController::class,'destroyMedia'])->name('media.destroy');
+});

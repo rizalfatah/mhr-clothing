@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Moment\PageController;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
-uses(TestCase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
     config(['session.driver' => 'array', 'cache.default' => 'array']);
@@ -15,7 +16,7 @@ test('all five Moment pages render on their own domain', function (string $path,
     $this->get('https://'.config('moment.domain').$path)
         ->assertOk()
         ->assertViewIs($view)
-        ->assertSee($heading, false)
+        ->assertSee($heading)
         ->assertDontSee('Cart Sidebar');
 })->with([
     ['/', 'moment.home', 'Every Graduation Has a'],

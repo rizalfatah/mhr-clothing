@@ -1,10 +1,10 @@
 @extends('moment.layout')
-@section('title', 'Halaman Tidak Ditemukan — Sepulang Moment')
+@section('title', $copy['seo_not_found_title'])
 @section('content')
 <section class="preset-cta content-container">
-    <p class="eyebrow">404 / A LITTLE DETOUR</p>
-    <h1>Sepertinya kita<br><em>sedikit tersesat.</em></h1>
-    <p>Halaman yang kamu cari tidak tersedia.<br>Mari kembali ke cerita wisudamu.</p>
-    <a class="pill-button" href="{{ route('moment.home', [], false) }}">Kembali ke beranda</a>
+    <p class="eyebrow">{{ $copy['text_24'] }}</p>
+    <h1>{{ $copy['text_25'] }}<br><em>{{ $copy['text_26'] }}</em></h1>
+    <p>{{ $copy['text_27'] }}<br>{{ $copy['text_28'] }}</p>
+    <a class="pill-button" href="{{ route('moment.home', [], false) }}">{{ $copy['text_29'] }}</a>
 </section>
 @endsection
