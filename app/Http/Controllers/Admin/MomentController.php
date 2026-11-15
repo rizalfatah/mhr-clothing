@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MomentController extends Controller
 {
@@ -92,15 +93,49 @@ class MomentController extends Controller
 
     public function upload(Request $r)
     {
-        $data = $r->validate(['image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'], 'alt_text' => ['required', 'string', 'max:255']]);
+        $file = $r->file('image');
+        if ($file instanceof UploadedFile && $file->getError() !== UPLOAD_ERR_OK) {
+            $limit = preg_replace('/([KMG])B?$/i', ' $1B', strtoupper(trim(ini_get('upload_max_filesize'))));
+            $message = match ($file->getError()) {
+                UPLOAD_ERR_INI_SIZE => 'Ukuran foto melebihi batas upload server ('.$limit.'). Pilih foto yang lebih kecil.',
+                UPLOAD_ERR_FORM_SIZE => 'Ukuran foto melebihi batas yang diizinkan formulir.',
+                UPLOAD_ERR_PARTIAL => 'Upload foto tidak selesai. Silakan unggah ulang.',
+                UPLOAD_ERR_NO_FILE => 'Pilih foto yang ingin diunggah.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Server tidak dapat menerima foto karena folder sementara tidak tersedia. Hubungi administrator.',
+                UPLOAD_ERR_CANT_WRITE => 'Server gagal menulis file upload. Hubungi administrator.',
+                UPLOAD_ERR_EXTENSION => 'Upload foto dihentikan oleh server. Hubungi administrator.',
+                default => 'Foto gagal diunggah. Silakan coba lagi.',
+            };
+            throw ValidationException::withMessages(['image' => $message]);
+        }
+        $data = $r->validate([
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'alt_text' => ['required', 'string', 'max:255'],
+        ], [
+            'image.required' => 'Pilih foto yang ingin diunggah.',
+            'image.uploaded' => 'Foto gagal diterima oleh server. Silakan unggah ulang.',
+            'image.max' => 'Ukuran foto maksimal 5 MB.',
+            'image.image' => 'File harus berupa gambar JPG, JPEG, PNG, atau WebP.',
+            'image.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WebP.',
+            'alt_text.required' => 'Deskripsi foto wajib diisi.',
+            'alt_text.max' => 'Deskripsi foto maksimal 255 karakter.',
+        ]);
         [$w,$h] = getimagesize($r->file('image')->getRealPath());
         $path = $r->file('image')->store('moment', 'public');
         abort_unless($path, 500, 'Gagal menyimpan gambar.');
         try {
-            MomentMedia::create(['path' => $path, 'alt_text' => $data['alt_text'], 'width' => $w, 'height' => $h]);
+            $media = MomentMedia::create(['path' => $path, 'alt_text' => $data['alt_text'], 'width' => $w, 'height' => $h]);
         } catch (\Throwable $e) {
             Storage::disk('public')->delete($path);
             throw $e;
+        }
+
+        if ($r->expectsJson()) {
+            return response()->json(['media' => [
+                'id' => $media->id, 'path' => $media->path,
+                'url' => MomentContent::imageUrl($media->path),
+                'alt' => $media->alt_text, 'name' => basename($media->path),
+            ]], 201);
         }
 
         return back()->with('success', 'Gambar berhasil diunggah. Pilih gambar ini pada form konten.');

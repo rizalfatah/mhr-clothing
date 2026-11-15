@@ -1,3 +1,4 @@
+import "./admin/moment-media-picker.js";
 import "./bootstrap";
 import "preline";
 

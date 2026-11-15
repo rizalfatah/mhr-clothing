@@ -23,6 +23,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, $request) {
+            if (! $request->is('admin/moment/media') || ! $request->isMethod('POST')) {
+                return null;
+            }
+            $limit = preg_replace('/([KMG])B?$/i', ' $1B', strtoupper(trim(ini_get('post_max_size'))));
+            $message = 'Ukuran total upload melebihi batas request server ('.$limit.'). Pilih foto yang lebih kecil.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message, 'errors' => ['image' => [$message]]], 413);
+            }
+            return back()->withErrors(['image' => $message]);
+        });
+
         // Handle 419 CSRF token mismatch errors
         $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
             if ($e->getStatusCode() === 419) {

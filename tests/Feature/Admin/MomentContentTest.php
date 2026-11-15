@@ -103,3 +103,68 @@ test('operator forms omit advanced controls and packages need only routine field
     $this->post(route('admin.moment.store', 'packages'), ['name' => 'Paket Operator', 'description' => 'Paket praktis', 'price' => 500000, 'price_status' => 'final', 'image' => MomentMedia::first()->path, 'benefits' => '60 menit sesi foto', 'sort_order' => 5, 'is_active' => 1])->assertRedirect()->assertSessionHasNoErrors();
     $this->withoutMiddleware(TrackUserSession::class)->get('https://'.config('moment.domain').'/paket-operator')->assertOk()->assertSee('Paket Operator')->assertSee('500.000');
 });
+
+test('the gallery uploads media as JSON without publishing a photo choice', function () {
+    Storage::fake('public');
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $originalHero = MomentSetting::findOrFail(1)->data['hero'];
+    $response = $this->postJson(route('admin.moment.media.store'), [
+        'image' => UploadedFile::fake()->image('gallery-upload.png'),
+        'alt_text' => 'Foto untuk galeri',
+    ])->assertCreated()->assertJsonPath('media.alt', 'Foto untuk galeri');
+    $path = $response->json('media.path');
+    Storage::disk('public')->assertExists($path);
+    expect(MomentMedia::where('path', $path)->exists())->toBeTrue()
+        ->and($response->json('media.url'))->toEndWith('/storage/'.$path)
+        ->and(MomentSetting::findOrFail(1)->data['hero'])->toBe($originalHero);
+});
+
+test('gallery upload validation returns errors without creating media', function () {
+    Storage::fake('public');
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $count = MomentMedia::count();
+    $this->postJson(route('admin.moment.media.store'), [
+        'image' => UploadedFile::fake()->create('not-a-photo.txt', 1),
+        'alt_text' => '',
+    ])->assertUnprocessable()->assertJsonValidationErrors(['image', 'alt_text']);
+    expect(MomentMedia::count())->toBe($count);
+    expect(Storage::disk('public')->allFiles())->toBeEmpty();
+});
+
+test('gallery uploads require an administrator', function () {
+    $this->postJson(route('admin.moment.media.store'), [])->assertUnauthorized();
+    $this->actingAs(User::factory()->create(['role' => 'customer']))
+        ->postJson(route('admin.moment.media.store'), [])->assertForbidden();
+});
+
+test('oversized photos return the application size limit', function () {
+    Storage::fake('public');
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $this->postJson(route('admin.moment.media.store'), [
+        'image' => UploadedFile::fake()->image('large.jpg')->size(5121),
+        'alt_text' => 'Foto besar',
+    ])->assertUnprocessable()->assertJsonPath('errors.image.0', 'Ukuran foto maksimal 5 MB.');
+    expect(Storage::disk('public')->allFiles())->toBeEmpty();
+});
+
+test('PHP upload failures report the actual cause', function (int $code, string $expected) {
+    Storage::fake('public');
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $file = new UploadedFile('/tmp/moment-failed-upload', 'photo.jpg', 'image/jpeg', $code, true);
+    $response = $this->postJson(route('admin.moment.media.store'), ['image' => $file, 'alt_text' => 'Foto']);
+    $response->assertUnprocessable()->assertJsonValidationErrors('image');
+    expect($response->json('errors.image.0'))->toContain($expected)->not->toContain('The image failed to upload.');
+    expect(Storage::disk('public')->allFiles())->toBeEmpty();
+})->with([
+    [UPLOAD_ERR_INI_SIZE, 'batas upload server'],
+    [UPLOAD_ERR_PARTIAL, 'tidak selesai'],
+    [UPLOAD_ERR_NO_TMP_DIR, 'folder sementara'],
+    [UPLOAD_ERR_CANT_WRITE, 'gagal menulis'],
+    [UPLOAD_ERR_EXTENSION, 'dihentikan oleh server'],
+]);
+
+test('requests above the server post limit return a clear JSON size error', function () {
+    $this->call('POST', route('admin.moment.media.store'), [], [], [], ['CONTENT_LENGTH' => '999999999999', 'HTTP_ACCEPT' => 'application/json'])
+        ->assertStatus(413)->assertJsonValidationErrors('image')
+        ->assertJsonPath('errors.image.0', 'Ukuran total upload melebihi batas request server ('.preg_replace('/([KMG])B?$/i', ' $1B', strtoupper(trim(ini_get('post_max_size')))).'). Pilih foto yang lebih kecil.');
+});
