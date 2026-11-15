@@ -99,6 +99,11 @@
                             </a>
                         </li>
 
+                        <li class="px-2.5 pt-4 pb-1">
+                            <div class="mb-3 border-t border-gray-200 dark:border-neutral-700" role="separator"></div>
+                            <h2 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">MAHRM</h2>
+                        </li>
+
                         <!-- Products -->
                         <li class="hs-accordion {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
                             id="products-accordion">
@@ -151,18 +156,7 @@
                             </div>
                         </li>
 
-                        <li>
-                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.moment.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
-                                href="{{ route('admin.moment.index') }}">
-                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
-                                    <circle cx="12" cy="13" r="3" />
-                                </svg>
-                                Konten Moment
-                            </a>
-                        </li>
+
                         <!-- Community Showcase -->
                         <li>
                             <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.community-images.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
@@ -346,6 +340,23 @@
                                     <circle cx="12" cy="12" r="3" />
                                 </svg>
                                 Pengaturan
+                            </a>
+                        </li>
+                        <li class="px-2.5 pt-4 pb-1">
+                            <div class="mb-3 border-t border-gray-200 dark:border-neutral-700" role="separator"></div>
+                            <h2 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">Moment</h2>
+                        </li>
+
+                        <li>
+                            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 dark:text-neutral-200 {{ request()->routeIs('admin.moment.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }}"
+                                href="{{ route('admin.moment.index') }}">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+                                    <circle cx="12" cy="13" r="3" />
+                                </svg>
+                                Konten Moment
                             </a>
                         </li>
                     </ul>
